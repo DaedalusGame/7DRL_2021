@@ -1,0 +1,728 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{40DCB728-7E91-4C31-A29D-386516DA4243}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>_7DRL_2021</RootNamespace>
+    <AssemblyName>Eradication_Bastion</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MonoGamePlatform>Windows</MonoGamePlatform>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Behaviors\Behavior.cs" />
+    <Compile Include="Behaviors\BehaviorActionHolder.cs" />
+    <Compile Include="Behaviors\BehaviorAlive.cs" />
+    <Compile Include="Behaviors\BehaviorBellTower.cs" />
+    <Compile Include="Behaviors\BehaviorDecay.cs" />
+    <Compile Include="Behaviors\BehaviorDrawable.cs" />
+    <Compile Include="Behaviors\BehaviorEscapeTarget.cs" />
+    <Compile Include="Behaviors\BehaviorFollowCamera.cs" />
+    <Compile Include="Behaviors\BehaviorBulwark.cs" />
+    <Compile Include="Behaviors\BehaviorDagger.cs" />
+    <Compile Include="Behaviors\BehaviorGrappleHeart.cs" />
+    <Compile Include="Behaviors\BehaviorGrappleWall.cs" />
+    <Compile Include="Behaviors\BehaviorGrapplingHook.cs" />
+    <Compile Include="Behaviors\BehaviorLich.cs" />
+    <Compile Include="Behaviors\BehaviorRat.cs" />
+    <Compile Include="Behaviors\BehaviorGrunt.cs" />
+    <Compile Include="Behaviors\BehaviorHeartless.cs" />
+    <Compile Include="Behaviors\BehaviorHitboxLich.cs" />
+    <Compile Include="Behaviors\BehaviorHitboxPlayer.cs" />
+    <Compile Include="Behaviors\BehaviorHitboxNormal.cs" />
+    <Compile Include="Behaviors\BehaviorIdentity.cs" />
+    <Compile Include="Behaviors\BehaviorKillTarget.cs" />
+    <Compile Include="Behaviors\BehaviorLastSeen.cs" />
+    <Compile Include="Behaviors\BehaviorLevelEnd.cs" />
+    <Compile Include="Behaviors\BehaviorLevelStart.cs" />
+    <Compile Include="Behaviors\BehaviorMace.cs" />
+    <Compile Include="Behaviors\BehaviorMovable.cs" />
+    <Compile Include="Behaviors\BehaviorNemesis.cs" />
+    <Compile Include="Behaviors\BehaviorOnTile.cs" />
+    <Compile Include="Behaviors\BehaviorOrientable.cs" />
+    <Compile Include="Behaviors\BehaviorPathfinder.cs" />
+    <Compile Include="Behaviors\BehaviorPlayer.cs" />
+    <Compile Include="Behaviors\BehaviorShadow.cs" />
+    <Compile Include="Behaviors\BehaviorChasm.cs" />
+    <Compile Include="Behaviors\BehaviorSpiky.cs" />
+    <Compile Include="Behaviors\BehaviorSolid.cs" />
+    <Compile Include="Behaviors\BehaviorSword.cs" />
+    <Compile Include="Behaviors\BehaviorTemplate.cs" />
+    <Compile Include="Behaviors\BehaviorUpgrade.cs" />
+    <Compile Include="Behaviors\BehaviorWraith.cs" />
+    <Compile Include="Behaviors\BehaviorWraithEmitter.cs" />
+    <Compile Include="Behaviors\IBehaviorUpdateable.cs" />
+    <Compile Include="Behaviors\IColored.cs" />
+    <Compile Include="Behaviors\IGrappleTarget.cs" />
+    <Compile Include="Behaviors\IOffseted.cs" />
+    <Compile Include="Behaviors\ISlider.cs" />
+    <Compile Include="Behaviors\ITickable.cs" />
+    <Compile Include="Behaviors\Origin.cs" />
+    <Compile Include="BiDictionary.cs" />
+    <Compile Include="Card.cs" />
+    <Compile Include="Cards\CardChallenge.cs" />
+    <Compile Include="Cards\CardHeal.cs" />
+    <Compile Include="Cards\CardMaxHP.cs" />
+    <Compile Include="Cards\CardSacrificeHealth.cs" />
+    <Compile Include="Cards\CardScore.cs" />
+    <Compile Include="Cards\CardUpgrade.cs" />
+    <Compile Include="ColorMatrix.cs" />
+    <Compile Include="Coroutine.cs" />
+    <Compile Include="Curio.cs" />
+    <Compile Include="CurioUtil.cs" />
+    <Compile Include="Dijkstra.cs" />
+    <Compile Include="DijkstraMap.cs" />
+    <Compile Include="Drawables\Drawable.cs" />
+    <Compile Include="Drawables\DrawableChasm.cs" />
+    <Compile Include="Drawables\DrawableFloor.cs" />
+    <Compile Include="Drawables\DrawableRat.cs" />
+    <Compile Include="Drawables\DrawableGrunt.cs" />
+    <Compile Include="Drawables\DrawableLich.cs" />
+    <Compile Include="Drawables\DrawableNemesis.cs" />
+    <Compile Include="Drawables\DrawablePlayer.cs" />
+    <Compile Include="Drawables\DrawableTile.cs" />
+    <Compile Include="Drawables\DrawableWall.cs" />
+    <Compile Include="DrawPass.cs" />
+    <Compile Include="EventBus.cs" />
+    <Compile Include="Events\EventAction.cs" />
+    <Compile Include="Events\EventCurio.cs" />
+    <Compile Include="FibonacciHeap\Constants.cs" />
+    <Compile Include="FibonacciHeap\FibonacciHeap.cs" />
+    <Compile Include="FibonacciHeap\FibonacciHeapDoubleKey.cs" />
+    <Compile Include="FibonacciHeap\FibonacciHeapNode.cs" />
+    <Compile Include="FibonacciHeap\FibonacciHeapNodeDoubleKey.cs" />
+    <Compile Include="FontUtil.cs" />
+    <Compile Include="FrameCounter.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="ICurio.cs" />
+    <Compile Include="ICurioMapper.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="InputTwinState.cs" />
+    <Compile Include="InputUtil.cs" />
+    <Compile Include="IPreDrawable.cs" />
+    <Compile Include="LerpHelper.cs" />
+    <Compile Include="LineSet.cs" />
+    <Compile Include="Manager.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="MapGenerator.cs" />
+    <Compile Include="MapTile.cs" />
+    <Compile Include="Mask.cs" />
+    <Compile Include="Menu.cs" />
+    <Compile Include="Menus\Base.cs" />
+    <Compile Include="Menus\PlayerUI.cs" />
+    <Compile Include="Menus\TitleUI.cs" />
+    <Compile Include="Pathfinding\Dijkstra\IUnweightedGraph.cs" />
+    <Compile Include="Pathfinding\Dijkstra\IWeightedGraph.cs" />
+    <Compile Include="Pathfinding\Dijkstra\MapGraph.cs" />
+    <Compile Include="Pathfinding\Dijkstra\UnweightedGraph.cs" />
+    <Compile Include="Pathfinding\Dijkstra\UnweightedGridGraph.cs" />
+    <Compile Include="Pathfinding\Dijkstra\WeightedGridGraph.cs" />
+    <Compile Include="Pathfinding\Dijkstra\WeightedPathfinder.cs" />
+    <Compile Include="Pathfinding\Utils\PathConstructor.cs" />
+    <Compile Include="Pathfinding\Utils\TupleComparer.cs" />
+    <Compile Include="PrimitiveBatch.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistryEntry.cs" />
+    <Compile Include="Results\ActionClearStab.cs" />
+    <Compile Include="Results\ActionConsumeHeart.cs" />
+    <Compile Include="Results\ActionDecelerate.cs" />
+    <Compile Include="Results\ActionAccelerate.cs" />
+    <Compile Include="Results\ActionCollision.cs" />
+    <Compile Include="Results\ActionDamage.cs" />
+    <Compile Include="Results\ActionDeath.cs" />
+    <Compile Include="Results\ActionDestroyArmor.cs" />
+    <Compile Include="Results\ActionDestructionWave.cs" />
+    <Compile Include="Results\ActionEnemyHit.cs" />
+    <Compile Include="Results\ActionGib.cs" />
+    <Compile Include="Results\ActionGrappleHeart.cs" />
+    <Compile Include="Results\ActionGrappleWall.cs" />
+    <Compile Include="Results\ActionGripDash.cs" />
+    <Compile Include="Results\ActionInputDirection.cs" />
+    <Compile Include="Results\ActionFall.cs" />
+    <Compile Include="Results\ActionKeepMoving.cs" />
+    <Compile Include="Results\ActionLichSlash.cs" />
+    <Compile Include="Results\ActionMaceAttack.cs" />
+    <Compile Include="Results\ActionChangeMomentum.cs" />
+    <Compile Include="Results\ActionDaggerAttack.cs" />
+    <Compile Include="Results\ActionMoveForward.cs" />
+    <Compile Include="Results\ActionMoveNemesis.cs" />
+    <Compile Include="Results\ActionMoveTo.cs" />
+    <Compile Include="Results\ActionNemesisRevive.cs" />
+    <Compile Include="Results\ActionParry.cs" />
+    <Compile Include="Results\ActionRipHeartGrapple.cs" />
+    <Compile Include="Results\ActionRipHeartSword.cs" />
+    <Compile Include="Results\ActionSetMomentum.cs" />
+    <Compile Include="Results\ActionHitVisual.cs" />
+    <Compile Include="Results\ActionStabHit.cs" />
+    <Compile Include="Results\ActionSlashHit.cs" />
+    <Compile Include="Results\ActionStabStuck.cs" />
+    <Compile Include="Results\ActionStop.cs" />
+    <Compile Include="Results\ActionSwordDraw.cs" />
+    <Compile Include="Results\ActionSwordSheathe.cs" />
+    <Compile Include="Results\ActionSwordStab.cs" />
+    <Compile Include="Results\ActionSwordSlash.cs" />
+    <Compile Include="Results\ActionTurn.cs" />
+    <Compile Include="Results\ActionWaitForAction.cs" />
+    <Compile Include="Results\IAction.cs" />
+    <Compile Include="Results\IGrappleAction.cs" />
+    <Compile Include="Results\IWeaponHit.cs" />
+    <Compile Include="Scene.cs" />
+    <Compile Include="SceneGame.cs" />
+    <Compile Include="SceneLoading.cs" />
+    <Compile Include="SceneTitle.cs" />
+    <Compile Include="Scheduler.cs" />
+    <Compile Include="SkillUtil.cs" />
+    <Compile Include="Slider.cs" />
+    <Compile Include="SpriteLoader.cs" />
+    <Compile Include="StringUtil.cs" />
+    <Compile Include="Symbol.cs" />
+    <Compile Include="Template.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="VisualEffect.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bulwark_body.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bulwark_body_armor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bulwark_weapon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_bell.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_blood.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_bloody_cleaver.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_bone_chalice.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_bubble.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_crystal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_eater.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_fire.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_injection.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_leviathan.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_moon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_nemesis.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_pentagram.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_rot.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_sacrifice.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_touch.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\card_void.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\cursor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_area.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_area_target_strip4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_bash.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_blood_large.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_blood_medium_strip6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_blood_score_strip8.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_blood_small_strip4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_cosmic_strip10.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_fall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_moon_strip6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_particle_strip8.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_shard_strip10.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_smoke_big_strip6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_smoke_small_strip4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\effect_star_big.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_0_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_10_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_11_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_12_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_13_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_14_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_15_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_16_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_17_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_18_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_19_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_1_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_20_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_21_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_22_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_23_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_24_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_25_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_26_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_27_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_28_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_29_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_2_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_30_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_31_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_32_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_33_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_34_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_35_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_36_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_37_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_38_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_39_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_3_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_40_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_41_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_42_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_43_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_44_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_45_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_46_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_47_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_48_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_49_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_4_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_50_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_51_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_52_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_53_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_54_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_55_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_56_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_57_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_58_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_59_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_5_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_60_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_61_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_62_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_63_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_6_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_7_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_8_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\font\font_9_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\grunt_body.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\grunt_body_armor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\grunt_weapon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\heart.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\juggler_body.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\key_control.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\key_enter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\key_escape.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\key_shift.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\key_space.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lich_body.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lich_head.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lich_heart.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lich_weapon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\line_dotted.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\mace.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\mace_chain.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\mouse_left.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\mouse_middle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\mouse_right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\nemesis_back.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\nemesis_back_armor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\nemesis_forward.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\nemesis_forward_armor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\nemesis_helmet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\nemesis_parry.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\nemesis_wings.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\player_body.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\player_grip.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\player_helmet_1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\player_sword.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\player_sword_bloody.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\player_sword_heart.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\rat_idle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\rat_move.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ring_shadow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ring_spark_thin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain_chasm.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain_chasm_wall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain_debris.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain_floor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain_slippery.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain_spikes.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain_wall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain_wraith.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_area.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_box.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_compass.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_compass_needle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_flame.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_grapple_target.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_heart_empty.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_heart_fill.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_momentum.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_pointer_small.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_slash_left.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_slash_right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_sword.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ui_tag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\wraith.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\wraith_trail.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <None Include="app.manifest" />
+    <None Include="FibonacciHeap\License">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Pathfinding\LICENSE">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
