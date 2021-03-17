@@ -184,11 +184,11 @@ namespace _7DRL_2021.Behaviors
 
                 if (WingsOpen > 0)
                 {
-                    e.Actions.RemoveAll(x => x.Action is ActionDamage || x.Action is ActionDestroyArmor);
+                    e.Actions.Clear();
                 }
                 if (State == NemesisState.Parry)
                 {
-                    e.Actions.RemoveAll(x => x.Action is ActionDamage || x.Action is ActionDestroyArmor);
+                    e.Actions.Clear();
                     e.Actions.Add(new ActionParrySword(hit.Origin, hit.Target).InSlot(ActionSlot.Active));
                 }
             }

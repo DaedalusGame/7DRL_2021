@@ -305,6 +305,7 @@ namespace _7DRL_2021
             yield return new WaitTime(100);
             CameraCurio.MoveVisual(tile.VisualPosition, LerpHelper.QuadraticOut, new SliderScene(this, 150));
             yield return new WaitTime(100);
+            CurrentTheme?.Stop();
             CurrentTheme = new MusicEffect(Theme);
             CurrentTheme.Volume.Set(0, 1, LerpHelper.QuadraticIn, 20);
             CurrentTheme.Play();
