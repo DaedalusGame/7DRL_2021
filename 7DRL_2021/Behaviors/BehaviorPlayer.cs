@@ -60,7 +60,7 @@ namespace _7DRL_2021.Behaviors
             var passive = Curio.GetActionHolder(ActionSlot.Passive);
             var active = Curio.GetActionHolder(ActionSlot.Active);
             var levelEnd = tile?.GetBehavior<BehaviorLevelEnd>();
-            if (levelEnd != null && !scene.WaitForCutscene && passive.Done && active.Done && levelEnd.CanEscape())
+            if (levelEnd != null && !scene.WaitForCutscene && passive.Done && active.Done && levelEnd.CanEscape() && Curio.IsAlive())
             {
                 Momentum.Amount = 0;
                 scene.Cutscene = Scheduler.Instance.RunAndWait(scene.RoutineEndLevel());

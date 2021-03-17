@@ -1,6 +1,7 @@
 ﻿using _7DRL_2021.Behaviors;
 using _7DRL_2021.Menus;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -152,6 +153,14 @@ namespace _7DRL_2021
         public int RatsHunted;
         public int CardsCrushed;
 
+        SoundReference SoundIngress = SoundLoader.AddSound("content/sound/ingress.wav");
+        SoundReference SoundEgress = SoundLoader.AddSound("content/sound/escape.wav");
+        SoundReference SoundBloodstain = SoundLoader.AddSound("content/sound/score_blood.wav");
+        SoundReference SoundBloodstainImpact = SoundLoader.AddSound("content/sound/score_blob.wav");
+        SoundReference SoundScore = SoundLoader.AddSound("content/sound/score.wav");
+        SoundReference Theme = SoundLoader.AddSound("content/sound/music_movement.wav");
+        MusicEffect CurrentTheme;
+
         public SceneGame(Game game) : base(game)
         {
             PlayerCurio = new Curio(Template.Player);
@@ -185,7 +194,6 @@ namespace _7DRL_2021
             var strong = new List<Template>();
 
             bool hasOmicron = PlayerCurio.HasBehaviors<BehaviorOmicron>();
-            hasOmicron = true;
 
             //TODO: There was gonna be a tutorial with blood urns for smashing
             if (Level >= 1)
@@ -297,6 +305,10 @@ namespace _7DRL_2021
             yield return new WaitTime(100);
             CameraCurio.MoveVisual(tile.VisualPosition, LerpHelper.QuadraticOut, new SliderScene(this, 150));
             yield return new WaitTime(100);
+            CurrentTheme = new MusicEffect(Theme);
+            CurrentTheme.Volume.Set(0, 1, LerpHelper.QuadraticIn, 20);
+            CurrentTheme.Play();
+            SoundIngress.Play(1f, 0f, 0f);
             player.Fade.Set(1, LerpHelper.QuarticOut, 70);
             PlayerCurio.MoveVisual(tile.VisualPosition, LerpHelper.QuarticOut, new SliderScene(this, 100));
             yield return new WaitTime(100);
@@ -310,7 +322,9 @@ namespace _7DRL_2021
             var end = tile.GetBehavior<BehaviorLevelEnd>();
             var player = PlayerCurio.GetBehavior<BehaviorPlayer>();
             int stains = 0;
-            foreach(var bloodStain in VisualEffects.OfType<BloodStain>())
+            float pitchSlide = 0;
+           
+            foreach (var bloodStain in VisualEffects.OfType<BloodStain>())
             {
                 Splats += 1;
                 stains += 1;
@@ -325,17 +339,27 @@ namespace _7DRL_2021
                     score = 500;
                 else
                     score = 50;
+                pitchSlide = (float)LerpHelper.QuadraticIn(-1, 1, Math.Min(0, stains / 50f));
 
-                new ScoreBlood(this, emit, center + delta * Random.NextFloat(4,8), offset, Util.AngleToVector(Random.NextAngle()) * Random.NextFloat(80, 200), score, 20 + stains);
+                var blob = new ScoreBlood(this, emit, center + delta * Random.NextFloat(4, 8), offset, Util.AngleToVector(Random.NextAngle()) * Random.NextFloat(80, 200), score, 20 + stains * 2);
+                if(stains % 3 == 0)
+                {
+                    blob.Sound = SoundBloodstainImpact.CreateInstance();
+                    blob.Sound.Pitch = pitchSlide;
+                }
                 bloodStain.Destroy();
             }
-            yield return new WaitTime(100);
+            SoundBloodstain.Play(1, pitchSlide, 0);
+            yield return new WaitTime(30 + stains * 2);
             orientation.OrientTo(Util.PointToAngle(end.Direction), LerpHelper.QuadraticIn, new SliderScene(this, 10));
             player.Fade.Set(0, LerpHelper.QuadraticIn, 70);
             var pos = tile.VisualPosition;
             PlayerCurio.MoveVisual(GetOutsidePosition(pos, end.Direction, 200), LerpHelper.QuadraticIn, new SliderScene(this, 100));
             CameraCurio.MoveVisual(GetOutsidePosition(pos, end.Direction, 150), LerpHelper.QuadraticIn, new SliderScene(this, 100));
+            SoundEgress.Play(1f, 0f, 0f);
+            CurrentTheme.Volume.Set(0, LerpHelper.QuadraticIn, 90);
             yield return new WaitTime(100);
+            CurrentTheme.Stop(false);
             PlayerCurio.MoveTo(null);
             CameraCurio.MoveTo(null);
             DestroyMap();
@@ -366,9 +390,13 @@ namespace _7DRL_2021
 
         public void GameOver(string reason, bool win)
         {
+            if (IsGameOver)
+                return;
             IsGameOver = true;
             GameOverReason = reason;
             GameOverWin = win;
+            CurrentTheme.Pitch.Set(-1, LerpHelper.QuadraticIn, 100);
+            CurrentTheme.Volume.Set(0, LerpHelper.QuadraticIn, 100);
         }
 
         private Matrix CreateViewMatrix()
@@ -435,6 +463,8 @@ namespace _7DRL_2021
             {
                 TimeModStandard = 1;
             }
+
+            CurrentTheme?.Update();
 
             VisualEffects.Update();
             foreach (var visualEffect in VisualEffects)
@@ -510,8 +540,7 @@ namespace _7DRL_2021
             var gameObjects = curios.SelectMany(curio => curio.GetDrawables());
             var drawPasses = gameObjects
                 .Concat(VisualEffects)
-                .Concat(Menu.GetAllMenus()
-                .OfType<IDrawable>())
+                .Concat(Menu.GetAllMenus().OfType<IDrawable>())
                 .Where(x => x.ShouldDraw(this))
                 .ToMultiLookup(x => x.GetDrawPasses());
 

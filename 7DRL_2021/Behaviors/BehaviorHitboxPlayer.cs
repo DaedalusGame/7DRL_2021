@@ -49,7 +49,7 @@ namespace _7DRL_2021.Behaviors
             {
                 if (alive.Armor <= 0)
                 {
-                    e.Actions.Add(new ActionPlayerDamage(hit.Origin, hit.Target, 1).InSlot(ActionSlot.Active));
+                    e.Actions.Add(new ActionPlayerDamage(hit.Origin, hit.Target, 1, hit.HitSound).InSlot(ActionSlot.Active));
                 }
                 else
                 {

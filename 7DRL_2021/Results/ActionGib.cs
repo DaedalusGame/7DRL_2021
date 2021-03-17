@@ -16,12 +16,14 @@ namespace _7DRL_2021.Results
         public ICurio Target { get; set; }
 
         int Score;
+        SoundReference Splat;
 
-        public ActionGib(ICurio origin, ICurio target, int score)
+        public ActionGib(ICurio origin, ICurio target, int score, SoundReference splat)
         {
             Origin = origin;
             Target = target;
             Score = score;
+            Splat = splat;
         }
 
         public bool Done => true;
@@ -36,6 +38,7 @@ namespace _7DRL_2021.Results
                 world.AddWorldScore(Score, Target.GetVisualTarget(), ScoreType.Small);
             if (Origin == world.PlayerCurio)
                 world.Gibs += 1;
+            Splat.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);
             Target.Destroy();
         }
     }
@@ -50,14 +53,16 @@ namespace _7DRL_2021.Results
         int Score;
         float Radius;
         int Particles;
+        SoundReference Splat;
 
-        public ActionCorpseGib(ICurio origin, ICurio target, int score, int particles = 30, float radius = 32)
+        public ActionCorpseGib(ICurio origin, ICurio target, int score, SoundReference splat, int particles = 30, float radius = 32)
         {
             Origin = origin;
             Target = target;
             Score = score;
             Radius = radius;
             Particles = particles;
+            Splat = splat;
         }
 
         public bool Done => true;
@@ -69,6 +74,7 @@ namespace _7DRL_2021.Results
             SkillUtil.CreateBloodCircle(world, Target.GetVisualTarget(), Particles, Radius, Random);
             if (Score > 0)
                 world.AddWorldScore(Score, Target.GetVisualTarget(), ScoreType.Small);
+            Splat.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);
             Target.Destroy();
         }
     }
@@ -81,12 +87,15 @@ namespace _7DRL_2021.Results
         public ICurio Target { get; set; }
 
         int Score;
+        SoundReference Splat;
+        SoundReference SoundRat = SoundLoader.AddSound("content/sound/rat_death.wav");
 
-        public ActionRatGib(ICurio origin, ICurio target, int score)
+        public ActionRatGib(ICurio origin, ICurio target, int score, SoundReference splat)
         {
             Origin = origin;
             Target = target;
             Score = score;
+            Splat = splat;
         }
 
         public bool Done => true;
@@ -100,12 +109,17 @@ namespace _7DRL_2021.Results
             SkillUtil.CreateBloodCircle(world, Target.GetVisualTarget(), 60, 64, Random);
             if (canBeSeen)
             {
+                SoundRat.Play(1, Random.NextFloat(-0.5f, +0.5f), 0);
                 SkillUtil.CreateSpatter(world, Target.GetVisualTarget(), 5, Vector2.Zero, 1, Random);
                 if (Score > 0)
                     world.AddWorldScore(Score, Target.GetVisualTarget(), ScoreType.Small);
                 if (Origin == world.PlayerCurio)
+                {
                     world.Gibs += 1;
+                    world.RatsHunted += 1;
+                }
             }
+            Splat.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);
             Target.Destroy();
         }
     }

@@ -10,6 +10,8 @@ namespace _7DRL_2021.Results
 {
     class ActionMaceAttack : IActionHasOrigin, ITickable, ISlider
     {
+        static Random Random = new Random();
+
         public bool Done => IsDone();
         public ICurio Origin { get; set; }
 
@@ -20,7 +22,8 @@ namespace _7DRL_2021.Results
         public float Slide => Frame.Slide;
         public AoEVisual VisualAoE;
         public Strike VisualStrike;
-        
+
+        public static SoundReference SoundSwish = SoundLoader.AddSound("content/sound/swish.wav");
 
         public ActionMaceAttack(ICurio origin, ICurio target, float timeUpswing, float time)
         {
@@ -70,7 +73,7 @@ namespace _7DRL_2021.Results
         private void Hit(ICurio target)
         {
             var actions = new List<ActionWrapper>();
-            actions.Add(new ActionEnemyHit(Origin, target).InSlot(ActionSlot.Active));
+            actions.Add(new ActionEnemyHit(Origin, target, SoundLoader.AddSound("content/sound/hit.wav")).InSlot(ActionSlot.Active));
             actions.Apply(target);
             /*var world = Origin.GetWorld();
             target.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 20);
@@ -121,6 +124,7 @@ namespace _7DRL_2021.Results
                     if (neighbor != null)
                     {
                         VisualStrike = new Strike(scene, Origin.GetVisualTarget(), neighbor.VisualTarget, this);
+                        SoundSwish.Play(1.0f, Random.NextFloat(-1.0f, 0f), 0);
                     }
                 }
                 bool shouldAttack = !Frame.Done;

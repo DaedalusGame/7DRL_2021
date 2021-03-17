@@ -17,6 +17,10 @@ namespace _7DRL_2021.Results
 
         protected abstract bool HasHeart { get; }
 
+        public static SoundReference Eat = SoundLoader.AddSound("content/sound/eat.wav");
+        public static SoundReference Blood = SoundLoader.AddSound("content/sound/splat.wav");
+        public static SoundReference Jingle = SoundLoader.AddSound("content/sound/score.wav");
+
         public ActionConsumeHeart(ICurio origin, int score, int heal)
         {
             Origin = origin;
@@ -36,6 +40,9 @@ namespace _7DRL_2021.Results
                 RemoveHeart();
                 if (Origin == world.PlayerCurio)
                     world.HeartsEaten += 1;
+                Eat.Play(1, 0, 0);
+                Blood.Play(0.5f, -0.5f, 0);
+                Jingle.Play(1, 0, 0);
             }
         }
 

@@ -54,7 +54,7 @@ namespace _7DRL_2021.Behaviors
                 {
                     if (alive.Armor <= 0)
                     {
-                        e.Actions.Add(new ActionDamage(hit.Origin, hit.Target, 1, 50).InSlot(ActionSlot.Active));
+                        e.Actions.Add(new ActionDamage(hit.Origin, hit.Target, 1, 50, SoundLoader.AddSound("content/sound/stab.wav")).InSlot(ActionSlot.Active));
                         e.Actions.Add(new ActionStabStuck(hit.Origin, hit.Target).InSlot(ActionSlot.Active));
                     }
                     else
@@ -66,7 +66,7 @@ namespace _7DRL_2021.Behaviors
                 {
                     if (alive.Armor <= 0)
                     {
-                        e.Actions.Add(new ActionDamage(hit.Origin, hit.Target, 1, 50).InSlot(ActionSlot.Active));
+                        e.Actions.Add(new ActionDamage(hit.Origin, hit.Target, 1, 50, SoundLoader.AddSound("content/sound/hit.wav")).InSlot(ActionSlot.Active));
                     }
                     else
                     {

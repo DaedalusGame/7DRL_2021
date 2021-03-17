@@ -193,7 +193,7 @@ namespace _7DRL_2021.Behaviors
                 }
             }
 
-            e.Actions.RemoveAll(x => x.Action is ActionGib);
+            e.Actions.RemoveAll(x => x.Action is ActionGib gib && gib.Target == Curio);
         }
 
         [EventSubscribe]

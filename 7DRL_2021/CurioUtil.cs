@@ -61,6 +61,15 @@ namespace _7DRL_2021
             return curio.HasBehaviors<IGrappleTarget>();
         }
 
+        public static void DelayDecay(this ICurio curio, float time)
+        {
+            var decay = curio.GetBehavior<BehaviorDecay>();
+            if(decay != null)
+            {
+                decay.Decay.Time -= time;
+            }
+        }
+
         public static ICurio GetGrappleTarget(this MapTile tile)
         {
             var x = tile.Contents.FirstOrDefault(IsGrappleTarget);

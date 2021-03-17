@@ -86,6 +86,7 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorGrapplingHook(template, -3));
             Behavior.Apply(new BehaviorHitboxPlayer(template));
             Behavior.Apply(new BehaviorShadow(template));
+            //Behavior.Apply(new BehaviorDestructionWave(template)); //DEBUG
             return template;
         });
         public static Template Grunt = new Template("grunt", () =>
@@ -103,7 +104,7 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorGrunt(template));
             Behavior.Apply(new BehaviorShadow(template));
             Behavior.Apply(new BehaviorHitboxNormal(template));
-            Behavior.Apply(new BehaviorDecay(template, 50, 200, 30, 32));
+            Behavior.Apply(new BehaviorDecay(template, 50, 200, 30, 32, SoundLoader.AddSound("content/sound/splat.wav")));
             Behavior.Apply(new BehaviorGrappleHeart(template));
             return template;
         });
@@ -122,7 +123,7 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorBulwark(template));
             Behavior.Apply(new BehaviorShadow(template));
             Behavior.Apply(new BehaviorHitboxNormal(template));
-            Behavior.Apply(new BehaviorDecay(template, 50, 300, 30, 32));
+            Behavior.Apply(new BehaviorDecay(template, 50, 300, 30, 32, SoundLoader.AddSound("content/sound/splat.wav")));
             Behavior.Apply(new BehaviorGrappleHeart(template));
             return template;
         });
@@ -141,7 +142,7 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorBulwark(template));
             Behavior.Apply(new BehaviorShadow(template));
             Behavior.Apply(new BehaviorHitboxNormal(template));
-            Behavior.Apply(new BehaviorDecay(template, 50, 400, 30, 32));
+            Behavior.Apply(new BehaviorDecay(template, 50, 400, 30, 32, SoundLoader.AddSound("content/sound/splat.wav")));
             Behavior.Apply(new BehaviorGrappleHeart(template));
             return template;
         });
@@ -174,7 +175,7 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorLastSeen(template));
             Behavior.Apply(new BehaviorLich(template));
             Behavior.Apply(new BehaviorShadow(template));
-            Behavior.Apply(new BehaviorDecay(template, 30, 1000, 90, 96));
+            Behavior.Apply(new BehaviorDecay(template, 30, 1000, 90, 96, SoundLoader.AddSound("content/sound/big_splat.wav")));
             Behavior.Apply(new BehaviorHitboxLich(template));
             return template;
         });

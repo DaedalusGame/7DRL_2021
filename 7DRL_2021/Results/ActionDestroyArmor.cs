@@ -18,6 +18,8 @@ namespace _7DRL_2021.Results
         int Damage;
         int Score;
 
+        public static SoundReference Shatter = SoundLoader.AddSound("content/sound/armor_break.wav");
+
         public ActionDestroyArmor(ICurio origin, ICurio target, int damage, int score)
         {
             Origin = origin;
@@ -55,6 +57,7 @@ namespace _7DRL_2021.Results
                     DrawPass = DrawPass.Effect,
                 };
             }
+            Shatter.Play(1, Random.NextFloat(0.5f, 1.0f), 0);
 
             world.AddWorldScore(Score, center, ScoreType.Small);
         }

@@ -15,10 +15,13 @@ namespace _7DRL_2021.Results
         public ICurio Origin { get; set; }
         public ICurio Target { get; set; }
 
-        public ActionHitVisual(ICurio origin, ICurio target)
+        public SoundReference HitSound;
+
+        public ActionHitVisual(ICurio origin, ICurio target, SoundReference hitSound)
         {
             Origin = origin;
             Target = target;
+            HitSound = hitSound;
         }
 
         public bool Done => true;
@@ -31,6 +34,7 @@ namespace _7DRL_2021.Results
             Target.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 20);
             Target.GetShakeHelper()?.AddShakeRandom(3, LerpHelper.QuadraticOut, 30);
             new HitStop(world, 0, 5);
+            HitSound.Play(1f, Random.NextFloat(-0.3f, +0.3f), 0);
 
             if (sword != null)
             {

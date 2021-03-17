@@ -13,10 +13,13 @@ namespace _7DRL_2021.Results
 
         public bool Done => true;
 
-        public ActionEnemyHit(ICurio origin, ICurio target)
+        public SoundReference HitSound;
+
+        public ActionEnemyHit(ICurio origin, ICurio target, SoundReference hitSound)
         {
             Origin = origin;
             Target = target;
+            HitSound = hitSound;
         }
 
         public void Run()

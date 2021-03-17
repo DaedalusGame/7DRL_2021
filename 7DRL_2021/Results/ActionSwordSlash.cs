@@ -21,6 +21,8 @@ namespace _7DRL_2021.Results
 
         List<ICurio> AlreadyHit = new List<ICurio>();
 
+        public static SoundReference Sound = SoundLoader.AddSound("content/sound/swish.wav");
+
         public ActionSwordSlash(ICurio origin, int slashStart, int slashEnd, float time)
         {
             Origin = origin;
@@ -38,6 +40,7 @@ namespace _7DRL_2021.Results
             var slash = new Slash(world, Origin.GetVisualTarget, Origin.GetVisualAngle, 16);
             slash.Perform(BehaviorSword.GetAngle(SlashStart), BehaviorSword.GetAngle(SlashEnd), 16, LerpHelper.QuadraticOut, this);
             new ScreenShakeJerk(world, Util.AngleToVector(Origin.GetVisualAngle() + BehaviorSword.GetAngle(SlashEnd)) * 3, 10);
+            Sound.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);
             RipHeart(world, sword);
             DamageArea();
         }

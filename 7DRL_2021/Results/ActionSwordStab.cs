@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021.Results
 {
-    class ActionSwordStab : IActionHasOrigin
+    class ActionSwordStab : IActionHasOrigin, ITickable
     {
         public bool Done => true;
         public ICurio Origin { get; set; }
@@ -40,20 +40,6 @@ namespace _7DRL_2021.Results
             var actions = new List<ActionWrapper>();
             actions.Add(new ActionStabHit(Origin, target).InSlot(ActionSlot.Active));
             actions.Apply(target);
-            /*Random random = new Random();
-            var world = Origin.GetWorld();
-            target.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 20);
-            target.GetShakeHelper()?.AddShakeRandom(3, LerpHelper.QuadraticOut, 30);
-            new TimeFade(world, 0, LerpHelper.QuadraticIn, 50);
-            for(int i = 0; i < 3; i++)
-            {
-                Vector2 offset = Util.AngleToVector(random.NextAngle()) * random.NextFloat(16, 48);
-                var blood = SpriteLoader.Instance.AddSprite("content/effect_blood_large");
-                new BloodStain(world, blood, random.Next(1000), target.GetVisualTarget() + offset, random.NextFloat(0.5f, 2.0f), random.NextAngle(), 8000);
-            }
-            world.AddWorldScore(1000, target.GetVisualTarget(), ScoreType.Small);
-            var alive = target.GetBehavior<BehaviorAlive>();
-            alive.TakeDamage(1);*/
         }
 
         private void DamageArea()
@@ -69,6 +55,11 @@ namespace _7DRL_2021.Results
                     Hit(target);
                 }
             }
+        }
+
+        public void Tick(SceneGame scene)
+        {
+            DamageArea();
         }
     }
 }

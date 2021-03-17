@@ -15,17 +15,20 @@ namespace _7DRL_2021.Behaviors
         public int Particles;
         public float Radius;
 
+        public SoundReference Splat;
+
         public BehaviorDecay()
         {
         }
 
-        public BehaviorDecay(ICurio curio, float time, int score, int particles, float radius)
+        public BehaviorDecay(ICurio curio, float time, int score, int particles, float radius, SoundReference splat)
         {
             Curio = curio;
             Decay = new Slider(time);
             Score = score;
             Particles = particles;
             Radius = radius;
+            Splat = splat;
         }
 
         public override void Apply()
@@ -36,7 +39,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorDecay(curio, Decay.EndTime, Score, Particles, Radius));
+            Apply(new BehaviorDecay(curio, Decay.EndTime, Score, Particles, Radius, Splat));
         }
 
         public void Tick(SceneGame scene)
@@ -47,7 +50,7 @@ namespace _7DRL_2021.Behaviors
             if (Decay.Done)
             {
                 var actions = new List<ActionWrapper>();
-                actions.Add(new ActionCorpseGib(scene.PlayerCurio, Curio, Score, Particles, Radius).InSlot(ActionSlot.Active));
+                actions.Add(new ActionCorpseGib(scene.PlayerCurio, Curio, Score, Splat, Particles, Radius).InSlot(ActionSlot.Active));
                 actions.Apply(Curio);
             }
         }

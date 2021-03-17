@@ -154,7 +154,7 @@ namespace _7DRL_2021.Behaviors
             foreach (var target in GetImpactArea().SelectMany(x => x.Contents))
             {
                 var actions = new List<ActionWrapper>();
-                actions.Add(new ActionEnemyHit(Curio, target).InSlot(ActionSlot.Active));
+                actions.Add(new ActionEnemyHit(Curio, target, SoundLoader.AddSound("content/sound/sinister.wav")).InSlot(ActionSlot.Active));
                 actions.Apply(target);
             }
             Curio.Destroy();

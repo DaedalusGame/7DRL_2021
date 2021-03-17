@@ -18,12 +18,15 @@ namespace _7DRL_2021.Results
         int Damage;
         int Score;
 
-        public ActionDamage(ICurio origin, ICurio target, int damage, int score)
+        public SoundReference HitSound;
+
+        public ActionDamage(ICurio origin, ICurio target, int damage, int score, SoundReference hitSound)
         {
             Origin = origin;
             Target = target;
             Damage = damage;
             Score = score;
+            HitSound = hitSound;
         }
 
         public bool Done => true;
@@ -37,6 +40,7 @@ namespace _7DRL_2021.Results
             Target.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 20);
             Target.GetShakeHelper()?.AddShakeRandom(3, LerpHelper.QuadraticOut, 30);
             new HitStop(world, 0, 5);
+            HitSound.Play(1f, Random.NextFloat(-0.3f, +0.3f), 0);
             SkillUtil.CreateSpatter(world, Target.GetVisualTarget(), 3, Vector2.Zero, 1, Random);
             if(Score > 0)
                 world.AddWorldScore(Score, Target.GetVisualTarget(), ScoreType.Small);
@@ -63,11 +67,14 @@ namespace _7DRL_2021.Results
 
         int Damage;
 
-        public ActionPlayerDamage(ICurio origin, ICurio target, int damage)
+        public SoundReference HitSound;
+
+        public ActionPlayerDamage(ICurio origin, ICurio target, int damage, SoundReference hitSound)
         {
             Origin = origin;
             Target = target;
             Damage = damage;
+            HitSound = hitSound;
         }
 
         public bool Done => true;
@@ -82,6 +89,7 @@ namespace _7DRL_2021.Results
             new HitStop(world, 0, 5);
             new ScreenShakeRandom(world, 10, 10, LerpHelper.QuadraticOut);
             new ScreenFlashSimple(world, ColorMatrix.Greyscale() * ColorMatrix.Tint(new Color(215, 63, 36)), LerpHelper.QuadraticOut, 10);
+            HitSound.Play(1, Random.NextFloat(-0.5f, +0.5f), 0);
 
             alive.TakeDamage(Damage);
         }

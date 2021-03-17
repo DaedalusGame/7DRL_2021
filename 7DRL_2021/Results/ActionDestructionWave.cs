@@ -15,6 +15,8 @@ namespace _7DRL_2021.Results
         public int Score;
         public bool Done => true;
 
+        public static SoundReference Sound = SoundLoader.AddSound("content/sound/destruction_wave.wav");
+
         public ActionDestructionWave(ICurio origin, int radius, int score)
         {
             Origin = origin;
@@ -38,9 +40,10 @@ namespace _7DRL_2021.Results
                 if (target == Origin || !target.HasBehaviors<BehaviorAlive>())
                     continue;
                 var actions = new List<ActionWrapper>();
-                actions.Add(new ActionGib(Origin, target, Score).InSlot(ActionSlot.Active));
+                actions.Add(new ActionGib(Origin, target, Score, SoundLoader.AddSound("content/sound/big_splat.wav")).InSlot(ActionSlot.Active));
                 actions.Apply(target);
             }
+            Sound.Play(1.0f, 0f, 0f);
         }
     }
 }

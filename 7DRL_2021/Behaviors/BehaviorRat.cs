@@ -14,6 +14,7 @@ namespace _7DRL_2021.Behaviors
         
         public ICurio Curio;
         public Slider Decay = new Slider(10);
+        SoundReference SoundRat = SoundLoader.AddSound("content/sound/rat_escape.wav");
 
         public BehaviorRat()
         {
@@ -50,7 +51,7 @@ namespace _7DRL_2021.Behaviors
             if (Decay.Done)
             {
                 var actions = new List<ActionWrapper>();
-                actions.Add(new ActionRatGib(scene.PlayerCurio, Curio, 2000).InSlot(ActionSlot.Active));
+                actions.Add(new ActionRatGib(scene.PlayerCurio, Curio, 2000, SoundLoader.AddSound("content/sound/splat.wav")).InSlot(ActionSlot.Active));
                 actions.Apply(Curio);
             }
 
@@ -69,6 +70,7 @@ namespace _7DRL_2021.Behaviors
                             if (escapeTile.IsChasm() || escapeTile.IsSolid())
                                 continue;
                             pathfinder.FindPath(escapeTile);
+                            SoundRat.Play(1, Random.NextFloat(-0.5f, +0.5f), 0);
                             break;
                         }
                     }
@@ -96,7 +98,7 @@ namespace _7DRL_2021.Behaviors
                     else
                     {
                         var actions = new List<ActionWrapper>();
-                        actions.Add(new ActionRatGib(scene.PlayerCurio, Curio, 2000).InSlot(ActionSlot.Active));
+                        actions.Add(new ActionRatGib(scene.PlayerCurio, Curio, 2000, SoundLoader.AddSound("content/sound/splat.wav")).InSlot(ActionSlot.Active));
                         actions.Apply(Curio);
                     }
                 }

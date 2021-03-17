@@ -17,6 +17,8 @@ namespace _7DRL_2021.Results
 
         public bool Done => true;
 
+        public static SoundReference Parry = SoundLoader.AddSound("content/sound/parry.wav");
+
         public ActionParrySword(ICurio origin, ICurio target)
         {
             Origin = origin;
@@ -50,6 +52,7 @@ namespace _7DRL_2021.Results
                     DrawPass = DrawPass.EffectAdditive,
                 };
             }
+            Parry.Play(0.5f, Random.NextFloat(-0.5f, +0.5f), 0.0f);
         }
     }
 }

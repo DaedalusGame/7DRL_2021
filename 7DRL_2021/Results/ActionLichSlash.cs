@@ -69,7 +69,7 @@ namespace _7DRL_2021.Results
         {
             AlreadyHit.Add(target);
             var actions = new List<ActionWrapper>();
-            actions.Add(new ActionEnemyHit(Origin, target).InSlot(ActionSlot.Active));
+            actions.Add(new ActionEnemyHit(Origin, target, SoundLoader.AddSound("content/sound/hit.wav")).InSlot(ActionSlot.Active));
             actions.Apply(target);
         }
 

@@ -9,6 +9,8 @@ namespace _7DRL_2021.Behaviors
 {
     class BehaviorBellTower : Behavior, ITickable
     {
+        static Random Random = new Random();
+
         public static GlitchParams Params = new GlitchParams()
         {
             LineSpeed = 0.4f,
@@ -28,6 +30,7 @@ namespace _7DRL_2021.Behaviors
         public ICurio Curio;
         public Slider BellTime;
         public int BellTolls;
+        static SoundReference SoundBell = SoundLoader.AddSound("content/sound/bell.wav");
 
         public BehaviorBellTower()
         {
@@ -57,6 +60,7 @@ namespace _7DRL_2021.Behaviors
             {
                 new ScreenGlitchFlash(scene, slide => Params.WithIntensity(slide), 10);
                 new ScreenFlashSimple(scene, ColorMatrix.Tint(Color.Red), LerpHelper.Flick, 10);
+                SoundBell.Play(1, Random.NextFloat(0.5f, 0.0f), 0);
                 BellTolls += 1;
                 BellTime.Time = 0;
                 if (BellTolls >= 12)

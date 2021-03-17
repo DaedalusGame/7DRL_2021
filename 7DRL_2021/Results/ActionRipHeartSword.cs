@@ -15,6 +15,8 @@ namespace _7DRL_2021.Results
         public ICurio Origin { get; set; }
         public ICurio Target { get; set; }
 
+        public static SoundReference Blood = SoundLoader.AddSound("content/sound/big_splat.wav");
+
         public ActionRipHeartSword(ICurio origin, ICurio target)
         {
             Origin = origin;
@@ -44,6 +46,7 @@ namespace _7DRL_2021.Results
                 }
                 if (Origin == world.PlayerCurio)
                     world.HeartsRipped += 1;
+                Blood.Play(1, 0.5f, 0);
                 Behavior.Apply(new BehaviorHeartless(Target));
             }
         }

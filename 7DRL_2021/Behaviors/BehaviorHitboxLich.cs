@@ -52,7 +52,7 @@ namespace _7DRL_2021.Behaviors
 
                 if (hit is ActionStabHit stab)
                 {
-                    e.Actions.Add(new ActionHitVisual(hit.Origin, hit.Target).InSlot(ActionSlot.Active));
+                    e.Actions.Add(new ActionHitVisual(hit.Origin, hit.Target, SoundLoader.AddSound("content/sound/stab.wav")).InSlot(ActionSlot.Active));
                     e.Actions.Add(new ActionStabStuck(hit.Origin, hit.Target).InSlot(ActionSlot.Active));
                 }
                 else

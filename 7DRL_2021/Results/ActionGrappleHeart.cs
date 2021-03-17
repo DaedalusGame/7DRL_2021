@@ -29,12 +29,14 @@ namespace _7DRL_2021.Results
 
         public void Run()
         {
+            var world = Origin.GetWorld();
             var grapple = Origin.GetBehavior<BehaviorGrapplingHook>();
             if(grapple != null)
             {
                 grapple.OrientVisual(Util.GetAngleDistance(Origin.GetAngle(), Util.VectorToAngle(Direction)), LerpHelper.ExponentialOut, GrappleTime);
                 grapple.Connect(Target.GetVisualTarget);
                 grapple.Wave(20, 0, LerpHelper.QuadraticIn, GrappleTime);
+                Target.DelayDecay(GrappleTime.EndTime);
             }
         }
 
@@ -46,10 +48,6 @@ namespace _7DRL_2021.Results
             GrappleTime += scene.TimeMod;
             if (GrappleTime.Done)
             {
-                var tile = Target.GetMainTile();
-                var offset = (-Direction).ToTileOffset();
-                var neighbor = tile.GetNeighborOrNull(offset.X, offset.Y);
-
                 if (shouldReel)
                 {
                     var alive = Target.GetBehavior<BehaviorAlive>();
@@ -61,6 +59,8 @@ namespace _7DRL_2021.Results
                     }
                     grapple.ReelIn(Target.GetVisualTarget(), LerpHelper.QuadraticIn, ReelTime);
                     grapple.OrientTo(-3, LerpHelper.ExponentialOut, ReelTime);
+                    Target.DelayDecay(ReelTime.EndTime);
+                    new TimeFade(scene, 0.01f, LerpHelper.ExponentialIn, 60);
                 }
                 bool shouldGrip = !ReelTime.Done;
                 ReelTime += scene.TimeMod;

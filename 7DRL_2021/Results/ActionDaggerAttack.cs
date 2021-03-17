@@ -49,7 +49,7 @@ namespace _7DRL_2021.Results
         {
             var world = Origin.GetWorld();
             var actions = new List<ActionWrapper>();
-            actions.Add(new ActionEnemyHit(Origin, target).InSlot(ActionSlot.Active));
+            actions.Add(new ActionEnemyHit(Origin, target, SoundLoader.AddSound("content/sound/stab.wav")).InSlot(ActionSlot.Active));
             actions.Apply(target);
             /*target.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 20);
             target.GetShakeHelper()?.AddShakeRandom(3, LerpHelper.QuadraticOut, 30);

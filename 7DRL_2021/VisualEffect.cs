@@ -1,5 +1,6 @@
 ﻿using _7DRL_2021.Behaviors;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -975,6 +976,8 @@ namespace _7DRL_2021
         int Score;
         float Angle;
 
+        public SoundEffectInstance Sound;
+
         public ScoreBlood(SceneGame world, Vector2 start, Vector2 end, Vector2 offsetStart, Vector2 offsetEnd, int score, int time) : base(world)
         {
             Start = start;
@@ -992,6 +995,7 @@ namespace _7DRL_2021
             if(Frame.Done)
             {
                 World.AddWorldScore(Score, End, Score > 500 ? ScoreType.Big : ScoreType.Small);
+                Sound?.Play();
                 Destroy();
             }
         }
@@ -1002,7 +1006,7 @@ namespace _7DRL_2021
             var offsetStart = OffsetStart * (float)LerpHelper.QuadraticIn(0, 1, Frame.Slide);
             var offsetEnd = OffsetEnd * (float)LerpHelper.QuadraticIn(1, 0, Frame.Slide);
             var position = Vector2.Lerp(Start + offsetStart,End + offsetEnd,(float)LerpHelper.Quadratic(0, 1, Frame.Slide));
-            scene.DrawSpriteExt(sprite, scene.Frame / 10, position - sprite.Middle, sprite.Middle, Angle, Vector2.One, SpriteEffects.None, new Color(215, 63, 36), 0);
+            scene.DrawSpriteExt(sprite, scene.Frame / 5, position - sprite.Middle, sprite.Middle, Angle, Vector2.One, SpriteEffects.None, new Color(215, 63, 36), 0);
         }
 
         public override IEnumerable<DrawPass> GetDrawPasses()
