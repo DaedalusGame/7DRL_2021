@@ -167,7 +167,9 @@
     <Compile Include="Results\ActionEnemyHit.cs" />
     <Compile Include="Results\ActionGib.cs" />
     <Compile Include="Results\ActionGrappleHeart.cs" />
+    <Compile Include="Results\ActionGrappleNothing.cs" />
     <Compile Include="Results\ActionGrappleWall.cs" />
+    <Compile Include="Results\ActionGripCancel.cs" />
     <Compile Include="Results\ActionGripDash.cs" />
     <Compile Include="Results\ActionInputDirection.cs" />
     <Compile Include="Results\ActionFall.cs" />
@@ -644,10 +646,16 @@
     <Content Include="Content\sound\big_splat.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\sound\clack.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\sound\destruction_wave.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\sound\ding.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\sound\doom.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\sound\eat.wav">
@@ -669,6 +677,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\sound\kill.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\sound\laugh.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\sound\music_gameover.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\sound\music_movement.wav">
@@ -711,6 +725,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\sound\visceral.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\sound\wallkick.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\terrain_chasm.png">

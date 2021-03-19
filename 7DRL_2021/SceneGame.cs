@@ -159,7 +159,9 @@ namespace _7DRL_2021
         SoundReference SoundBloodstainImpact = SoundLoader.AddSound("content/sound/score_blob.wav");
         SoundReference SoundScore = SoundLoader.AddSound("content/sound/score.wav");
         SoundReference Theme = SoundLoader.AddSound("content/sound/music_movement.wav");
+        SoundReference ThemeGameOver = SoundLoader.AddSound("content/sound/music_gameover.wav");
         MusicEffect CurrentTheme;
+        MusicEffect CurrentGameOver;
 
         public SceneGame(Game game) : base(game)
         {
@@ -374,6 +376,8 @@ namespace _7DRL_2021
         {
             DestroyMap();
             Game.Scene = new SceneTitle(Game);
+            CurrentTheme?.Stop();
+            CurrentGameOver?.Stop();
             Manager.Reset();
         }
 
@@ -381,6 +385,8 @@ namespace _7DRL_2021
         {
             DestroyMap();
             Game.Scene = new SceneLoading(Game);
+            CurrentTheme?.Stop();
+            CurrentGameOver?.Stop();
             Manager.Reset();
         }
 
@@ -398,6 +404,13 @@ namespace _7DRL_2021
             GameOverWin = win;
             CurrentTheme.Pitch.Set(-1, LerpHelper.QuadraticIn, 100);
             CurrentTheme.Volume.Set(0, LerpHelper.QuadraticIn, 100);
+            if (!win)
+            {
+                CurrentGameOver?.Stop();
+                CurrentGameOver = new MusicEffect(ThemeGameOver);
+                CurrentGameOver.Volume.Set(0, 1, LerpHelper.QuadraticIn, 240);
+                CurrentGameOver.Play();
+            }
         }
 
         private Matrix CreateViewMatrix()
@@ -466,6 +479,7 @@ namespace _7DRL_2021
             }
 
             CurrentTheme?.Update();
+            CurrentGameOver?.Update();
 
             VisualEffects.Update();
             foreach (var visualEffect in VisualEffects)

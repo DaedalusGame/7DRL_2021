@@ -163,6 +163,7 @@ namespace _7DRL_2021
             Input.MoveNext();
 
             SpriteLoader.Instance.Update(gameTime);
+            SoundLoader.Update(gameTime);
             Scheduler.Instance.Update();
 
             Scene.Update(gameTime);

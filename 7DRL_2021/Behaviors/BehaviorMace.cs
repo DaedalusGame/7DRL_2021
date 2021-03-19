@@ -16,6 +16,8 @@ namespace _7DRL_2021.Behaviors
         public Vector2 MacePosition;
         public float UpswingAngle;
 
+        static SoundReference SoundSwish = SoundLoader.AddSound("content/sound/swish.wav");
+
         public BehaviorMace()
         {
         }
@@ -51,10 +53,16 @@ namespace _7DRL_2021.Behaviors
 
         public void Tick(SceneGame scene)
         {
-            if (Curio.IsAlive())
+            if (Curio.IsAlive() && !Upswing.Done)
             {
                 Upswing += scene.TimeMod;
+                var lastAngle = UpswingAngle;
                 UpswingAngle += scene.TimeMod * (float)LerpHelper.QuadraticOut(MathHelper.TwoPi * 0.01, MathHelper.TwoPi * 0.2, Upswing.Slide);
+                var deltaSwing = Math.Abs(Math.Floor(UpswingAngle / MathHelper.Pi) - Math.Floor(lastAngle / MathHelper.Pi));
+                if (deltaSwing >= 1)
+                {
+                    SoundSwish.Play(1, Upswing.Slide - 0.5f, 0);
+                }
             }
             else
                 Upswing.Time = Upswing.EndTime;

@@ -14,6 +14,8 @@ namespace _7DRL_2021.Results
         private Slider Frame;
         public float Slide => Frame.Slide;
 
+        static SoundReference SoundFall = SoundLoader.AddSound("content/sound/fall.wav");
+
         public ActionFall(ICurio origin, int time)
         {
             Origin = origin;
@@ -30,6 +32,7 @@ namespace _7DRL_2021.Results
                 DissipateTime = 1,
                 DrawPass = DrawPass.Chasm3,
             };
+            SoundFall.Play(1, 0, 0);
         }
 
         public void Tick(SceneGame scene)

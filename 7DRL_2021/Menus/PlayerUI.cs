@@ -599,7 +599,7 @@ namespace _7DRL_2021.Menus
                 }
                 if (state.IsKeyPressed(Keys.Escape))
                 {
-                    player.DashCancel();
+                    player.DashCancel(TargetPosition);
                     Close();
                 }
             }

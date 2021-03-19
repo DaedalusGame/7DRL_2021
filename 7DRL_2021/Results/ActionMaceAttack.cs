@@ -24,6 +24,7 @@ namespace _7DRL_2021.Results
         public Strike VisualStrike;
 
         public static SoundReference SoundSwish = SoundLoader.AddSound("content/sound/swish.wav");
+        public static SoundReference SoundImpact = SoundLoader.AddSound("content/sound/wallkick.wav");
 
         public ActionMaceAttack(ICurio origin, ICurio target, float timeUpswing, float time)
         {
@@ -133,6 +134,7 @@ namespace _7DRL_2021.Results
                 {
                     var target = GetTarget();
                     mace.Mace(target.VisualTarget, 20);
+                    SoundImpact.Play(1, Random.NextFloat(-0.5f, +0.5f), 0);
                     DamageArea();
                     VisualAoE.Destroy();
                 }

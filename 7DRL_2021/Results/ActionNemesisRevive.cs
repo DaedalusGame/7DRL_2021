@@ -29,6 +29,8 @@ namespace _7DRL_2021.Results
         public Slider Frame;
         public bool Done => Frame.Done;
 
+        public static SoundReference SoundRevive = SoundLoader.AddSound("content/sound/revive.wav");
+
         public ActionNemesisRevive(ICurio origin, float time)
         {
             Origin = origin;
@@ -38,6 +40,7 @@ namespace _7DRL_2021.Results
         public void Run()
         {
             var world = Origin.GetWorld();
+            SoundRevive.Play(1, 0, 0);
             new ScreenGlitchFlash(world, slide => Params.WithIntensity((1- slide) * 0.1f), (int)Frame.EndTime);
             new TimeFade(world, 0.1f, LerpHelper.ExponentialOut, (int)Frame.EndTime);
         }

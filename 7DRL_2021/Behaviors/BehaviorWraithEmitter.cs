@@ -15,6 +15,8 @@ namespace _7DRL_2021.Behaviors
         public Slider Frame;
         public bool Activated = false;
 
+        static SoundReference SoundEmit = SoundLoader.AddSound("content/sound/laugh.wav");
+
         public BehaviorWraithEmitter()
         {
         }
@@ -44,6 +46,7 @@ namespace _7DRL_2021.Behaviors
             var wraith = new Curio(Template.Wraith);
             wraith.MoveTo(targetTile);
             Behavior.Apply(new BehaviorWraith(wraith, emitTile.VisualTarget, Random.NextFloat(30, 70)));
+            SoundEmit.Play(1f, Random.NextFloat(-1, +1), Random.NextFloat(-1, +1));
         }
 
         public void Tick(SceneGame scene)

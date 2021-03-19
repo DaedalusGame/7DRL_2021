@@ -18,6 +18,9 @@ namespace _7DRL_2021.Results
 
         public bool Done => ReelTime.Done;
 
+        static SoundReference SoundSwish = SoundLoader.AddSound("content/sound/swish.wav");
+        static SoundReference SoundStab = SoundLoader.AddSound("content/sound/stab.wav");
+
         public ActionGrappleHeart(ICurio origin, ICurio target, Vector2 direction, float grappleTime, float reelTime)
         {
             Origin = origin;
@@ -37,6 +40,8 @@ namespace _7DRL_2021.Results
                 grapple.Connect(Target.GetVisualTarget);
                 grapple.Wave(20, 0, LerpHelper.QuadraticIn, GrappleTime);
                 Target.DelayDecay(GrappleTime.EndTime);
+                SoundSwish.Play(1, 0.5f, 0);
+                SoundStab.Play(1, 1.0f, 0);
             }
         }
 
@@ -60,7 +65,6 @@ namespace _7DRL_2021.Results
                     grapple.ReelIn(Target.GetVisualTarget(), LerpHelper.QuadraticIn, ReelTime);
                     grapple.OrientTo(-3, LerpHelper.ExponentialOut, ReelTime);
                     Target.DelayDecay(ReelTime.EndTime);
-                    new TimeFade(scene, 0.01f, LerpHelper.ExponentialIn, 60);
                 }
                 bool shouldGrip = !ReelTime.Done;
                 ReelTime += scene.TimeMod;

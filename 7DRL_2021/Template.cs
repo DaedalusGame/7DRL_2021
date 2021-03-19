@@ -61,7 +61,7 @@ namespace _7DRL_2021
             Curio template = new Curio();
             Behavior.Apply(new BehaviorIdentity(template, "belltower"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
-            Behavior.Apply(new BehaviorBellTower(template, 600));
+            Behavior.Apply(new BehaviorBellTower(template, 300));
             return template;
         });
         public static Template Wraith = new Template("wraith", () =>

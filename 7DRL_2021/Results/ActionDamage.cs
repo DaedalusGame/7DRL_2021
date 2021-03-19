@@ -19,6 +19,7 @@ namespace _7DRL_2021.Results
         int Score;
 
         public SoundReference HitSound;
+        public SoundReference DeathSound = SoundLoader.AddSound("content/sound/kill.wav");
 
         public ActionDamage(ICurio origin, ICurio target, int damage, int score, SoundReference hitSound)
         {
@@ -48,8 +49,13 @@ namespace _7DRL_2021.Results
             SkillUtil.CreateBloodCircle(world, Target.GetVisualTarget(), 30, 32, Random);
 
             alive.TakeDamage(Damage);
-            if (alive.CurrentDead && Origin == world.PlayerCurio)
-                world.Kills += 1;
+            
+            if(alive.CurrentDead)
+            {
+                //DeathSound.Play(1, 0, 0);
+                if (Origin == world.PlayerCurio)
+                    world.Kills += 1;
+            }
 
             if (sword != null)
             {

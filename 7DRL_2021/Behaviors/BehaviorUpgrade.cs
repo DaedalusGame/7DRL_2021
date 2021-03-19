@@ -158,7 +158,7 @@ namespace _7DRL_2021.Behaviors
             var bellTower = Manager.GetBehaviors().OfType<BehaviorBellTower>().FirstOrDefault(x => !x.Curio.HasBehaviors<BehaviorTemplate>());
             if (bellTower != null)
             {
-                bellTower.BellTime.EndTime *= 0.05f;
+                bellTower.BellTime.EndTime *= 0.10f;
                 BellTower = bellTower.Curio;
             }
         }

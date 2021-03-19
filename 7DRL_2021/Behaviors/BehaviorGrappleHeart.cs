@@ -24,6 +24,7 @@ namespace _7DRL_2021.Behaviors
         public void AddGrappleAction(List<ActionWrapper> wrappers, ICurio origin, Vector2 direction)
         {
             wrappers.Add(new ActionGrappleHeart(origin, Curio, direction, 10, 5).InSlot(ActionSlot.Active));
+            wrappers.Add(new ActionKeepMoving(origin).InSlot(ActionSlot.Active));
         }
 
         public override void Apply()

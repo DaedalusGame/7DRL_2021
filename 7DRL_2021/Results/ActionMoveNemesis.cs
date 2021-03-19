@@ -20,6 +20,8 @@ namespace _7DRL_2021.Results
         private Slider ShootFrame;
         public float Slide => Frame.Slide;
 
+        public static SoundReference SoundFly = SoundLoader.AddSound("content/sound/fly.wav");
+
         public ActionMoveNemesis(ICurio origin, ICurio target, MapTile tile, float time)
         {
             Origin = origin;
@@ -38,6 +40,7 @@ namespace _7DRL_2021.Results
             var angle = Util.VectorToAngle(Tile.GetVisualTarget() - Origin.GetVisualTarget());
             if (neighbor != null && !neighbor.IsSolid())
             {
+                SoundFly.Play(1, 0, 0);
                 nemesis.WingsOpen.Set(1, LerpHelper.ExponentialIn, 30);
                 Origin.MoveTo(neighbor, LerpHelper.Linear, this);
                 camera?.MoveTo(neighbor, LerpHelper.Linear, this);

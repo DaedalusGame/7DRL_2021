@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace _7DRL_2021
 {
@@ -23,7 +24,7 @@ namespace _7DRL_2021
         public SoundEffectInstance Play(float volume, float pitch, float pan)
         {
             var instance = Sound.CreateInstance();
-            instance.Volume = volume;
+            instance.Volume = SoundLoader.SoundMasterVolume * volume;
             instance.Pitch = pitch;
             instance.Pan = pan;
             instance.Play();
@@ -32,7 +33,9 @@ namespace _7DRL_2021
 
         public SoundEffectInstance CreateInstance()
         {
-            return Sound.CreateInstance();
+            var instance = Sound.CreateInstance();
+            instance.Volume = SoundLoader.SoundMasterVolume;
+            return instance;
         }
     }
 
@@ -74,7 +77,7 @@ namespace _7DRL_2021
             Volume.Update();
             Pitch.Update();
             Pan.Update();
-            Music.Volume = Volume;
+            Music.Volume = SoundLoader.MusicMasterVolume * Volume;
             Music.Pitch = Pitch;
             Music.Pan = Pan;
         }
@@ -82,6 +85,9 @@ namespace _7DRL_2021
 
     class SoundLoader
     {
+        public static float SoundMasterVolume = 0.5f;
+        public static float MusicMasterVolume = 1f;
+
         public static Dictionary<string, SoundReference> Sounds = new Dictionary<string, SoundReference>();
 
         public static List<SoundReference> AllSounds = new List<SoundReference>();
@@ -96,6 +102,11 @@ namespace _7DRL_2021
             AllSounds.Add(rval);
             Load(rval);
             return rval;
+        }
+
+        public static void Update(GameTime gameTime)
+        {
+
         }
 
         private static void Load(SoundReference reference)

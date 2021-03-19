@@ -26,12 +26,13 @@ namespace _7DRL_2021.Behaviors
 
         public ICurio Curio;
         public Momentum Momentum = new Momentum(Vector2.Zero, 0);
-        public Point? GripDirection;
 
         public bool SwordReady => Curio.HasBehaviors<BehaviorSword>();
         public bool SwordStuck => Curio.GetBehavior<BehaviorSword>()?.StabTargets.Any() ?? false;
         public bool Gripped => Curio.GetBehavior<BehaviorGrapplingHook>()?.GripDirection != null;
         public LerpFloat Fade = new LerpFloat(0);
+
+        static SoundReference SoundDeath = SoundLoader.AddSound("content/sound/kill.wav");
 
         public BehaviorPlayer()
         {
@@ -62,12 +63,14 @@ namespace _7DRL_2021.Behaviors
             var levelEnd = tile?.GetBehavior<BehaviorLevelEnd>();
             if (levelEnd != null && !scene.WaitForCutscene && passive.Done && active.Done && levelEnd.CanEscape() && Curio.IsAlive())
             {
-                Momentum.Amount = 0;
-                scene.Cutscene = Scheduler.Instance.RunAndWait(scene.RoutineEndLevel());
+                EndLevel(scene);
             }
 
-            if (Curio.IsDead())
+            if (Curio.IsDead() && !scene.IsGameOver)
+            {
                 scene.GameOver("GLORY TO THE BLOOD GOD.", false);
+                SoundDeath.Play(1, -0.5f, 0);
+            }
 
             if(!scene.WaitForPlayer)
             {
@@ -76,6 +79,20 @@ namespace _7DRL_2021.Behaviors
             else if (Momentum.Amount <= 0 && SwordReady)
             {
                 SheatheSword();
+            }
+        }
+
+        private void EndLevel(SceneGame scene)
+        {
+            Momentum.Amount = 0;
+            if (Gripped || SwordReady)
+            {
+                SheatheSword();
+                DashCancel(0);
+            }
+            else
+            {
+                scene.Cutscene = Scheduler.Instance.RunAndWait(scene.RoutineEndLevel());
             }
         }
 
@@ -355,13 +372,18 @@ namespace _7DRL_2021.Behaviors
 
             var grappleTarget = Curio.GetGrappleTarget(offset);
 
+            var actions = new List<ActionWrapper>();
             if (grappleTarget != null)
             {
-                var actions = new List<ActionWrapper>();
                 foreach (var grapple in grappleTarget.GetBehaviors<IGrappleTarget>())
                     grapple.AddGrappleAction(actions, Curio, offset);
-                actions.Apply(Curio);
             }
+            else
+            {
+                actions.Add(new ActionGrappleNothing(Curio, GetFurthestGrapple(offset), offset, 10, 5).InSlot(ActionSlot.Active));
+                actions.Add(new ActionKeepMoving(Curio).InSlot(ActionSlot.Active));
+            }
+            actions.Apply(Curio);
         }
 
         public ICurio GetGrappleTarget(Vector2 direction)
@@ -381,6 +403,20 @@ namespace _7DRL_2021.Behaviors
             return null;
         }
 
+        public ICurio GetFurthestGrapple(Vector2 direction)
+        {
+            var tile = Curio.GetMainTile();
+            var offset = Util.ToTileOffset(direction);
+            var neighbor = tile;
+            for (int i = 0; i < 10; i++)
+            {
+                neighbor = neighbor.GetNeighborOrNull(offset.X, offset.Y);
+                if (neighbor == null)
+                    break;
+            }
+            return neighbor;
+        }
+
         public void Dash(int targetPos)
         {
             var angle = Curio.GetAngle() + targetPos * MathHelper.PiOver4;
@@ -390,10 +426,11 @@ namespace _7DRL_2021.Behaviors
             actions.Apply(Curio);
         }
 
-        public void DashCancel()
+        public void DashCancel(int targetPos)
         {
+            var angle = Curio.GetAngle() + targetPos * MathHelper.PiOver4;
             var actions = new List<ActionWrapper>();
-            actions.Add(new ActionStop(Curio).InSlot(ActionSlot.Active));
+            actions.Add(new ActionGripCancel(Curio, Util.AngleToVector(angle)).InSlot(ActionSlot.Active));
             actions.Apply(Curio);
         }
 

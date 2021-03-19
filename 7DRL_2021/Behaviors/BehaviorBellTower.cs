@@ -31,6 +31,7 @@ namespace _7DRL_2021.Behaviors
         public Slider BellTime;
         public int BellTolls;
         static SoundReference SoundBell = SoundLoader.AddSound("content/sound/bell.wav");
+        static SoundReference SoundSummon = SoundLoader.AddSound("content/sound/doom.wav");
 
         public BehaviorBellTower()
         {
@@ -70,6 +71,7 @@ namespace _7DRL_2021.Behaviors
                     {
                         wraithEmitter.Activated = true;
                     }
+                    SoundSummon.Play(1, 0, 0);
                 }
             }
         }

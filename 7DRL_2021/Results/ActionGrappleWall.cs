@@ -18,6 +18,9 @@ namespace _7DRL_2021.Results
 
         public bool Done => ReelTime.Done;
 
+        static SoundReference SoundSwish = SoundLoader.AddSound("content/sound/swish.wav");
+        static SoundReference SoundClack = SoundLoader.AddSound("content/sound/clack.wav");
+
         public ActionGrappleWall(ICurio origin, ICurio target, Vector2 direction, float grappleTime, float reelTime)
         {
             Origin = origin;
@@ -32,6 +35,8 @@ namespace _7DRL_2021.Results
             var grapple = Origin.GetBehavior<BehaviorGrapplingHook>();
             if(grapple != null)
             {
+                SoundSwish.Play(1, 0.5f, 0);
+                SoundClack.Play(1, 0, 0);
                 grapple.OrientVisual(Util.GetAngleDistance(Origin.GetAngle(), Util.VectorToAngle(Direction)), LerpHelper.ExponentialOut, GrappleTime);
                 grapple.Connect(Target.GetVisualTarget);
                 grapple.Wave(20, 0, LerpHelper.QuadraticIn, GrappleTime);
@@ -66,14 +71,16 @@ namespace _7DRL_2021.Results
                         grapple.ReelIn(Target.GetVisualTarget(), LerpHelper.QuadraticIn, ReelTime);
                         grapple.OrientTo(-3, LerpHelper.ExponentialOut, ReelTime);
                     }
+                    SoundSwish.Play(1, 0, 0);
                 }
                 bool shouldGrip = !ReelTime.Done;
                 ReelTime += scene.TimeMod;
-                if(ReelTime.Done && shouldGrip)
+                if(ReelTime.Done && shouldGrip && neighbor != null && !neighbor.IsSolid())
                 {
                     Origin.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 5);
                     grapple.GripDirection = offset;
                     orientable.OrientTo(Util.VectorToAngle(offset.ToVector2()));
+                    SoundClack.Play(1, -1.0f, 0);
                 }
             }
         }
