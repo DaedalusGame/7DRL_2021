@@ -182,7 +182,7 @@ namespace _7DRL_2021
         {
             Shader.CurrentTechnique = Shader.Techniques["Distort"];
             Shader.Parameters["distort_offset"].SetValue(offset);
-            Shader.Parameters["texture_map"].SetValue(map);
+            Shader.Parameters["sampler_main+texture_map"].SetValue(map);
             Shader.Parameters["map_transform"].SetValue(mapTransform);
             Shader.Parameters["WorldViewProjection"].SetValue(transform * projection);
         }
@@ -195,7 +195,7 @@ namespace _7DRL_2021
             Shader.Parameters["glitch_resolution"].SetValue(new Vector2(Viewport.Width, Viewport.Height));
             Shader.Parameters["glitch_rng_seed"].SetValue(Math.Max(param.Seed, 0.000001f));
             Shader.Parameters["glitch_random_values"].SetValue(new Vector3(random.NextFloat(), random.NextFloat(), random.NextFloat()));
-            Shader.Parameters["glitch_noise_texture"].SetValue(map);
+            Shader.Parameters["sampler_main+glitch_noise_texture"].SetValue(map);
 
             Shader.Parameters["glitch_line_speed"].SetValue(param.LineSpeed);
             Shader.Parameters["glitch_line_drift"].SetValue(param.LineDrift);
