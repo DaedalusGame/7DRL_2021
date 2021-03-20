@@ -9,6 +9,11 @@ namespace _7DRL_2021
 {
     class Curio : ICurio
     {
+        public class Templated : Curio
+        {
+
+        }
+
         public Guid GlobalID
         {
             get;
@@ -43,8 +48,6 @@ namespace _7DRL_2021
                 //NOOP
             }
         }
-
-        public double DrawOrder => 0;
 
         public IEnumerable<Behavior> Behaviors => this.GetBehaviors();
 

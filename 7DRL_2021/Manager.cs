@@ -1,4 +1,5 @@
 ﻿using _7DRL_2021.Behaviors;
+using _7DRL_2021.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,9 @@ namespace _7DRL_2021
         static List<Behavior> Behaviors = new List<Behavior>();
         static Dictionary<Guid, Drawer> BehaviorLookup = new Dictionary<Guid, Drawer>();
         static BiDictionary<Guid, ICurio> CurioLookup = new BiDictionary<Guid, ICurio>();
+
+        public static BehaviorSystemDrawable Drawable = new BehaviorSystemDrawable();
+        public static BehaviorSystemTickable Tickable = new BehaviorSystemTickable();
 
         public static void Setup(this ICurio curio, Template template = null)
         {
@@ -156,12 +160,22 @@ namespace _7DRL_2021
             return null;
         }
 
+        private static void AddToSystem(ICurio curio, Behavior behavior)
+        {
+            foreach(BehaviorSystem system in BehaviorSystem.AllSystems)
+            {
+                if (system.Accepts(curio, behavior))
+                    system.Add(curio, behavior);
+            }
+        }
+
         public static void AddBehavior(this ICurio curio, Behavior behavior)
         {
             if (BehaviorLookup.TryGetValue(curio.GlobalID, out Drawer drawer))
             {
                 Behaviors.Add(behavior);
                 drawer.Add(behavior);
+                AddToSystem(curio, behavior);
             }
         }
 

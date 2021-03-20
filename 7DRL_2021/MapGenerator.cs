@@ -361,6 +361,8 @@ namespace _7DRL_2021
 
                 if (template != null)
                     tile.ApplyTemplate(template);
+                if (rooms.Any(x => x.Type == RoomType.Chasm) && template != Template.Chasm)
+                    Behavior.Apply(new BehaviorChasmSeam(tile, template == Template.Corridor ? new Color(155, 99, 74) : new Color(124, 88, 114)));
                 if (singleRoom?.Type == RoomType.Start)
                     Behavior.Apply(new BehaviorLevelStart(tile, singleRoom.GetEdgeDirection()));
                 if (singleRoom?.Type == RoomType.End)

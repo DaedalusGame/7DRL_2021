@@ -43,7 +43,7 @@ namespace _7DRL_2021
 
         public static Template Camera = new Template("camera", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "camera"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             return template;
@@ -51,14 +51,14 @@ namespace _7DRL_2021
 
         public static Template Pointer = new Template("pointer", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "pointer"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             return template;
         });
         public static Template BellTower = new Template("belltower", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "belltower"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             Behavior.Apply(new BehaviorBellTower(template, 300));
@@ -66,7 +66,7 @@ namespace _7DRL_2021
         });
         public static Template Wraith = new Template("wraith", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "wraith"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             return template;
@@ -74,7 +74,7 @@ namespace _7DRL_2021
 
         public static Template Player = new Template("player", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "player"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             Behavior.Apply(new BehaviorOrientable(template, 0));
@@ -91,7 +91,7 @@ namespace _7DRL_2021
         });
         public static Template Grunt = new Template("grunt", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "grunt"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             Behavior.Apply(new BehaviorOrientable(template, 0));
@@ -110,7 +110,7 @@ namespace _7DRL_2021
         });
         public static Template Twitch = new Template("twitch", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "twitch"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             Behavior.Apply(new BehaviorOrientable(template, 0));
@@ -129,7 +129,7 @@ namespace _7DRL_2021
         });
         public static Template Bulwark = new Template("bulwark", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "bulwark"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             Behavior.Apply(new BehaviorOrientable(template, 0));
@@ -148,7 +148,7 @@ namespace _7DRL_2021
         });
         public static Template Rat = new Template("rat", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "rat"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             Behavior.Apply(new BehaviorOrientable(template, 0));
@@ -164,7 +164,7 @@ namespace _7DRL_2021
         });
         public static Template Lich = new Template("lich", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "lich"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             Behavior.Apply(new BehaviorOrientable(template, 0));
@@ -181,7 +181,7 @@ namespace _7DRL_2021
         });
         public static Template Nemesis = new Template("nemesis", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "nemesis"));
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             Behavior.Apply(new BehaviorOrientable(template, 0));
@@ -198,21 +198,21 @@ namespace _7DRL_2021
 
         public static Template Floor = new Template("floor", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "floor"));
             Behavior.Apply(new BehaviorDrawable(template, Drawable.Floor, 10));
             return template;
         });
         public static Template Corridor = new Template("corridor", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "corridor"));
             Behavior.Apply(new BehaviorDrawable(template, Drawable.Corridor, 10));
             return template;
         });
         public static Template Wall = new Template("wall", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "wall"));
             Behavior.Apply(new BehaviorDrawable(template, Drawable.Wall, 10));
             Behavior.Apply(new BehaviorSolid(template));
@@ -221,7 +221,7 @@ namespace _7DRL_2021
         });
         public static Template WraithWall = new Template("wraith_wall", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "wraith_wall"));
             Behavior.Apply(new BehaviorDrawable(template, Drawable.WraithWall, 10));
             Behavior.Apply(new BehaviorSolid(template));
@@ -231,7 +231,7 @@ namespace _7DRL_2021
         });
         public static Template SpikeWall = new Template("spike_wall", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "spike_wall"));
             Behavior.Apply(new BehaviorDrawable(template, Drawable.SpikedWall, 10));
             Behavior.Apply(new BehaviorSolid(template));
@@ -240,7 +240,7 @@ namespace _7DRL_2021
         });
         public static Template Chasm = new Template("chasm", () =>
         {
-            Curio template = new Curio();
+            Curio template = new Curio.Templated();
             Behavior.Apply(new BehaviorIdentity(template, "chasm"));
             Behavior.Apply(new BehaviorDrawable(template, Drawable.Chasm, 10));
             Behavior.Apply(new BehaviorChasm(template));

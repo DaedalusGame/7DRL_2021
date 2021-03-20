@@ -504,7 +504,7 @@ namespace _7DRL_2021
             Menu.Update(this);
             Menu.HandleInput(this);
 
-            var tickables = Manager.GetRealBehaviors<ITickable>();
+            var tickables = Manager.Tickable.GetTickables();
             //var tickables = Manager.GetCurios(Map).SelectMany(x => x.GetBehaviors().OfType<ITickable>());
             foreach (var tickable in tickables.ToList())
                 tickable.Tick(this);
@@ -560,7 +560,7 @@ namespace _7DRL_2021
             //var tiles = cameraTile?.GetNearby(15) ?? Enumerable.Empty<MapTile>();
             //var curios = Manager.GetCurios().Where(x => !(x is MapTile)).Concat(tiles);
             //var gameObjects = curios.SelectMany(curio => curio.GetDrawables());
-            var globalDrawables = Manager.GetRealBehaviors<IDrawable>();
+            var globalDrawables = Manager.Drawable.GetDrawables();
             var cameraPos = CameraCurio.GetVisualTarget();
             var drawPasses = globalDrawables
                 .Concat(VisualEffects)

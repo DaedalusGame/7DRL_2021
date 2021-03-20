@@ -71,10 +71,7 @@
                     if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
                     {
                         costSoFar[next] = newCost;
-                        if (frontier.Contains(next))
-                            frontier.UpdatePriority(next, newCost);
-                        else
-                            frontier.Enqueue(next, newCost);
+                        frontier.Enqueue(next, newCost);
                         cameFrom[next] = current;
                     }
                 }

@@ -93,9 +93,9 @@ namespace _7DRL_2021.Drawables
         public override IEnumerable<DrawPass> GetDrawPasses()
         {
             yield return Pass;
-            yield return DrawPass.Chasm1;
-            yield return DrawPass.Chasm2;
-            yield return DrawPass.Chasm3;
+            //yield return DrawPass.Chasm1;
+            //yield return DrawPass.Chasm2;
+            //yield return DrawPass.Chasm3;
         }
     }
 }
