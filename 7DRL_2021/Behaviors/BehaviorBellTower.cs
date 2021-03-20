@@ -51,7 +51,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorBellTower(curio, BellTime.EndTime));
+            Apply(new BehaviorBellTower(curio, BellTime.EndTime), Curio);
         }
 
         public void Tick(SceneGame scene)

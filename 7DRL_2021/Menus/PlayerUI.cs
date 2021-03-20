@@ -403,7 +403,7 @@ namespace _7DRL_2021.Menus
             yield return DrawPass.UIWorld;
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return true;
         }
@@ -522,7 +522,7 @@ namespace _7DRL_2021.Menus
             yield return DrawPass.UIWorld;
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return true;
         }
@@ -636,7 +636,7 @@ namespace _7DRL_2021.Menus
             yield return DrawPass.UIWorld;
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return true;
         }

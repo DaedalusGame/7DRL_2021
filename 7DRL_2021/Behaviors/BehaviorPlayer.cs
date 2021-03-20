@@ -50,7 +50,7 @@ namespace _7DRL_2021.Behaviors
 
         public override void Clone(ICurioMapper mapper)
         {
-            Apply(new BehaviorPlayer(mapper.Map(Curio)));
+            Apply(new BehaviorPlayer(mapper.Map(Curio)), Curio);
         }
 
         public void Tick(SceneGame scene)

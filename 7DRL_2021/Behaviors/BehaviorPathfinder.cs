@@ -95,7 +95,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorPathfinder(curio));
+            Apply(new BehaviorPathfinder(curio), Curio);
         }
 
         public void Tick(SceneGame scene)
@@ -103,7 +103,7 @@ namespace _7DRL_2021.Behaviors
             Cooldown += 1;
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return true;
         }

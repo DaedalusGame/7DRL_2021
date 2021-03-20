@@ -35,7 +35,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorLevelEnd(curio, Direction));
+            Apply(new BehaviorLevelEnd(curio, Direction), Curio);
         }
     }
 }

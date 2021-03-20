@@ -1,6 +1,7 @@
 ﻿namespace _7DRL_2021.Pathfinding
 {
     using FibonacciHeap;
+    using Priority_Queue;
     using System;
     using System.Collections.Generic;
 
@@ -47,16 +48,16 @@
             cameFrom = new Dictionary<T, T>();
             cameFrom.Add(start, start);
 
-            var costSoFar = new Dictionary<T, double>();
-            var frontier = new FibonacciMap<T, double>(0);
+            var costSoFar = new Dictionary<T, float>();
+            var frontier = new SimplePriorityQueue<T>();
 
             costSoFar[start] = 0;
 
-            frontier.Insert(start, 0);
+            frontier.Enqueue(start, 0);
 
             while (frontier.Count > 0)
             {
-                var current = frontier.RemoveMin();
+                var current = frontier.Dequeue();
 
                 if (current.Equals(goal))
                 {
@@ -70,8 +71,10 @@
                     if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
                     {
                         costSoFar[next] = newCost;
-                        var priority = newCost;
-                        frontier.Insert(next, priority);
+                        if (frontier.Contains(next))
+                            frontier.UpdatePriority(next, newCost);
+                        else
+                            frontier.Enqueue(next, newCost);
                         cameFrom[next] = current;
                     }
                 }

@@ -28,7 +28,7 @@ namespace _7DRL_2021.Behaviors
 
         public override void Clone(ICurioMapper mapper)
         {
-            Apply(new BehaviorFollowCamera(mapper.Map(Curio), mapper.Map(Camera)));
+            Apply(new BehaviorFollowCamera(mapper.Map(Curio), mapper.Map(Camera)), Curio);
         }
     }
 }

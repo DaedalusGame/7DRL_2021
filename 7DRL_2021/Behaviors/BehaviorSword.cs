@@ -104,7 +104,7 @@ namespace _7DRL_2021.Behaviors
 
         public override void Clone(ICurioMapper mapper)
         {
-            Apply(new BehaviorSword(mapper.Map(Curio), Position));
+            Apply(new BehaviorSword(mapper.Map(Curio), Position), Curio);
         }
     }
 }

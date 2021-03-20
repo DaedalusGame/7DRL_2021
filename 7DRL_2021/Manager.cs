@@ -184,6 +184,13 @@ namespace _7DRL_2021
             return Behaviors.ToList();
         }
 
+        public static IEnumerable<T> GetRealBehaviors<T>()
+        {
+            Behaviors.RemoveAll(x => x.Removed);
+            return Behaviors.Where(x => x.Origin != null).OfType<T>();
+        }
+
+
         public static IEnumerable<Behavior> GetBehaviors(this ICurio curio)
         {
             if (BehaviorLookup.TryGetValue(curio.GlobalID, out Drawer drawer))

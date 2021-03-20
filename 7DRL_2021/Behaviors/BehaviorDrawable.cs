@@ -165,9 +165,10 @@ namespace _7DRL_2021.Behaviors
             Apply(new BehaviorDrawable(curio, Drawable, Priority), Curio);
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
-            return Curio.GetMap() == scene.Map;
+            var tile = Curio.GetMainTile();
+            return tile.GetMap() == scene.Map && scene.IsWithinCamera(cameraPosition, tile.VisualTarget);
         }
 
         public IEnumerable<DrawPass> GetDrawPasses()

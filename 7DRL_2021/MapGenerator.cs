@@ -356,6 +356,9 @@ namespace _7DRL_2021
                 if (template == Template.Wall && Random.NextDouble() < 0.1)
                     template = Template.WraithWall;
 
+                if (template == null)
+                    template = Template.Floor;
+
                 if (template != null)
                     tile.ApplyTemplate(template);
                 if (singleRoom?.Type == RoomType.Start)

@@ -71,7 +71,7 @@ namespace _7DRL_2021.Pathfinding
             foreach (var curio in Map.Curios.Except(except))
             {
                 var tile = curio.GetMainTile();
-                CurioMap[tile.X, tile.Y] = 300;
+                CurioMap[tile.X, tile.Y] = 30;
                 Curios.Add(new Point(tile.X, tile.Y));
             }
         }

@@ -37,7 +37,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorKillTarget(curio));
+            Apply(new BehaviorKillTarget(curio), Curio);
         }
 
         public void Draw(SceneGame scene, DrawPass pass)
@@ -56,7 +56,7 @@ namespace _7DRL_2021.Behaviors
             yield return DrawPass.UI;
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return Curio.GetMap() == scene.Map && !IsCompleted();
         }

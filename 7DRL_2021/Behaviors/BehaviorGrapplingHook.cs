@@ -143,10 +143,10 @@ namespace _7DRL_2021.Behaviors
 
         public override void Clone(ICurioMapper mapper)
         {
-            Apply(new BehaviorGrapplingHook(mapper.Map(Curio), Position));
+            Apply(new BehaviorGrapplingHook(mapper.Map(Curio), Position), Curio);
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return scene.Map == Curio.GetMap();
         }

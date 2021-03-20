@@ -14,7 +14,7 @@ namespace _7DRL_2021
             get;
         }
 
-        bool ShouldDraw(SceneGame scene);
+        bool ShouldDraw(SceneGame scene, Vector2 cameraPosition);
 
         IEnumerable<DrawPass> GetDrawPasses();
 

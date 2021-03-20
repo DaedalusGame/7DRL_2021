@@ -34,11 +34,11 @@ namespace _7DRL_2021.Drawables
         public override void Draw(ICurio curio, SceneGame scene, DrawPass pass)
         {
             var tile = curio.GetMainTile();
-            var offset = curio.GetOffset();
+            //var offset = curio.GetOffset();
 
             if(pass != Pass)
             {
-                return;
+                //return;
                 var wall = SpriteLoader.Instance.AddSprite("content/terrain_chasm_wall");
 
                 var noise = Noise.GetValue(tile.X, tile.Y);

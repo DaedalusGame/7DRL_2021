@@ -53,7 +53,7 @@ namespace _7DRL_2021.Behaviors
 
         public override void Clone(ICurioMapper mapper)
         {
-            Apply(new BehaviorActionHolder((Curio)mapper.Map(Curio), Type));
+            Apply(new BehaviorActionHolder((Curio)mapper.Map(Curio), Type), Curio);
         }
 
         public override string ToString()

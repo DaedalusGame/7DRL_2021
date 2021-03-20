@@ -48,7 +48,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorDoubleHeal(curio));
+            Apply(new BehaviorDoubleHeal(curio), Curio);
         }
 
         [EventSubscribe]
@@ -76,7 +76,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorDestructionWave(curio));
+            Apply(new BehaviorDestructionWave(curio), Curio);
         }
 
         [EventSubscribe]
@@ -110,7 +110,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorOmicron(curio));
+            Apply(new BehaviorOmicron(curio), Curio);
         }
 
         [EventSubscribe]
@@ -142,7 +142,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorDoom(curio, ScoreMultiplier));
+            Apply(new BehaviorDoom(curio, ScoreMultiplier), Curio);
         }
 
         public void Tick(SceneGame scene)

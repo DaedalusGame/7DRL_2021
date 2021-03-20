@@ -52,7 +52,7 @@ namespace _7DRL_2021.Behaviors
             }
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return scene.Map == Curio.GetMap();
         }
@@ -105,7 +105,7 @@ namespace _7DRL_2021.Behaviors
 
         public override void Clone(ICurioMapper mapper)
         {
-            Apply(new BehaviorWraith(mapper.Map(Curio), Source, Frame.EndTime));
+            Apply(new BehaviorWraith(mapper.Map(Curio), Source, Frame.EndTime), Curio);
         }
 
         public override void DrawArcObject(SceneGame scene, DrawPass pass)

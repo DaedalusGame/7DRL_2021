@@ -91,7 +91,7 @@ namespace _7DRL_2021
 
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return Map == scene.Map;
         }

@@ -179,6 +179,11 @@ namespace _7DRL_2021
             Cutscene = Scheduler.Instance.RunAndWait(RoutineStartLevel());
         }
 
+        public bool IsWithinCamera(Vector2 camera, Vector2 pos)
+        {
+            return Math.Max(Math.Abs(camera.X - pos.X), Math.Abs(camera.Y - pos.Y)) < 12 * 16; 
+        }
+
         private void GenerateMap()
         {
             var generator = new MapGenerator();
@@ -433,8 +438,9 @@ namespace _7DRL_2021
         {
             Menu.PreDraw(this);
 
-            var curios = Manager.GetCurios();
-            foreach (var behavior in curios.SelectMany(curio => curio.GetPreDrawables()))
+            //var curios = Manager.GetCurios();
+            var preDrawables = Manager.GetRealBehaviors<IPreDrawable>();
+            foreach (var behavior in preDrawables)
             {
                 behavior.PreDraw(this);
             }
@@ -498,7 +504,8 @@ namespace _7DRL_2021
             Menu.Update(this);
             Menu.HandleInput(this);
 
-            var tickables = Manager.GetCurios(Map).SelectMany(x => x.GetBehaviors().OfType<ITickable>());
+            var tickables = Manager.GetRealBehaviors<ITickable>();
+            //var tickables = Manager.GetCurios(Map).SelectMany(x => x.GetBehaviors().OfType<ITickable>());
             foreach (var tickable in tickables.ToList())
                 tickable.Tick(this);
 
@@ -550,13 +557,15 @@ namespace _7DRL_2021
             SetRenderTarget(null);
 
             var cameraTile = CameraCurio.GetMainTile();
-            var tiles = cameraTile?.GetNearby(15) ?? Enumerable.Empty<MapTile>();
-            var curios = Manager.GetCurios().Where(x => !(x is MapTile)).Concat(tiles);
-            var gameObjects = curios.SelectMany(curio => curio.GetDrawables());
-            var drawPasses = gameObjects
+            //var tiles = cameraTile?.GetNearby(15) ?? Enumerable.Empty<MapTile>();
+            //var curios = Manager.GetCurios().Where(x => !(x is MapTile)).Concat(tiles);
+            //var gameObjects = curios.SelectMany(curio => curio.GetDrawables());
+            var globalDrawables = Manager.GetRealBehaviors<IDrawable>();
+            var cameraPos = CameraCurio.GetVisualTarget();
+            var drawPasses = globalDrawables
                 .Concat(VisualEffects)
                 .Concat(Menu.GetAllMenus().OfType<IDrawable>())
-                .Where(x => x.ShouldDraw(this))
+                .Where(x => x.ShouldDraw(this, cameraPos))
                 .ToMultiLookup(x => x.GetDrawPasses());
 
             SetRenderTarget(CameraTargetA);

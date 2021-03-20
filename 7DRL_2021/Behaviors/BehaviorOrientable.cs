@@ -93,7 +93,7 @@ namespace _7DRL_2021.Behaviors
 
         public override void Clone(ICurioMapper mapper)
         {
-            Apply(new BehaviorOrientable(mapper.Map(Curio), Angle));
+            Apply(new BehaviorOrientable(mapper.Map(Curio), Angle), Curio);
         }
 
         public override string ToString()

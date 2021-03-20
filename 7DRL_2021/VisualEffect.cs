@@ -126,7 +126,7 @@ namespace _7DRL_2021
 
         public abstract void Draw(SceneGame scene, DrawPass pass);
 
-        public virtual bool ShouldDraw(SceneGame scene)
+        public virtual bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return true;
         }
@@ -693,7 +693,7 @@ namespace _7DRL_2021
                     color = Color.Lerp(Color.Gray, Color.Black, slide);
                     break;
                 case DrawPass.BloodMultiply:
-                    color = Color.Lerp(color, Color.White, slide);
+                    color = Color.Lerp(color, Color.White, (float)LerpHelper.ExponentialIn(0, 1, slide));
                     break;
             }
          

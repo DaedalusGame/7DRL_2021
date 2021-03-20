@@ -39,7 +39,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorDecay(curio, Decay.EndTime, Score, Particles, Radius, Splat));
+            Apply(new BehaviorDecay(curio, Decay.EndTime, Score, Particles, Radius, Splat), Curio);
         }
 
         public void Tick(SceneGame scene)

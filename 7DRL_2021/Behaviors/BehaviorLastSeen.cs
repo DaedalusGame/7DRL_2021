@@ -33,7 +33,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorLastSeen(curio));
+            Apply(new BehaviorLastSeen(curio), Curio);
         }
 
         public bool CanSee(Vector2 start, Vector2 end)
@@ -82,7 +82,7 @@ namespace _7DRL_2021.Behaviors
             yield return DrawPass.EffectLowAdditive;
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return true;
         }

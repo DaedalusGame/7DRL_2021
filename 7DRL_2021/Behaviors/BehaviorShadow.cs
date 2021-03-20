@@ -37,7 +37,7 @@ namespace _7DRL_2021.Behaviors
 
         public override void Clone(ICurioMapper mapper)
         {
-            Apply(new BehaviorShadow((Curio)mapper.Map(Curio)));
+            Apply(new BehaviorShadow((Curio)mapper.Map(Curio)), Curio);
         }
 
         public void Tick(SceneGame scene)
@@ -78,7 +78,7 @@ namespace _7DRL_2021.Behaviors
             yield return DrawPass.EffectLowAdditive;
         }
 
-        public bool ShouldDraw(SceneGame scene)
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
         {
             return Curio.GetMap() == scene.Map;
         }
