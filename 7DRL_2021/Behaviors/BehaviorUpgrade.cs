@@ -116,7 +116,7 @@ namespace _7DRL_2021.Behaviors
         [EventSubscribe]
         public void OnAction(EventAction e)
         {
-            if (Curio.HasBehaviors<BehaviorTemplate>())
+            if (Curio.IsTemplate())
                 return;
             e.Actions.RemoveAll(x => x.Action is ActionNemesisRevive);
         }
@@ -155,7 +155,7 @@ namespace _7DRL_2021.Behaviors
 
         private void TryActivate()
         {
-            var bellTower = Manager.GetBehaviors().OfType<BehaviorBellTower>().FirstOrDefault(x => !x.Curio.HasBehaviors<BehaviorTemplate>());
+            var bellTower = Manager.GetBehaviors().OfType<BehaviorBellTower>().FirstOrDefault(x => !x.Curio.IsTemplate());
             if (bellTower != null)
             {
                 bellTower.BellTime.EndTime *= 0.10f;

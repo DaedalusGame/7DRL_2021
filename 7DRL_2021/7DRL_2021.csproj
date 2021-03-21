@@ -137,11 +137,6 @@
     <Compile Include="EventBus.cs" />
     <Compile Include="Events\EventAction.cs" />
     <Compile Include="Events\EventCurio.cs" />
-    <Compile Include="FibonacciHeap\Constants.cs" />
-    <Compile Include="FibonacciHeap\FibonacciHeap.cs" />
-    <Compile Include="FibonacciHeap\FibonacciHeapDoubleKey.cs" />
-    <Compile Include="FibonacciHeap\FibonacciHeapNode.cs" />
-    <Compile Include="FibonacciHeap\FibonacciHeapNodeDoubleKey.cs" />
     <Compile Include="FontUtil.cs" />
     <Compile Include="FrameCounter.cs" />
     <Compile Include="Game.cs" />
@@ -875,9 +870,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.manifest" />
-    <None Include="FibonacciHeap\License">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="Pathfinding\LICENSE">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

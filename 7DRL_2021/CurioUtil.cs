@@ -10,6 +10,11 @@ namespace _7DRL_2021
 {
     static class CurioUtil
     {
+        public static bool IsTemplate(this ICurio curio)
+        {
+            return curio is Curio.Templated;
+        }
+
         public static MapTile GetMainTile(this ICurio curio)
         {
             if (curio is MapTile tile)

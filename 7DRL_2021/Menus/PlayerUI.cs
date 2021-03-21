@@ -287,6 +287,11 @@ namespace _7DRL_2021.Menus
             {
                 scene.DrawSprite(spriteMomentum, 0, new Vector2(compassX - 128 + i * 8, compassY - 8 + 32), SpriteEffects.None, 0);
             }
+            if (momentum.Amount > 32)
+            {
+                var momentumText = Game.ConvertToSmallPixelText($"+{momentum.Amount - 32}");
+                scene.DrawText(momentumText, new Vector2(compassX + 128 + 8, compassY - 11 + 32), Alignment.Left, new TextParameters().SetColor(Color.White, Color.Black));
+            }
         }
     }
 

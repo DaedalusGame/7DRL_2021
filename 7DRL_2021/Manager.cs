@@ -54,6 +54,7 @@ namespace _7DRL_2021
         static BiDictionary<Guid, ICurio> CurioLookup = new BiDictionary<Guid, ICurio>();
 
         public static BehaviorSystemDrawable Drawable = new BehaviorSystemDrawable();
+        public static BehaviorSystemPreDrawable PreDrawable = new BehaviorSystemPreDrawable();
         public static BehaviorSystemTickable Tickable = new BehaviorSystemTickable();
 
         public static void Setup(this ICurio curio, Template template = null)
@@ -120,7 +121,7 @@ namespace _7DRL_2021
         public static void Reset()
         {
             foreach (var curio in Curios)
-                if (!curio.HasBehaviors<BehaviorTemplate>())
+                if (!curio.IsTemplate())
                     curio.Destroy();
         }
 

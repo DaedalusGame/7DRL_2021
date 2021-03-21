@@ -38,7 +38,10 @@ namespace _7DRL_2021.Results
             var lich = Origin.GetBehavior<BehaviorLich>();
             lich.SwordAngle.Set(StartAngle);
             lich.SwordScale.Set(0, 1, LerpHelper.QuadraticIn, StartTime.EndTime);
-            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget());
+            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget())
+            {
+                ShouldDestroy = () => Done || Origin.IsDeadOrDestroyed(),
+            };
         }
 
         private void PerformSlash(BehaviorLich lich)
@@ -103,10 +106,6 @@ namespace _7DRL_2021.Results
             if (!EndTime.Done)
             {
                 EndTime += world.TimeMod;
-                if (EndTime.Done)
-                {
-                    VisualAoE.Destroy();
-                }
             }
         }
     }

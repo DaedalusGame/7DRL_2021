@@ -46,7 +46,10 @@ namespace _7DRL_2021.Results
             var mace = Origin.GetBehavior<BehaviorMace>();
             var target = GetTarget();
             mace.Upswing = new Slider(TimeUpswing);
-            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget());
+            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget())
+            {
+                ShouldDestroy = () => Done || Origin.IsDeadOrDestroyed(),
+            };
             VisualAoE.Set(target);
             Retarget();
         }
@@ -136,7 +139,6 @@ namespace _7DRL_2021.Results
                     mace.Mace(target.VisualTarget, 20);
                     SoundImpact.Play(1, Random.NextFloat(-0.5f, +0.5f), 0);
                     DamageArea();
-                    VisualAoE.Destroy();
                 }
             }
             else

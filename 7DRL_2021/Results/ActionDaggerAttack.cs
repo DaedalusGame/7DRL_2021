@@ -34,7 +34,10 @@ namespace _7DRL_2021.Results
             var dagger = Origin.GetBehavior<BehaviorDagger>();
             var target = GetTarget();
             dagger.Upswing = new Slider(TimeUpswing);
-            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget());
+            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget())
+            {
+                ShouldDestroy = () => Done || Origin.IsDeadOrDestroyed(),
+            };
             VisualAoE.Set(target);
         }
 
@@ -67,7 +70,7 @@ namespace _7DRL_2021.Results
             var targetTile = GetTarget();
             if (targetTile != null)
             {
-                new Wave(world, 10)
+                /*new Wave(world, 10)
                 {
                     WaveSprite = SpriteLoader.Instance.AddSprite("content/ring_spark_thin"),
                     Position = targetTile.VisualTarget,
@@ -78,7 +81,7 @@ namespace _7DRL_2021.Results
                     DrawPass = DrawPass.EffectLowAdditive,
                     InnerLerp = LerpHelper.QuadraticOut,
                     OuterLerp = LerpHelper.QuadraticOut,
-                };
+                };*/
 
                 foreach (var target in targetTile.Contents)
                 {
@@ -106,7 +109,6 @@ namespace _7DRL_2021.Results
                 if (Frame.Done && shouldAttack)
                 {
                     DamageArea();
-                    VisualAoE.Destroy();
                 }
             }
         }

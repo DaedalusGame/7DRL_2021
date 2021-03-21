@@ -61,7 +61,8 @@ namespace _7DRL_2021.Behaviors
                 var path = WeightedPathfinder.Search(Graph, new Point(source.X, source.Y), new Point(destination.X, destination.Y));
                 if (path != null)
                     Path = path;
-                Cooldown.Time = 0;
+                else
+                    Cooldown.Time = 0;
             }
         }
 

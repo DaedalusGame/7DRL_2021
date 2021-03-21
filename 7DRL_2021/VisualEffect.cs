@@ -569,6 +569,50 @@ namespace _7DRL_2021
         }
     }
 
+    class ExplosionParticle : VisualEffect
+    {
+        SpriteReference Sprite;
+        Vector2 Position;
+        public float Angle;
+        public LerpFloat AngleSpeed = new LerpFloat(0);
+        public LerpFloat Size = new LerpFloat(1);
+        public Vector2 CurrentPosition => Position;
+
+        public Color Color = Color.White;
+        public DrawPass DrawPass = DrawPass.Effect;
+
+        public ExplosionParticle(SceneGame world, SpriteReference sprite, Vector2 pos, int time) : base(world)
+        {
+            Sprite = sprite;
+            Position = pos;
+            Angle = Random.NextAngle();
+            Frame = new Slider(time);
+        }
+
+        public override void Update()
+        {
+            Frame += World.TimeMod;
+            Angle += World.TimeMod * AngleSpeed;
+            AngleSpeed.Update(World.TimeMod);
+            if (Frame.Done)
+                Destroy();
+        }
+
+        public override void Draw(SceneGame scene, DrawPass pass)
+        {
+            int subImage = scene.AnimationFrame(Sprite, Frame.Time, Frame.EndTime);
+            float size = Size;
+            if (Sprite == null)
+                scene.SpriteBatch.Draw(scene.Pixel, CurrentPosition, null, Color, Angle, Vector2.One, 1, SpriteEffects.None, 0);
+            else
+                scene.DrawSpriteExt(Sprite, subImage, CurrentPosition - Sprite.Middle, Sprite.Middle, Angle, new Vector2(size), SpriteEffects.None, Color, 0);
+        }
+
+        public override IEnumerable<DrawPass> GetDrawPasses()
+        {
+            yield return DrawPass;
+        }
+    }
 
     class Strike : VisualEffect
     {
@@ -712,6 +756,7 @@ namespace _7DRL_2021
         public Vector2 AnchorEnd;
         public MapTile Target;
         public IEnumerable<MapTile> Tiles;
+        public Func<bool> ShouldDestroy = () => false;
 
         public AoEVisual(SceneGame world, Vector2 anchorStart) : base(world)
         {
@@ -742,7 +787,8 @@ namespace _7DRL_2021
 
         public override void Update()
         {
-            //NOOP
+            if (ShouldDestroy())
+                Destroy();
         }
 
         public override void Draw(SceneGame scene, DrawPass pass)

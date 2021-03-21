@@ -439,7 +439,7 @@ namespace _7DRL_2021
             Menu.PreDraw(this);
 
             //var curios = Manager.GetCurios();
-            var preDrawables = Manager.GetRealBehaviors<IPreDrawable>();
+            var preDrawables = Manager.PreDrawable.GetPreDrawables();
             foreach (var behavior in preDrawables)
             {
                 behavior.PreDraw(this);

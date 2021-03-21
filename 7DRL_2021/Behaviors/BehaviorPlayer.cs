@@ -31,6 +31,8 @@ namespace _7DRL_2021.Behaviors
         public bool SwordStuck => Curio.GetBehavior<BehaviorSword>()?.StabTargets.Any() ?? false;
         public bool Gripped => Curio.GetBehavior<BehaviorGrapplingHook>()?.GripDirection != null;
         public LerpFloat Fade = new LerpFloat(0);
+        public float Footstep;
+        public int FootstepOffset = +1;
 
         static SoundReference SoundDeath = SoundLoader.AddSound("content/sound/kill.wav");
 
@@ -66,19 +68,48 @@ namespace _7DRL_2021.Behaviors
                 EndLevel(scene);
             }
 
+            UpdateFootstep(scene);
+
             if (Curio.IsDead() && !scene.IsGameOver)
             {
                 scene.GameOver("GLORY TO THE BLOOD GOD.", false);
                 SoundDeath.Play(1, -0.5f, 0);
             }
 
-            if(!scene.WaitForPlayer)
+            if (!scene.WaitForPlayer)
             {
                 //MovePassive();
             }
             else if (Momentum.Amount <= 0 && SwordReady)
             {
                 SheatheSword();
+            }
+        }
+
+        private bool CanFootstep(IAction action)
+        {
+            return action is ActionAccelerate || action is ActionWaitForAction;
+        }
+
+        private void UpdateFootstep(SceneGame scene)
+        {
+            var active = Curio.GetActionHolder(ActionSlot.Active);
+            var tile = Curio.GetMainTile();
+            Footstep += scene.TimeMod;
+            if (Momentum.Amount >= 32 && Footstep >= 4 && tile != null && !tile.IsChasm() && active.CurrentActions.Any(CanFootstep))
+            {
+                Footstep = Footstep % 4;
+                var angle = Curio.GetVisualAngle();
+                var offset = Util.AngleToVector(angle);
+                var lateral = Util.AngleToVector(angle + MathHelper.PiOver2);
+                var particle = new ExplosionParticle(scene, SpriteLoader.Instance.AddSprite("content/effect_moon"), Curio.GetVisualTarget() + FootstepOffset * lateral * 6 + offset * -12, 20)
+                {
+                    Color = Color.White,
+                    DrawPass = DrawPass.EffectLowAdditive,
+                };
+                particle.Angle = angle + MathHelper.Pi;
+                //new ScreenShakeRandom(scene, 0.5f, 5, LerpHelper.QuadraticIn);
+                FootstepOffset *= -1;
             }
         }
 
@@ -172,6 +203,9 @@ namespace _7DRL_2021.Behaviors
         public void AddDefaultMove(List<ActionWrapper> actions)
         {
             var tile = Curio.GetMainTile();
+            if (tile == null)
+                return;
+
             if (Momentum.Amount > 0)
             {
                 var offset = Momentum.Direction.ToTileOffset();
@@ -410,9 +444,10 @@ namespace _7DRL_2021.Behaviors
             var neighbor = tile;
             for (int i = 0; i < 10; i++)
             {
-                neighbor = neighbor.GetNeighborOrNull(offset.X, offset.Y);
-                if (neighbor == null)
+                var next = neighbor.GetNeighborOrNull(offset.X, offset.Y);
+                if (next == null)
                     break;
+                neighbor = next;
             }
             return neighbor;
         }

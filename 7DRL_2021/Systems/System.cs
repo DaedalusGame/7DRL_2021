@@ -30,7 +30,7 @@ namespace _7DRL_2021.Systems
     {
         public override bool Accepts(ICurio curio, Behavior behavior)
         {
-            return behavior is IDrawable && !(curio is Curio.Templated);
+            return behavior is IDrawable && !curio.IsTemplate();
         }
 
         public IEnumerable<IDrawable> GetDrawables()
@@ -40,11 +40,25 @@ namespace _7DRL_2021.Systems
         }
     }
 
+    class BehaviorSystemPreDrawable : BehaviorSystem
+    {
+        public override bool Accepts(ICurio curio, Behavior behavior)
+        {
+            return behavior is IPreDrawable && !curio.IsTemplate();
+        }
+
+        public IEnumerable<IPreDrawable> GetPreDrawables()
+        {
+            Behaviors.RemoveAll(x => x.Removed);
+            return Behaviors.Cast<IPreDrawable>();
+        }
+    }
+
     class BehaviorSystemTickable : BehaviorSystem
     {
         public override bool Accepts(ICurio curio, Behavior behavior)
         {
-            return behavior is ITickable && !(curio is Curio.Templated);
+            return behavior is ITickable && !curio.IsTemplate();
         }
 
         public IEnumerable<ITickable> GetTickables()
