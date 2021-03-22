@@ -47,7 +47,7 @@ namespace _7DRL_2021.Results
 
         private void RipHeart(SceneGame world, BehaviorSword sword)
         {
-            foreach (var stabTarget in sword.StabTargets)
+            foreach (var stabTarget in sword.StabTargets.Where(x => !x.Removed))
             {
                 var actions = new List<ActionWrapper>();
                 actions.Add(new ActionRipHeartSword(Origin, stabTarget).InSlot(ActionSlot.Active));

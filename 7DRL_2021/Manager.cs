@@ -123,6 +123,8 @@ namespace _7DRL_2021
             foreach (var curio in Curios)
                 if (!curio.IsTemplate())
                     curio.Destroy();
+            Curios.RemoveAll(x => x.Removed);
+            Behaviors.RemoveAll(x => x.Removed);
         }
 
         public static void Destroy(this ICurio curio)
@@ -130,6 +132,7 @@ namespace _7DRL_2021
             curio.Removed = true;
             curio.ClearBehaviors();
             CurioLookup.Remove(curio);
+            BehaviorLookup.Remove(curio.GlobalID);
         }
 
         public static ICurio GetCurio(Guid guid)
@@ -139,17 +142,18 @@ namespace _7DRL_2021
 
         public static IEnumerable<ICurio> GetCurios()
         {
+            Curios.RemoveAll(x => x.Removed);
             return Curios;
         }
 
         public static IEnumerable<ICurio> GetCurios(Map map)
         {
-            return Curios.Where(curio => curio.GetMap() == map);
+            return GetCurios().Where(curio => curio.GetMap() == map);
         }
 
         public static IEnumerable<ICurio> GetCuriosWith<T>() where T : Behavior
         {
-            return Curios.Where(curio => curio.GetBehaviors<T>().Any());
+            return GetCurios().Where(curio => curio.GetBehaviors<T>().Any());
         }
 
         public static Map GetMap(this ICurio curio)

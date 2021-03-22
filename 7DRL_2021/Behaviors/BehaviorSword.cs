@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021.Behaviors
 {
-    class BehaviorSword : Behavior
+    class BehaviorSword : Behavior, ITickable
     {
         ICurio Curio;
         public int Position;
@@ -105,6 +105,11 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             Apply(new BehaviorSword(mapper.Map(Curio), Position), Curio);
+        }
+
+        public void Tick(SceneGame scene)
+        {
+            StabTargets.RemoveAll(x => x.Removed);
         }
     }
 }
