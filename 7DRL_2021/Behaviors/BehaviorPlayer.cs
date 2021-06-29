@@ -33,6 +33,7 @@ namespace _7DRL_2021.Behaviors
         public LerpFloat Fade = new LerpFloat(0);
         public float Footstep;
         public int FootstepOffset = +1;
+        public LerpFloat ForwardBack = new LerpFloat(0);
 
         static SoundReference SoundDeath = SoundLoader.AddSound("content/sound/kill.wav");
 
@@ -69,6 +70,13 @@ namespace _7DRL_2021.Behaviors
             }
 
             UpdateFootstep(scene);
+
+            if (ForwardBack.End > 0 && Momentum.Amount <= 0)
+                ForwardBack.Set(0, LerpHelper.Quadratic, 30);
+            if (ForwardBack.End < 1 && Momentum.Amount > 0)
+                ForwardBack.Set(1, LerpHelper.Quadratic, 30);
+
+            ForwardBack.Update();
 
             if (Curio.IsDead() && !scene.IsGameOver)
             {

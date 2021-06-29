@@ -212,6 +212,8 @@ namespace _7DRL_2021
             Shader.Parameters["glitch_shakiness"].SetValue(param.Shakiness);
 
             Shader.Parameters["WorldViewProjection"].SetValue(transform * projection);
+
+            GraphicsDevice.SamplerStates[1] = GraphicsDevice.SamplerStates[0];
         }
 
         public void PushSpriteBatch(SpriteSortMode? sortMode = null, BlendState blendState = null, SamplerState samplerState = null, Matrix? transform = null, Matrix? projection = null, Microsoft.Xna.Framework.Graphics.Effect shader = null, Action<Matrix, Matrix> shaderSetup = null)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021.Behaviors
 {
-    class BehaviorSword : Behavior, ITickable
+    class BehaviorSword : Behavior, ITickable, IMoveTickable
     {
         ICurio Curio;
         public int Position;
@@ -17,6 +17,8 @@ namespace _7DRL_2021.Behaviors
         public bool HasBlood;
         public bool HasHeart;
         public List<ICurio> StabTargets = new List<ICurio>();
+
+        public Slider SparkFrame = new Slider(0.5f);
 
         public BehaviorSword()
         {
@@ -35,6 +37,13 @@ namespace _7DRL_2021.Behaviors
             var center = Curio.GetVisualPosition() + new Vector2(8, 8);
             var angle = Curio.GetVisualAngle();
             return center + Util.AngleToVector(angle + VisualAngle()) * (8 + 16 * VisualScale());
+        }
+
+        public Vector2 GetBlade(float bladeLength)
+        {
+            var center = Curio.GetVisualPosition() + new Vector2(8, 8);
+            var angle = Curio.GetVisualAngle();
+            return center + Util.AngleToVector(angle + VisualAngle()) * (8 + bladeLength * VisualScale());
         }
 
         public static float GetAngle(int position)
@@ -110,6 +119,46 @@ namespace _7DRL_2021.Behaviors
         public void Tick(SceneGame scene)
         {
             StabTargets.RemoveAll(x => x.Removed);
+        }
+
+        Random Random = new Random();
+
+        public void MoveTick(Vector2 direction)
+        {
+            SparkFrame += Curio.GetWorld().TimeMod;
+            if (SparkFrame.Done)
+            {
+                SparkFrame.Time = 0;
+
+                if (Position == 0)
+                    return;
+
+                var tile = Curio.GetMainTile();
+                var angle = Curio.GetAngle() + Position * MathHelper.PiOver4;
+                var offset = Util.AngleToVector(angle).ToTileOffset();
+                var neighbor = tile.GetNeighborOrNull(offset.X, offset.Y);
+                if (neighbor != null && neighbor.IsSolid())
+                {
+                    Vector2 sparkDirection = direction;
+                    if (Position < 0)
+                        sparkDirection = sparkDirection.TurnLeft();
+                    if (Position > 0)
+                        sparkDirection = sparkDirection.TurnRight();
+                    Vector2 tip = GetBlade(8);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 randomOffset = Util.AngleToVector(Random.NextAngle()) * 20;
+                        new SparkParticle(Curio.GetWorld(), SpriteLoader.Instance.AddSprite("content/effect_cinder"), tip, 10)
+                        {
+                            Velocity = sparkDirection * Random.Next(24, 48) + randomOffset,
+                            Color = Color.White,
+                            Size = Random.NextFloat(),
+                            VelocityLerp = LerpHelper.QuadraticIn,
+                            DrawPass = DrawPass.EffectCreatureAdditive,
+                        };
+                    }
+                }
+            }
         }
     }
 }

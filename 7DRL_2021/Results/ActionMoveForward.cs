@@ -38,6 +38,10 @@ namespace _7DRL_2021.Results
 
         public void Tick(SceneGame scene)
         {
+            foreach(var moveTickable in Origin.GetBehaviors<IMoveTickable>())
+            {
+                moveTickable.MoveTick(Direction);
+            }
             Frame += scene.TimeMod;
         }
     }

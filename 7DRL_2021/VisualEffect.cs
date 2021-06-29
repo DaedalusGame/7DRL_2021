@@ -435,6 +435,47 @@ namespace _7DRL_2021
         }
     }
 
+    class SparkParticle : VisualEffect
+    {
+        SpriteReference Sprite;
+        Vector2 Position;
+        public Vector2 Velocity;
+        public LerpHelper.Delegate VelocityLerp = LerpHelper.Linear;
+        public float Size;
+        public Color Color = Color.White;
+        public DrawPass DrawPass = DrawPass.Effect;
+
+        private Vector2 Offset => Vector2.Lerp(Vector2.Zero, Velocity, (float)VelocityLerp(0, 1, Frame.Slide));
+        public Vector2 CurrentPosition => Position + Offset;
+
+        public SparkParticle(SceneGame world, SpriteReference sprite, Vector2 pos, int time) : base(world)
+        {
+            Sprite = sprite;
+            Position = pos;
+            Frame = new Slider(time);
+        }
+
+        public override void Update()
+        {
+            Frame += World.TimeMod;
+            if (Frame.Done)
+                Destroy();
+        }
+
+        public override void Draw(SceneGame scene, DrawPass pass)
+        {
+            float size = (float)LerpHelper.CubicIn(1, 0, Frame.Slide);
+            float length = (float)LerpHelper.Linear(2, 1, Frame.Slide);
+            float angle = Util.VectorToAngle(Vector2.Lerp(Vector2.Zero, Velocity, (float)VelocityLerp(0, 1, Frame.Slide)) - Vector2.Lerp(Vector2.Zero, Velocity, (float)VelocityLerp(0, 1, Frame.Slide - 0.01)));
+            scene.DrawSpriteExt(Sprite, 0, CurrentPosition - Sprite.Middle, Sprite.Middle, angle, new Vector2(1, length) * size, SpriteEffects.None, Color, 0);
+        }
+
+        public override IEnumerable<DrawPass> GetDrawPasses()
+        {
+            yield return DrawPass;
+        }
+    }
+
     class SmokeParticle : VisualEffect
     {
         SpriteReference Sprite;

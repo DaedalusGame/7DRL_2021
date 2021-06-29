@@ -594,6 +594,9 @@ namespace _7DRL_2021
             PopSpriteBatch();
             drawPasses.DrawPass(this, DrawPass.WallBottom);
             drawPasses.DrawPass(this, DrawPass.Creature);
+            PushSpriteBatch(blendState: BlendState.Additive);
+            drawPasses.DrawPass(this, DrawPass.EffectCreatureAdditive);
+            PopSpriteBatch();
             drawPasses.DrawPass(this, DrawPass.WallTop);
             drawPasses.DrawPass(this, DrawPass.Effect);
             PushSpriteBatch(blendState: BlendState.Additive);

@@ -21,6 +21,7 @@ namespace _7DRL_2021
         Creature,
         Effect,
         EffectAdditive,
+        EffectCreatureAdditive,
         BloodAdditive,
         BloodMultiply,
         UIWorld,
