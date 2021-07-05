@@ -63,7 +63,7 @@ namespace _7DRL_2021.Behaviors
                 new ScreenFlashSimple(scene, ColorMatrix.Tint(Color.Red), LerpHelper.Flick, 10);
                 SoundBell.Play(1, Random.NextFloat(0.5f, 0.0f), 0);
                 BellTolls += 1;
-                BellTime.Time = 0;
+                BellTime.Reset();
                 if (BellTolls >= 12)
                 {
                     new ScreenBellWraiths(Curio.GetWorld(), this, 60, 300);

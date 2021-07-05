@@ -1,4 +1,5 @@
 ﻿using _7DRL_2021.Behaviors;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021.Results
 {
-    class ActionLichSlash : IActionHasOrigin, ITickable
+    class ActionLichSlash : IActionHasOrigin, ITickable, IDrawable
     {
         static Random Random = new Random();
 
@@ -18,9 +19,13 @@ namespace _7DRL_2021.Results
         public Slider SlashTime;
         public Slider EndTime;
         public List<ICurio> AlreadyHit = new List<ICurio>();
-        public AoEVisual VisualAoE;
 
         public bool Done => EndTime.Done;
+
+        public double DrawOrder => 0;
+
+        public Color ColorStart => Color.IndianRed;
+        public Color ColorEnd => Color.Orange;
 
         public ActionLichSlash(ICurio origin, float startAngle, float endAngle, float startTime, float slashTime, float endTime)
         {
@@ -38,10 +43,6 @@ namespace _7DRL_2021.Results
             var lich = Origin.GetBehavior<BehaviorLich>();
             lich.SwordAngle.Set(StartAngle);
             lich.SwordScale.Set(0, 1, LerpHelper.QuadraticIn, StartTime.EndTime);
-            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget())
-            {
-                ShouldDestroy = () => Done || Origin.IsDeadOrDestroyed(),
-            };
         }
 
         private void PerformSlash(BehaviorLich lich)
@@ -79,7 +80,6 @@ namespace _7DRL_2021.Results
         public void Tick(SceneGame world)
         {
             var lich = Origin.GetBehavior<BehaviorLich>();
-            VisualAoE.Set(null, lich.GetImpactArea());
 
             if(!StartTime.Done)
             {
@@ -107,6 +107,31 @@ namespace _7DRL_2021.Results
             {
                 EndTime += world.TimeMod;
             }
+        }
+
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
+        {
+            return scene.Map == Origin.GetMap();
+        }
+
+        public IEnumerable<DrawPass> GetDrawPasses()
+        {
+            yield return DrawPass.EffectLowAdditive;
+        }
+
+        public void Draw(SceneGame scene, DrawPass pass)
+        {
+            var lich = Origin.GetBehavior<BehaviorLich>();
+
+            if (!SlashTime.Done)
+            {
+                SkillUtil.DrawArea(scene, lich.GetImpactArea(), ColorStart, ColorEnd, StartTime.Slide);
+            }
+        }
+
+        public void DrawIcon(SceneGame scene, Vector2 pos)
+        {
+            throw new NotImplementedException();
         }
     }
 }

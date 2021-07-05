@@ -37,8 +37,8 @@ namespace _7DRL_2021.Behaviors
         {
             if (Curio.IsAlive())
                 Upswing += scene.TimeMod;
-            else
-                Upswing.Time = Upswing.EndTime;
+            //else
+            //    Upswing.Time = Upswing.EndTime;
         }
     }
 }

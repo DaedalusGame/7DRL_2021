@@ -59,7 +59,7 @@ namespace _7DRL_2021.Behaviors
                 float radius = 240;
                 if(scene.PlayerCurio.IsAlive() && Vector2.DistanceSquared(Curio.GetVisualTarget(), scene.PlayerCurio.GetVisualTarget()) < radius * radius)
                     EmitWraith(scene.PlayerCurio);
-                Frame.Time = 0;
+                Frame.Reset();
                 Frame.EndTime = Random.NextFloat(40, 80);
             }
         }

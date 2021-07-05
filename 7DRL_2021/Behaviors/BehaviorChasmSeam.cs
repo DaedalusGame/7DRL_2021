@@ -45,22 +45,26 @@ namespace _7DRL_2021.Behaviors
             var wall = SpriteLoader.Instance.AddSprite("content/terrain_chasm_wall");
 
             var noise = Noise.GetValue(tile.X, tile.Y);
+            int depth = (noise % 3) + 1;
             int ox = 0;
             int oy = 0;
             Color color = Color;
             switch (pass)
             {
                 case DrawPass.Chasm1:
+                    if (depth < 3) return;
                     ox = NoiseX.GetValue(tile.X, tile.Y);
                     oy = NoiseY.GetValue(tile.X, tile.Y);
                     color = Color.Lerp(color, Color.Black, 0.75f);
                     break;
                 case DrawPass.Chasm2:
+                    if (depth < 2) return;
                     ox = NoiseX.GetValue(tile.X + 1000, tile.Y);
                     oy = NoiseY.GetValue(tile.X, tile.Y);
                     color = Color.Lerp(color, Color.Black, 0.50f);
                     break;
                 case DrawPass.Chasm3:
+                    if (depth < 1) return;
                     ox = NoiseX.GetValue(tile.X + 2000, tile.Y);
                     oy = NoiseY.GetValue(tile.X, tile.Y);
                     color = Color.Lerp(color, Color.Black, 0.25f);

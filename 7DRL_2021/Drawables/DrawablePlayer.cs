@@ -17,8 +17,8 @@ namespace _7DRL_2021.Drawables
 
         public override void Draw(ICurio curio, SceneGame scene, DrawPass pass)
         {
-            var spriteHelmetForward = SpriteLoader.Instance.AddSprite("content/player_helmet_1");
-            var spriteHelmetBack = SpriteLoader.Instance.AddSprite("content/player_helmet_1");
+            var spriteHelmetForward = SpriteLoader.Instance.AddSprite("content/player_helmet_5");
+            var spriteHelmetBack = SpriteLoader.Instance.AddSprite("content/player_helmet_4");
 
             var spriteBodyForward = SpriteLoader.Instance.AddSprite("content/player_forward");
             var spriteBodyBack = SpriteLoader.Instance.AddSprite("content/player_back");
@@ -77,7 +77,7 @@ namespace _7DRL_2021.Drawables
                 spriteBody = spriteBodyBack;
             }
             scene.DrawSpriteExt(spriteBody, 0, center + offset - spriteBody.Middle, spriteBody.Middle, angleBody, new Vector2(1), SpriteEffects.None, Color.White, 0);
-            scene.DrawSpriteExt(spriteHelmet, world.Frame / 4, center + offset + Util.AngleToVector(angleBody) * headPos - spriteHelmet.Middle, spriteHelmet.Middle, angleBody, new Vector2(1), SpriteEffects.None, Color.White, 0);
+            scene.DrawSpriteExt(spriteHelmet, (int)(player.HairFrame / 4), center + offset + Util.AngleToVector(angleBody) * headPos - spriteHelmet.Middle, spriteHelmet.Middle, angleBody, new Vector2(1), SpriteEffects.None, Color.White, 0);
             //scene.PushSpriteBatch(blendState: BlendState.Additive);
             //scene.DrawSpriteExt(spriteWings, 0, center + offset - spriteWings.Middle, spriteWings.Middle, angleBody, new Vector2(1), SpriteEffects.None, new Color(200, 192, 255), 0);
             //scene.PopSpriteBatch();

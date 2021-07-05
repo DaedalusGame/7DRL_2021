@@ -95,28 +95,51 @@ namespace _7DRL_2021
             return null;
         }
 
-        public static void DrawArea(SceneGame scene, IEnumerable<MapTile> tiles, Color a, Color b)
+        public static void DrawStrike(SceneGame scene, Vector2 start, Vector2 end, float slide, Color color)
+        {
+            var sprite = SpriteLoader.Instance.AddSprite("content/effect_bash");
+            float angle = Util.VectorToAngle(end - start);
+            var pos = Vector2.Lerp(start, end, (float)LerpHelper.QuadraticIn(0.3, 1, slide));
+            var middle = new Vector2(sprite.Width / 2, sprite.Height / 4);
+            var size = (float)LerpHelper.CubicOut(0.3, 1, slide);
+            var lengthMod = (float)LerpHelper.CubicIn(1, 0.3, slide);
+            scene.DrawSpriteExt(sprite, 0, pos - middle, middle, angle, new Vector2(1, lengthMod) * size, SpriteEffects.None, color, 0);
+        }
+
+        public static void DrawArea(SceneGame scene, IEnumerable<MapTile> tiles, Color a, Color b, float appear)
         {
             var cursor = SpriteLoader.Instance.AddSprite("content/effect_area");
+            var cursor_hit = SpriteLoader.Instance.AddSprite("content/effect_area_hit");
 
             float flash = 0.5f + (float)Math.Sin(scene.Frame / 10f) * 0.5f;
-            Color color = Color.Lerp(a, b, flash);
+            Color color = Color.Lerp(a.WithAlpha(appear), b.WithAlpha(appear), flash);
             foreach (var tile in tiles)
             {
                 var pos = new Rectangle(16 * tile.X, 16 * tile.Y, 16, 16);
-                scene.SpriteBatch.Draw(cursor.Texture, pos, new Rectangle(scene.Frame, 0, 16, 16), color.WithAlpha(0.3f));
+                if (appear < 1)
+                    scene.SpriteBatch.Draw(cursor.Texture, pos, new Rectangle(scene.Frame, 0, 16, 16), color.WithAlpha(0.3f));
+                else
+                    scene.SpriteBatch.Draw(cursor_hit.Texture, pos, new Rectangle(scene.Frame, 0, 16, 16), color.WithAlpha(0.5f));
             }
         }
 
-        public static void DrawImpact(SceneGame scene, MapTile target, Color a, Color b)
+        public static void DrawImpact(SceneGame scene, MapTile target, Color a, Color b, float appear)
         {
             var cursor = SpriteLoader.Instance.AddSprite("content/effect_area_target");
 
             float flash = 0.5f + (float)Math.Sin(scene.Frame / 10f) * 0.5f;
-            Color color = Color.Lerp(a, b, flash);
+            Color color = Color.Lerp(a.WithAlpha(appear), b.WithAlpha(appear), flash);
 
             var pos = target.GetVisualPosition();
             scene.DrawSprite(cursor, (int)(scene.Frame * 0.25f), pos, SpriteEffects.None, color, 0);
+        }
+
+        public static void DrawImpactLine(SceneGame scene, Func<float, Vector2> curve, Color a, Color b, float appear)
+        {
+            var line = SpriteLoader.Instance.AddSprite("content/line_dotted");
+            var flash = 0.5f + (float)Math.Sin(scene.Frame / 10f) * 0.5f;
+            Color color = Color.Lerp(a.WithAlpha(appear), b.WithAlpha(appear), flash);
+            scene.DrawBeamCurve(line, curve, 100, (slide) => 0.5f, 2, scene.Frame, 0.0f, 1.0f, ColorMatrix.Tint(color), BlendState.Additive);
         }
 
         public static void DrawPointer(SceneGame scene, Vector2 pos, string text)

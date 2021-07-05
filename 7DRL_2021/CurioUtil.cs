@@ -186,6 +186,17 @@ namespace _7DRL_2021
             return false;
         }
 
+        public static bool MoveVisual(this ICurio curio, MapTile tile, LerpHelper.Delegate lerp, ISlider slider)
+        {
+            var movable = curio.GetBehavior<BehaviorMovable>();
+            if (movable != null)
+            {
+                movable.MoveVisual(tile, lerp, slider);
+                return true;
+            }
+            return false;
+        }
+
         public static bool MoveVisual(this ICurio curio, Vector2 newPosition, LerpHelper.Delegate lerp, ISlider slider)
         {
             var movable = curio.GetBehavior<BehaviorMovable>();

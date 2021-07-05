@@ -11,12 +11,14 @@ namespace _7DRL_2021.Results
         public ICurio Origin { get; set; }
         public ICurio Target { get; set; }
 
+        public ActionSwordStab Stab;
         public bool Done => true;
 
-        public ActionStabHit(ICurio origin, ICurio target)
+        public ActionStabHit(ICurio origin, ICurio target, ActionSwordStab stab)
         {
             Origin = origin;
             Target = target;
+            Stab = stab;
         }
 
         public void Run()

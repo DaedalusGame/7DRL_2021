@@ -99,12 +99,18 @@ namespace _7DRL_2021
         public double DrawOrder => 0;
         public bool Destroyed { get; set; }
 
+        public bool Timeless;
         public Slider Frame;
 
         public VisualEffect(SceneGame world)
         {
             World = world;
             World.VisualEffects.AddLater(this);
+        }
+
+        public float GetTimeMod()
+        {
+            return Timeless ? 1 : World.TimeMod;
         }
 
         public void Destroy()
@@ -193,7 +199,7 @@ namespace _7DRL_2021
             if (Frame.Done)
             {
                 new ScreenGlitchFlash(World, slide => BehaviorBellTower.Params.WithIntensity((1-slide) * 0.3f), 10);
-                Frame.Time = 0;
+                Frame.Reset();
                 Frame.EndTime = Random.NextFloat(MinTime, MaxTime);
             }
         }
@@ -457,7 +463,7 @@ namespace _7DRL_2021
 
         public override void Update()
         {
-            Frame += World.TimeMod;
+            Frame += GetTimeMod();
             if (Frame.Done)
                 Destroy();
         }
@@ -468,6 +474,85 @@ namespace _7DRL_2021
             float length = (float)LerpHelper.Linear(2, 1, Frame.Slide);
             float angle = Util.VectorToAngle(Vector2.Lerp(Vector2.Zero, Velocity, (float)VelocityLerp(0, 1, Frame.Slide)) - Vector2.Lerp(Vector2.Zero, Velocity, (float)VelocityLerp(0, 1, Frame.Slide - 0.01)));
             scene.DrawSpriteExt(Sprite, 0, CurrentPosition - Sprite.Middle, Sprite.Middle, angle, new Vector2(1, length) * size, SpriteEffects.None, Color, 0);
+        }
+
+        public override IEnumerable<DrawPass> GetDrawPasses()
+        {
+            yield return DrawPass;
+        }
+    }
+
+    class CutterParticle : VisualEffect
+    {
+        SpriteReference Sprite;
+        Vector2 Position;
+        public float Angle;
+        public float RotationStart, RotationEnd;
+        public float SizeStart, SizeEnd;
+        public LerpHelper.Delegate RotationLerp = LerpHelper.Linear;
+        public LerpHelper.Delegate ScaleLerp = LerpHelper.Linear;
+        public Color Color = Color.White;
+        public DrawPass DrawPass = DrawPass.Effect;
+
+        public Vector2 CurrentPosition => Position;
+
+        public CutterParticle(SceneGame world, SpriteReference sprite, Vector2 pos, int time) : base(world)
+        {
+            Sprite = sprite;
+            Position = pos;
+            Frame = new Slider(time);
+        }
+
+        public override void Update()
+        {
+            Frame += GetTimeMod();
+            Angle += World.TimeMod * (float)RotationLerp(RotationStart, RotationEnd, Frame.Slide);
+            if (Frame.Done)
+                Destroy();
+        }
+
+        public override void Draw(SceneGame scene, DrawPass pass)
+        {
+            float size = (float)ScaleLerp(SizeStart, SizeEnd, Frame.Slide);
+            scene.DrawSpriteExt(Sprite, 0, CurrentPosition - Sprite.Middle, Sprite.Middle, Angle, new Vector2(size), SpriteEffects.None, Color, 0);
+        }
+
+        public override IEnumerable<DrawPass> GetDrawPasses()
+        {
+            yield return DrawPass;
+        }
+    }
+
+    class TrailParticle : VisualEffect
+    {
+        SpriteReference Sprite;
+        int SubImage;
+        Vector2 Position;
+        public float Angle;
+        public Color Color = Color.White;
+        public DrawPass DrawPass = DrawPass.Effect;
+        public LerpHelper.Delegate FadeLerp = LerpHelper.Linear;
+
+        public TrailParticle(SceneGame world, SpriteReference sprite, Vector2 pos, int time) : base(world)
+        {
+            Sprite = sprite;
+            SubImage = Random.Next(1000);
+            Position = pos;
+            Angle = Random.NextAngle();
+            Frame = new Slider(time);
+        }
+
+        public override void Update()
+        {
+            Frame += GetTimeMod();
+            if (Frame.Done)
+                Destroy();
+        }
+
+        public override void Draw(SceneGame scene, DrawPass pass)
+        {
+            var fade = (float)FadeLerp(1, 0, Frame.Slide);
+            scene.DrawSpriteExt(Sprite, SubImage, Position - Sprite.Middle, Sprite.Middle, Angle, new Vector2(1), SpriteEffects.None, Color.WithAlpha(fade), 0);
         }
 
         public override IEnumerable<DrawPass> GetDrawPasses()
@@ -517,7 +602,7 @@ namespace _7DRL_2021
 
         public override void Update()
         {
-            Frame += World.TimeMod;
+            Frame += GetTimeMod();
             Angle += (float)AngleSpeedLerp(AngleSpeedStart, AngleSpeedEnd, Frame.Slide);
             if (Frame.Done)
                 Destroy();
@@ -617,7 +702,7 @@ namespace _7DRL_2021
         public float Angle;
         public LerpFloat AngleSpeed = new LerpFloat(0);
         public LerpFloat Size = new LerpFloat(1);
-        public Vector2 CurrentPosition => Position;
+        public virtual Vector2 CurrentPosition => Position;
 
         public Color Color = Color.White;
         public DrawPass DrawPass = DrawPass.Effect;
@@ -632,9 +717,9 @@ namespace _7DRL_2021
 
         public override void Update()
         {
-            Frame += World.TimeMod;
-            Angle += World.TimeMod * AngleSpeed;
-            AngleSpeed.Update(World.TimeMod);
+            Frame += GetTimeMod();
+            Angle += GetTimeMod() * AngleSpeed;
+            AngleSpeed.Update(GetTimeMod());
             if (Frame.Done)
                 Destroy();
         }
@@ -652,6 +737,18 @@ namespace _7DRL_2021
         public override IEnumerable<DrawPass> GetDrawPasses()
         {
             yield return DrawPass;
+        }
+    }
+
+    class ExplosionParticleAnchored : ExplosionParticle
+    {
+        Func<Vector2> Anchor;
+
+        public override Vector2 CurrentPosition => Anchor();
+
+        public ExplosionParticleAnchored(SceneGame world, SpriteReference sprite, Func<Vector2> pos, int time) : base(world, sprite, Vector2.Zero, time)
+        {
+            Anchor = pos;
         }
     }
 

@@ -15,18 +15,20 @@ namespace _7DRL_2021.Results
         public ICurio Origin { get; set; }
         public ICurio Target { get; set; }
 
-        int Damage;
-        int Score;
+        public int Damage;
+        public int Score;
+        public int Blood;
 
         public SoundReference HitSound;
         public SoundReference DeathSound = SoundLoader.AddSound("content/sound/kill.wav");
 
-        public ActionDamage(ICurio origin, ICurio target, int damage, int score, SoundReference hitSound)
+        public ActionDamage(ICurio origin, ICurio target, int damage, int score, int blood, SoundReference hitSound)
         {
             Origin = origin;
             Target = target;
             Damage = damage;
             Score = score;
+            Blood = blood;
             HitSound = hitSound;
         }
 
@@ -42,11 +44,12 @@ namespace _7DRL_2021.Results
             Target.GetShakeHelper()?.AddShakeRandom(3, LerpHelper.QuadraticOut, 30);
             new HitStop(world, 0, 5);
             HitSound.Play(1f, Random.NextFloat(-0.3f, +0.3f), 0);
-            SkillUtil.CreateSpatter(world, Target.GetVisualTarget(), 3, Vector2.Zero, 1, Random);
+            SkillUtil.CreateSpatter(world, Target.GetVisualTarget(), Blood, Vector2.Zero, 1, Random);
             if(Score > 0)
                 world.AddWorldScore(Score, Target.GetVisualTarget(), ScoreType.Small);
 
-            SkillUtil.CreateBloodCircle(world, Target.GetVisualTarget(), 30, 32, Random);
+            if(Blood > 0)
+                SkillUtil.CreateBloodCircle(world, Target.GetVisualTarget(), 30, 32, Random);
 
             alive.TakeDamage(Damage);
             
@@ -57,7 +60,7 @@ namespace _7DRL_2021.Results
                     world.Kills += 1;
             }
 
-            if (sword != null)
+            if (sword != null && Blood > 0)
             {
                 sword.HasBlood = true;
             }

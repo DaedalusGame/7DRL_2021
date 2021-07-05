@@ -39,7 +39,7 @@ namespace _7DRL_2021.Results
             if (Origin == world.PlayerCurio)
                 world.Gibs += 1;
             Splat.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);
-            Target.Destroy();
+            Behavior.Apply(new BehaviorGib(Target));
         }
     }
 
@@ -75,7 +75,7 @@ namespace _7DRL_2021.Results
             if (Score > 0)
                 world.AddWorldScore(Score, Target.GetVisualTarget(), ScoreType.Small);
             Splat.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);
-            Target.Destroy();
+            Behavior.Apply(new BehaviorGib(Target));
         }
     }
 
@@ -120,7 +120,7 @@ namespace _7DRL_2021.Results
                 }
             }
             Splat.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);
-            Target.Destroy();
+            Behavior.Apply(new BehaviorGib(Target));
         }
     }
 }

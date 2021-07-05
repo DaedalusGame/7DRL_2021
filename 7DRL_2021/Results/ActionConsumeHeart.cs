@@ -74,8 +74,8 @@ namespace _7DRL_2021.Results
 
         protected override void RemoveHeart()
         {
-            var sword = Origin.GetBehavior<BehaviorGrapplingHook>();
-            sword.HasHeart = false;
+            var grapple = Origin.GetBehavior<BehaviorGrapplingHook>();
+            grapple.HasHeart = false;
         }
     }
 }

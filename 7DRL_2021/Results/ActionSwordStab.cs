@@ -16,6 +16,7 @@ namespace _7DRL_2021.Results
         Vector2 Direction;
 
         List<ICurio> AlreadyHit = new List<ICurio>();
+        public List<IModifier> Modifiers = new List<IModifier>();
 
         public ActionSwordStab(ICurio origin, Vector2 direction)
         {
@@ -38,7 +39,7 @@ namespace _7DRL_2021.Results
         {
             AlreadyHit.Add(target);
             var actions = new List<ActionWrapper>();
-            actions.Add(new ActionStabHit(Origin, target).InSlot(ActionSlot.Active));
+            actions.Add(new ActionStabHit(Origin, target, this).InSlot(ActionSlot.Active));
             actions.Apply(target);
         }
 

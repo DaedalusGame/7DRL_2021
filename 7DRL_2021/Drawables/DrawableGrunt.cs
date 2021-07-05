@@ -75,26 +75,14 @@ namespace _7DRL_2021.Drawables
                 scene.DrawSpriteExt(SpriteWeapon, 0, weaponPos - SpriteWeapon.Middle, SpriteWeapon.Middle, angleBody + weaponAngle, new Vector2(weaponScale), SpriteEffects.None, Color.White, 0);
                 if(!mace.Upswing.Done)
                 {
-                    DrawMace(scene, weaponPos, Util.AngleToVector(mace.UpswingAngle) * (float)LerpHelper.QuadraticOut(0, 12, mace.MaceReturn.Slide), 2);   
+                    mace.DrawMace(scene, weaponPos, Util.AngleToVector(mace.UpswingAngle) * (float)LerpHelper.QuadraticOut(0, 12, mace.MaceReturn.Slide), 2);   
                 }
                 if(!mace.MaceReturn.Done)
                 {
                     var maceOffset = mace.MacePosition - weaponPos;
-                    DrawMace(scene, weaponPos, Vector2.Lerp(maceOffset, Vector2.Zero, (float)LerpHelper.QuadraticOut(0,1,mace.MaceReturn.Slide)), 8);
+                    mace.DrawMace(scene, weaponPos, Vector2.Lerp(maceOffset, Vector2.Zero, (float)LerpHelper.QuadraticOut(0,1,mace.MaceReturn.Slide)), 8);
                 }
             }
-        }
-
-        private void DrawMace(SceneGame scene, Vector2 pos, Vector2 offset, int chains)
-        {
-            var mace = SpriteLoader.Instance.AddSprite("content/mace");
-            var chain = SpriteLoader.Instance.AddSprite("content/mace_chain");
-
-            for (int i = 0; i < chains; i++)
-            {
-                scene.DrawSpriteExt(chain, 0, pos + offset * ((float)i / chains) - chain.Middle, chain.Middle, 0, new Vector2(1), SpriteEffects.None, Color.White, 0);
-            }
-            scene.DrawSpriteExt(mace, 0, pos + offset - mace.Middle, mace.Middle, 0, new Vector2(1), SpriteEffects.None, Color.White, 0);
         }
 
         public override void DrawIcon(ICurio curio, SceneGame scene, Vector2 pos)

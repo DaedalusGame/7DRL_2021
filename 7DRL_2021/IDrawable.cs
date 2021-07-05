@@ -23,6 +23,11 @@ namespace _7DRL_2021
         void DrawIcon(SceneGame scene, Vector2 pos);
     }
 
+    interface IDrawableContainer
+    {
+        IEnumerable<IDrawable> GetDrawables();
+    }
+
     interface IDrawableCurio : IDrawable
     {
         ICurio DrawCurio

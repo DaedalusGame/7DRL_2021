@@ -1,5 +1,6 @@
 ﻿using _7DRL_2021.Results;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace _7DRL_2021.Behaviors
         public Slider MaceReturn = new Slider(1, 1);
         public Vector2 MacePosition;
         public float UpswingAngle;
+        public float MaxDistance;
 
         static SoundReference SoundSwish = SoundLoader.AddSound("content/sound/swish.wav");
 
@@ -22,9 +24,10 @@ namespace _7DRL_2021.Behaviors
         {
         }
 
-        public BehaviorMace(ICurio curio)
+        public BehaviorMace(ICurio curio, float maxDistance)
         {
             Curio = curio;
+            MaxDistance = maxDistance;
         }
 
         public void Mace(Vector2 target, float time)
@@ -37,7 +40,7 @@ namespace _7DRL_2021.Behaviors
         {
             var delta = target.GetVisualTarget() - Curio.GetVisualTarget();
             var distance = delta.Length();
-            return distance < 48f;
+            return distance < MaxDistance;
         }
 
         public override void Apply()
@@ -48,7 +51,7 @@ namespace _7DRL_2021.Behaviors
         public override void Clone(ICurioMapper mapper)
         {
             var curio = mapper.Map(Curio);
-            Apply(new BehaviorMace(curio), Curio);
+            Apply(new BehaviorMace(curio, MaxDistance), Curio);
         }
 
         public void Tick(SceneGame scene)
@@ -64,12 +67,54 @@ namespace _7DRL_2021.Behaviors
                     SoundSwish.Play(1, Upswing.Slide - 0.5f, 0);
                 }
             }
-            else
-                Upswing.Time = Upswing.EndTime;
+            //else
+            //    Upswing.Time = Upswing.EndTime;
             if (!MaceReturn.Done)
             {
                 MaceReturn += scene.TimeMod;
             }
+        }
+
+        public virtual void DrawMace(SceneGame scene, Vector2 pos, Vector2 offset, int chains)
+        {
+            var mace = SpriteLoader.Instance.AddSprite("content/mace");
+            var chain = SpriteLoader.Instance.AddSprite("content/mace_chain");
+
+            for (int i = 0; i < chains; i++)
+            {
+                scene.DrawSpriteExt(chain, 0, pos + offset * ((float)i / chains) - chain.Middle, chain.Middle, 0, new Vector2(1), SpriteEffects.None, Color.White, 0);
+            }
+            scene.DrawSpriteExt(mace, 0, pos + offset - mace.Middle, mace.Middle, 0, new Vector2(1), SpriteEffects.None, Color.White, 0);
+        }
+    }
+
+    class BehaviorMaceGore : BehaviorMace
+    {
+        public BehaviorMaceGore() : base()
+        {
+        }
+
+        public BehaviorMaceGore(ICurio curio, float maxDistance) : base(curio, maxDistance)
+        {
+        }      
+
+        public override void Clone(ICurioMapper mapper)
+        {
+            var curio = mapper.Map(Curio);
+            Apply(new BehaviorMaceGore(curio, MaxDistance), Curio);
+        }
+
+        public override void DrawMace(SceneGame scene, Vector2 pos, Vector2 offset, int chains)
+        {
+            var mace = SpriteLoader.Instance.AddSprite("content/mace_gore");
+            var chain = SpriteLoader.Instance.AddSprite("content/mace_chain");
+            var angle = Util.VectorToAngle(offset);
+
+            for (int i = 0; i < chains; i++)
+            {
+                scene.DrawSpriteExt(chain, 0, pos + offset * ((float)i / chains) - chain.Middle, chain.Middle, 0, new Vector2(1), SpriteEffects.None, Color.White, 0);
+            }
+            scene.DrawSpriteExt(mace, 0, pos + offset - mace.Middle, mace.Middle, angle, new Vector2(1), SpriteEffects.None, Color.White, 0);
         }
     }
 }

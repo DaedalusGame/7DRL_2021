@@ -45,4 +45,11 @@ namespace _7DRL_2021.Results
     interface IActionPaired : IActionHasOrigin, IActionHasTarget
     {
     }
+
+    interface IActionContainer
+    {
+        IEnumerable<IAction> Actions { get; }
+
+        void Add(IAction action);
+    }
 }

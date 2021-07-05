@@ -15,7 +15,7 @@ namespace _7DRL_2021.Results
         private Slider Frame;
         public float Slide => Frame.Slide;
 
-        public ActionTurn(ICurio origin, float turnAngle, int time)
+        public ActionTurn(ICurio origin, float turnAngle, float time)
         {
             Origin = origin;
             TurnAngle = turnAngle;

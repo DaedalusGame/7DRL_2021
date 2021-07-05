@@ -14,11 +14,13 @@ namespace _7DRL_2021.Behaviors
         {
             public Slider Frame;
             public Func<float, ColorMatrix> FlashFunction;
+            public bool Timeless;
 
-            public FlashEffect(Func<float, ColorMatrix> flashFunction, int time)
+            public FlashEffect(Func<float, ColorMatrix> flashFunction, float time, bool timeless)
             {
                 FlashFunction = flashFunction;
                 Frame = new Slider(time);
+                Timeless = timeless;
             }
         }
 
@@ -36,26 +38,26 @@ namespace _7DRL_2021.Behaviors
             }
         }
 
-        public void AddFlash(Func<float, ColorMatrix> flashFunction, int time)
+        public void AddFlash(Func<float, ColorMatrix> flashFunction, float time, bool timeless = true)
         {
-            Effects.Add(new FlashEffect(flashFunction, time));
+            Effects.Add(new FlashEffect(flashFunction, time, timeless));
         }
 
-        public void AddFlash(ColorMatrix color, int time)
+        public void AddFlash(ColorMatrix color, float time, bool timeless = true)
         {
-            AddFlash((slide) => color, time);
+            AddFlash((slide) => color, time, timeless);
         }
 
-        public void AddFlash(ColorMatrix color, LerpHelper.Delegate lerp, int time)
+        public void AddFlash(ColorMatrix color, LerpHelper.Delegate lerp, float time, bool timeless = true)
         {
-            AddFlash((slide) => ColorMatrix.Lerp(color, ColorMatrix.Identity, (float)lerp(0, 1, slide)), time);
+            AddFlash((slide) => ColorMatrix.Lerp(color, ColorMatrix.Identity, (float)lerp(0, 1, slide)), time, timeless);
         }
 
-        public void Update()
+        public void Update(float timeMod)
         {
             foreach (var effect in Effects)
             {
-                effect.Frame += 1;
+                effect.Frame += effect.Timeless ? 1 : timeMod;
             }
             Effects.RemoveAll(effect => effect.Frame.Done);
         }
@@ -69,11 +71,13 @@ namespace _7DRL_2021.Behaviors
         {
             public Slider Frame;
             public Func<float, Vector2> ShakeFunction;
+            public bool Timeless;
 
-            public ShakeEffect(Func<float, Vector2> shakeFunction, int time)
+            public ShakeEffect(Func<float, Vector2> shakeFunction, int time, bool timeless)
             {
                 ShakeFunction = shakeFunction;
                 Frame = new Slider(time);
+                Timeless = timeless;
             }
         }
 
@@ -91,31 +95,31 @@ namespace _7DRL_2021.Behaviors
             }
         }
 
-        public void AddShake(Func<float, Vector2> shakeFunction, int time)
+        public void AddShake(Func<float, Vector2> shakeFunction, int time, bool timeless = true)
         {
-            Effects.Add(new ShakeEffect(shakeFunction, time));
+            Effects.Add(new ShakeEffect(shakeFunction, time, timeless));
         }
 
-        public void AddShake(Vector2 offset, int time)
+        public void AddShake(Vector2 offset, int time, bool timeless = true)
         {
-            AddShake((slide) => offset, time);
+            AddShake((slide) => offset, time, timeless);
         }
 
-        public void AddShake(Vector2 offset, LerpHelper.Delegate lerp, int time)
+        public void AddShake(Vector2 offset, LerpHelper.Delegate lerp, int time, bool timeless = true)
         {
-            AddShake((slide) => Vector2.Lerp(offset, Vector2.Zero, (float)lerp(0, 1, slide)), time);
+            AddShake((slide) => Vector2.Lerp(offset, Vector2.Zero, (float)lerp(0, 1, slide)), time, timeless);
         }
 
-        public void AddShakeRandom(float distance, LerpHelper.Delegate lerp, int time)
+        public void AddShakeRandom(float distance, LerpHelper.Delegate lerp, int time, bool timeless = true)
         {
-            AddShake((slide) => Vector2.Lerp(distance * Util.AngleToVector(Random.NextAngle()), Vector2.Zero, (float)lerp(0, 1, slide)), time);
+            AddShake((slide) => Vector2.Lerp(distance * Util.AngleToVector(Random.NextAngle()), Vector2.Zero, (float)lerp(0, 1, slide)), time, timeless);
         }
 
-        public void Update()
+        public void Update(float timeMod)
         {
             foreach (var effect in Effects)
             {
-                effect.Frame += 1;
+                effect.Frame += effect.Timeless ? 1 : timeMod;
             }
             Effects.RemoveAll(effect => effect.Frame.Done);
         }
@@ -188,8 +192,8 @@ namespace _7DRL_2021.Behaviors
 
         public void Tick(SceneGame scene)
         {
-            FlashHelper.Update();
-            ShakeHelper.Update();
+            FlashHelper.Update(scene.TimeModCurrent);
+            ShakeHelper.Update(scene.TimeModCurrent);
         }
 
         public ColorMatrix GetColor()

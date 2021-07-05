@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021.Results
 {
-    class ActionMaceAttack : IActionHasOrigin, ITickable, ISlider
+    class ActionMaceAttack : IActionHasOrigin, ITickable, IDrawable
     {
         static Random Random = new Random();
 
@@ -19,12 +19,15 @@ namespace _7DRL_2021.Results
         private Point Offset;
         private Slider Frame;
         private float TimeUpswing;
-        public float Slide => Frame.Slide;
-        public AoEVisual VisualAoE;
-        public Strike VisualStrike;
+        public bool Swinging;
+
+        public double DrawOrder => 0;
 
         public static SoundReference SoundSwish = SoundLoader.AddSound("content/sound/swish.wav");
         public static SoundReference SoundImpact = SoundLoader.AddSound("content/sound/wallkick.wav");
+
+        public Color ColorStart => Color.IndianRed;
+        public Color ColorEnd => Color.Orange;
 
         public ActionMaceAttack(ICurio origin, ICurio target, float timeUpswing, float time)
         {
@@ -46,11 +49,6 @@ namespace _7DRL_2021.Results
             var mace = Origin.GetBehavior<BehaviorMace>();
             var target = GetTarget();
             mace.Upswing = new Slider(TimeUpswing);
-            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget())
-            {
-                ShouldDestroy = () => Done || Origin.IsDeadOrDestroyed(),
-            };
-            VisualAoE.Set(target);
             Retarget();
         }
 
@@ -70,7 +68,6 @@ namespace _7DRL_2021.Results
             if(origin != null && target != null && mace != null && mace.IsInArea(Target) && map.CanSee(Origin.GetVisualTarget(), Target.GetVisualTarget()))
             {
                 Offset = new Point(target.X - origin.X, target.Y - origin.Y);
-                VisualAoE.Set(target);
             }
         }
 
@@ -79,15 +76,6 @@ namespace _7DRL_2021.Results
             var actions = new List<ActionWrapper>();
             actions.Add(new ActionEnemyHit(Origin, target, SoundLoader.AddSound("content/sound/hit.wav")).InSlot(ActionSlot.Active));
             actions.Apply(target);
-            /*var world = Origin.GetWorld();
-            target.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 20);
-            target.GetShakeHelper()?.AddShakeRandom(3, LerpHelper.QuadraticOut, 30);
-            //new TimeFade(world, 0, LerpHelper.QuadraticIn, 50);
-            var alive = target.GetBehavior<BehaviorAlive>();
-            if (alive != null)
-            {
-                alive.TakeDamage(1);
-            }*/
         }
 
         private void DamageArea()
@@ -122,14 +110,10 @@ namespace _7DRL_2021.Results
             var mace = Origin.GetBehavior<BehaviorMace>();
             if (mace.Upswing.Done)
             {
-                if(VisualStrike == null)
+                if(!Swinging)
                 {
-                    var neighbor = tile.GetNeighborOrNull(Offset.X, Offset.Y);
-                    if (neighbor != null)
-                    {
-                        VisualStrike = new Strike(scene, Origin.GetVisualTarget(), neighbor.VisualTarget, this);
-                        SoundSwish.Play(1.0f, Random.NextFloat(-1.0f, 0f), 0);
-                    }
+                    SoundSwish.Play(1.0f, Random.NextFloat(-1.0f, 0f), 0);
+                    Swinging = true;
                 }
                 bool shouldAttack = !Frame.Done;
                 Frame += scene.TimeMod;
@@ -145,6 +129,42 @@ namespace _7DRL_2021.Results
             {
                 Retarget();
             }
+        }
+
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
+        {
+            return scene.Map == Origin.GetMap();
+        }
+
+        public IEnumerable<DrawPass> GetDrawPasses()
+        {
+            yield return DrawPass.EffectAdditive;
+            yield return DrawPass.EffectLowAdditive;
+        }
+
+        public void Draw(SceneGame scene, DrawPass pass)
+        {
+            if (Origin.IsDeadOrDestroyed())
+                return;
+            var tile = Origin.GetMainTile();
+            var target = GetTarget();
+            var mace = Origin.GetBehavior<BehaviorMace>();
+            if (pass == DrawPass.EffectLowAdditive)
+            {
+                SkillUtil.DrawArea(scene, new[] { target }, ColorStart, ColorEnd, mace.Upswing.Slide);
+                SkillUtil.DrawImpact(scene, target, ColorStart, ColorEnd, mace.Upswing.Slide);
+            }
+            if (pass == DrawPass.EffectAdditive)
+            {
+                SkillUtil.DrawImpactLine(scene, AoEVisual.GetStraight(Origin.GetVisualTarget(), target.GetVisualTarget()), ColorStart, ColorEnd, mace.Upswing.Slide);
+                if(mace.Upswing.Done && !Frame.Done)
+                    SkillUtil.DrawStrike(scene, Origin.GetVisualTarget(), target.GetVisualTarget(), Frame.Slide, Color.White);
+            }
+        }
+
+        public void DrawIcon(SceneGame scene, Vector2 pos)
+        {
+            throw new NotImplementedException();
         }
     }
 }

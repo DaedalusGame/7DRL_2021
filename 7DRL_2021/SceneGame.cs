@@ -137,6 +137,7 @@ namespace _7DRL_2021
         public Wait Cutscene = Wait.NoWait;
         public float TimeModStandard;
         public float TimeMod => (WaitForPlayer || WaitForCutscene) ? 0 : TimeModStandard;
+        public float TimeModCurrent;
         public bool WaitForPlayer => PlayerCurio.GetActionHolder(ActionSlot.Active)?.Done ?? false;
         public bool WaitForCutscene => !Cutscene.Done;
 
@@ -215,6 +216,9 @@ namespace _7DRL_2021
                 weak.Remove(Template.Grunt);
             if (Level % 2 == 0)
                 weak.Add(Template.Rat);
+
+            weak.Add(Template.Executioner);
+            weak.Add(Template.Lich);
 
             var toSpawn = new List<Template>();
             if (weak.Any())
@@ -304,6 +308,7 @@ namespace _7DRL_2021
             var orientation = PlayerCurio.GetBehavior<BehaviorOrientable>();
             var start = tile.GetBehavior<BehaviorLevelStart>();
             var player = PlayerCurio.GetBehavior<BehaviorPlayer>();
+            player.LevelTransition = true;
             orientation.OrientTo(Util.PointToAngle(start.Direction) + MathHelper.Pi);
             var pos = tile.VisualPosition;
             CameraCurio.TeleportVisual(GetOutsidePosition(pos, start.Direction, 150));
@@ -319,7 +324,10 @@ namespace _7DRL_2021
             SoundIngress.Play(1f, 0f, 0f);
             player.Fade.Set(1, LerpHelper.QuarticOut, 70);
             PlayerCurio.MoveVisual(tile.VisualPosition, LerpHelper.QuarticOut, new SliderScene(this, 100));
-            yield return new WaitTime(100);
+            yield return new WaitTime(70);
+            player.LevelTransition = false;
+            yield return new WaitTime(30);
+           
         }
 
         public IEnumerable<Wait> RoutineEndLevel()
@@ -366,6 +374,7 @@ namespace _7DRL_2021
             CameraCurio.MoveVisual(GetOutsidePosition(pos, end.Direction, 150), LerpHelper.QuadraticIn, new SliderScene(this, 100));
             SoundEgress.Play(1f, 0f, 0f);
             CurrentTheme.Volume.Set(0, LerpHelper.QuadraticIn, 90);
+            player.LevelTransition = true;
             yield return new WaitTime(100);
             CurrentTheme.Stop(false);
             PlayerCurio.MoveTo(null);
@@ -483,6 +492,8 @@ namespace _7DRL_2021
             {
                 TimeModStandard = 1;
             }
+
+            TimeModCurrent = TimeMod;
 
             CurrentTheme?.Update();
             CurrentGameOver?.Update();

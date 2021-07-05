@@ -128,7 +128,7 @@ namespace _7DRL_2021.Behaviors
             SparkFrame += Curio.GetWorld().TimeMod;
             if (SparkFrame.Done)
             {
-                SparkFrame.Time = 0;
+                SparkFrame.Reset();
 
                 if (Position == 0)
                     return;

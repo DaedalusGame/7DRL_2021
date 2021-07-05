@@ -52,7 +52,8 @@ namespace _7DRL_2021.Behaviors
                     var angleDelta = MathHelper.WrapAngle(angleTarget - angleCurrent);
                     var attack = new List<ActionWrapper>()
                     {
-                        new ActionMaceAttack(Curio, scene.PlayerCurio, 20f, 5f).InSlot(ActionSlot.Active),
+                        //new ActionMaceAttack(Curio, scene.PlayerCurio, 20f, 5f).InSlot(ActionSlot.Active),
+                        new ActionMaceGoreAttack(Curio, scene.PlayerCurio, 40f, 20f, 5f).InSlot(ActionSlot.Active),
                         new ActionTurn(Curio, angleDelta, 3).InSlot(ActionSlot.Active),
                     };
                     attack.Apply(Curio);

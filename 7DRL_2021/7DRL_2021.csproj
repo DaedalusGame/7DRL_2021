@@ -71,10 +71,15 @@
     <Compile Include="Behaviors\BehaviorFollowCamera.cs" />
     <Compile Include="Behaviors\BehaviorBulwark.cs" />
     <Compile Include="Behaviors\BehaviorDagger.cs" />
+    <Compile Include="Behaviors\BehaviorGib.cs" />
     <Compile Include="Behaviors\BehaviorGrappleHeart.cs" />
     <Compile Include="Behaviors\BehaviorGrappleWall.cs" />
     <Compile Include="Behaviors\BehaviorGrapplingHook.cs" />
+    <Compile Include="Behaviors\BehaviorGruntGeneric.cs" />
     <Compile Include="Behaviors\BehaviorLich.cs" />
+    <Compile Include="Behaviors\BehaviorProjectile.cs" />
+    <Compile Include="Behaviors\BehaviorProjectileBloodThorn.cs" />
+    <Compile Include="Behaviors\BehaviorProjectileEnergyKnife.cs" />
     <Compile Include="Behaviors\BehaviorRat.cs" />
     <Compile Include="Behaviors\BehaviorGrunt.cs" />
     <Compile Include="Behaviors\BehaviorHeartless.cs" />
@@ -126,7 +131,9 @@
     <Compile Include="DijkstraMap.cs" />
     <Compile Include="Drawables\Drawable.cs" />
     <Compile Include="Drawables\DrawableChasm.cs" />
+    <Compile Include="Drawables\DrawableEmpty.cs" />
     <Compile Include="Drawables\DrawableFloor.cs" />
+    <Compile Include="Drawables\DrawableProjectile.cs" />
     <Compile Include="Drawables\DrawableRat.cs" />
     <Compile Include="Drawables\DrawableGrunt.cs" />
     <Compile Include="Drawables\DrawableLich.cs" />
@@ -144,6 +151,7 @@
     <Compile Include="ICurio.cs" />
     <Compile Include="ICurioMapper.cs" />
     <Compile Include="IDrawable.cs" />
+    <Compile Include="IFrameCollection.cs" />
     <Compile Include="InputTwinState.cs" />
     <Compile Include="InputUtil.cs" />
     <Compile Include="IPreDrawable.cs" />
@@ -171,7 +179,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryEntry.cs" />
+    <Compile Include="Results\ActionAlignGrid.cs" />
+    <Compile Include="Results\ActionBloodThorn.cs" />
+    <Compile Include="Results\ActionButterflyKnives.cs" />
     <Compile Include="Results\ActionClearStab.cs" />
+    <Compile Include="Results\ActionConsumeBlood.cs" />
     <Compile Include="Results\ActionConsumeHeart.cs" />
     <Compile Include="Results\ActionDecelerate.cs" />
     <Compile Include="Results\ActionAccelerate.cs" />
@@ -181,16 +193,20 @@
     <Compile Include="Results\ActionDestroyArmor.cs" />
     <Compile Include="Results\ActionDestructionWave.cs" />
     <Compile Include="Results\ActionEnemyHit.cs" />
+    <Compile Include="Results\ActionFireStab.cs" />
+    <Compile Include="Results\ActionFireSlash.cs" />
     <Compile Include="Results\ActionGib.cs" />
     <Compile Include="Results\ActionGrappleHeart.cs" />
     <Compile Include="Results\ActionGrappleNothing.cs" />
     <Compile Include="Results\ActionGrappleWall.cs" />
     <Compile Include="Results\ActionGripCancel.cs" />
     <Compile Include="Results\ActionGripDash.cs" />
+    <Compile Include="Results\ActionHeartBurn.cs" />
     <Compile Include="Results\ActionInputDirection.cs" />
     <Compile Include="Results\ActionFall.cs" />
     <Compile Include="Results\ActionKeepMoving.cs" />
     <Compile Include="Results\ActionLichSlash.cs" />
+    <Compile Include="Results\ActionMaceGoreAttack.cs" />
     <Compile Include="Results\ActionMaceAttack.cs" />
     <Compile Include="Results\ActionChangeMomentum.cs" />
     <Compile Include="Results\ActionDaggerAttack.cs" />
@@ -203,6 +219,7 @@
     <Compile Include="Results\ActionRipHeartSword.cs" />
     <Compile Include="Results\ActionSetMomentum.cs" />
     <Compile Include="Results\ActionHitVisual.cs" />
+    <Compile Include="Results\ActionEnergyKnifeHit.cs" />
     <Compile Include="Results\ActionStabHit.cs" />
     <Compile Include="Results\ActionSlashHit.cs" />
     <Compile Include="Results\ActionStabStuck.cs" />
@@ -215,7 +232,9 @@
     <Compile Include="Results\ActionWaitForAction.cs" />
     <Compile Include="Results\IAction.cs" />
     <Compile Include="Results\IGrappleAction.cs" />
+    <Compile Include="Results\IModifier.cs" />
     <Compile Include="Results\IWeaponHit.cs" />
+    <Compile Include="Results\ModifierBloodfire.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneGame.cs" />
     <Compile Include="SceneLoading.cs" />
@@ -270,6 +289,15 @@
     <Content Include="content\card_bubble.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="content\card_butterfly.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\card_butterfly_knife.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\card_butterfly_moon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="content\card_crystal.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -294,13 +322,28 @@
     <Content Include="content\card_pentagram.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="content\card_plague.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\card_poison_blade.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\card_prion.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="content\card_rot.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\card_sacrifice.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="content\card_thorn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="content\card_touch.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\card_virus.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\card_void.png">
@@ -310,6 +353,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\effect_area.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\effect_area_hit.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\effect_area_target_strip4.png">
@@ -336,6 +382,12 @@
     <Content Include="content\effect_cosmic_strip10.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="content\effect_cutter_strip4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\effect_explosion_strip6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="content\effect_fall.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -358,6 +410,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\energy_dagger.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\executioner_body.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\executioner_body_armor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\executioner_weapon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\font\font_0_0.png">
@@ -601,6 +662,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\mace_chain.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\mace_gore.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\mouse_left.png">

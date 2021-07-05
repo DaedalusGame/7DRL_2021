@@ -1,4 +1,5 @@
 ﻿using _7DRL_2021.Results;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,15 @@ namespace _7DRL_2021.Behaviors
         Passive,
     }
 
-    class BehaviorActionHolder : Behavior, ITickable
+    class BehaviorActionHolder : Behavior, ITickable, IDrawableContainer
     {
         public Curio Curio;
         public ActionSlot Type;
         public List<IAction> CurrentActions = new List<IAction>();
 
+        public IEnumerable<IDrawable> DrawableActions => CurrentActions.OfType<IDrawable>();
         public bool Done => CurrentActions.All(x => x.Done);
-        
+
         public BehaviorActionHolder()
         {
         }
@@ -64,7 +66,16 @@ namespace _7DRL_2021.Behaviors
         public void Tick(SceneGame scene)
         {
             foreach (var action in CurrentActions.OfType<ITickable>().ToList())
+            {
+                if (Removed)
+                    break;
                 action.Tick(scene);
+            }
+        }
+
+        public IEnumerable<IDrawable> GetDrawables()
+        {
+            return DrawableActions;
         }
     }
 }

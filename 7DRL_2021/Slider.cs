@@ -10,14 +10,19 @@ namespace _7DRL_2021
 {
     class Slider : ISlider
     {
-        public float Time;
+        public float Time
+        {
+            get => MathHelper.Clamp(CurrentTime, 0, EndTime);
+            set => CurrentTime = MathHelper.Clamp(value, 0, EndTime);
+        }
+        public float CurrentTime;
         public float EndTime;
         public float Slide => Time / EndTime;
         public bool Done => Time >= EndTime;
 
         public Slider(float time, float endTime)
         {
-            Time = time;
+            CurrentTime = time;
             EndTime = endTime;
         }
 
@@ -33,15 +38,20 @@ namespace _7DRL_2021
             return MathHelper.Clamp(time / delta, 0, 1);
         }
 
+        public void Reset()
+        {
+            CurrentTime -= EndTime;
+        }
+
         public static Slider operator +(Slider slider, float i)
         {
-            slider.Time = MathHelper.Clamp(slider.Time + i, 0, slider.EndTime);
+            slider.CurrentTime += i;
             return slider;
         }
 
         public static Slider operator -(Slider slider, float i)
         {
-            slider.Time = MathHelper.Clamp(slider.Time - i, 0, slider.EndTime);
+            slider.CurrentTime -= i;
             return slider;
         }
 

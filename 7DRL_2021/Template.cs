@@ -71,6 +71,35 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
             return template;
         });
+        public static Template EnergyKnife = new Template("energy_knife", () =>
+        {
+            Curio template = new Curio.Templated();
+            Behavior.Apply(new BehaviorIdentity(template, "energy_knife"));
+            Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
+            Behavior.Apply(new BehaviorOrientable(template, 0));
+            Behavior.Apply(new BehaviorDrawable(template, Drawable.EnergyKnife, 10));
+            Behavior.Apply(new BehaviorProjectile(template, LerpHelper.Linear));
+            Behavior.Apply(new BehaviorProjectileEnergyKnife(template));
+            return template;
+        });
+        public static Template BloodThorn = new Template("blood_thorn", () =>
+        {
+            Curio template = new Curio.Templated();
+            Behavior.Apply(new BehaviorIdentity(template, "blood_thorn"));
+            Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
+            Behavior.Apply(new BehaviorOrientable(template, 0));
+            Behavior.Apply(new BehaviorProjectile(template, LerpHelper.Linear));
+            Behavior.Apply(new BehaviorProjectileBloodThorn(template));
+            return template;
+        });
+        public static Template BloodThornTrail = new Template("blood_thorn_trail", () =>
+        {
+            Curio template = new Curio.Templated();
+            Behavior.Apply(new BehaviorIdentity(template, "blood_thorn_trail"));
+            Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
+            Behavior.Apply(new BehaviorTrailBloodThorn(template));
+            return template;
+        });
 
         public static Template Player = new Template("player", () =>
         {
@@ -86,7 +115,11 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorGrapplingHook(template, -3));
             Behavior.Apply(new BehaviorHitboxPlayer(template));
             Behavior.Apply(new BehaviorShadow(template));
-            //Behavior.Apply(new BehaviorDestructionWave(template)); //DEBUG
+            //Behavior.Apply(new BehaviorSkillDestructionWave(template)); //DEBUG
+            //Behavior.Apply(new BehaviorSkillButterflyKnives(template)); //DEBUG
+            //Behavior.Apply(new BehaviorSkillBloodThorn(template)); //DEBUG
+            //Behavior.Apply(new BehaviorSkillVampireBlade(template)); //DEBUG
+            Behavior.Apply(new BehaviorSkillBloodfireBlade(template)); //DEBUG
             return template;
         });
         public static Template Grunt = new Template("grunt", () =>
@@ -101,7 +134,8 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorPathfinder(template));
             Behavior.Apply(new BehaviorLastSeen(template));
             Behavior.Apply(new BehaviorDagger(template));
-            Behavior.Apply(new BehaviorGrunt(template));
+            Behavior.Apply(new BehaviorGruntGeneric(template, 10, 5));
+            Behavior.Apply(new BehaviorKnifeAttack(template, 10, 3f, 5f, 2.5f));
             Behavior.Apply(new BehaviorShadow(template));
             Behavior.Apply(new BehaviorHitboxNormal(template));
             Behavior.Apply(new BehaviorDecay(template, 50, 200, 30, 32, SoundLoader.AddSound("content/sound/splat.wav")));
@@ -119,8 +153,9 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorActionHolder(template, ActionSlot.Active));
             Behavior.Apply(new BehaviorPathfinder(template));
             Behavior.Apply(new BehaviorLastSeen(template));
-            Behavior.Apply(new BehaviorMace(template));
-            Behavior.Apply(new BehaviorBulwark(template));
+            Behavior.Apply(new BehaviorMace(template, 48));
+            Behavior.Apply(new BehaviorGruntGeneric(template, 8, 4));
+            Behavior.Apply(new BehaviorMaceAttack(template, 10, 3f, 20f, 5f));
             Behavior.Apply(new BehaviorShadow(template));
             Behavior.Apply(new BehaviorHitboxNormal(template));
             Behavior.Apply(new BehaviorDecay(template, 50, 300, 30, 32, SoundLoader.AddSound("content/sound/splat.wav")));
@@ -138,11 +173,32 @@ namespace _7DRL_2021
             Behavior.Apply(new BehaviorActionHolder(template, ActionSlot.Active));
             Behavior.Apply(new BehaviorPathfinder(template));
             Behavior.Apply(new BehaviorLastSeen(template));
-            Behavior.Apply(new BehaviorMace(template));
-            Behavior.Apply(new BehaviorBulwark(template));
+            Behavior.Apply(new BehaviorMace(template, 48));
+            Behavior.Apply(new BehaviorGruntGeneric(template, 8, 4));
+            Behavior.Apply(new BehaviorMaceAttack(template, 10, 3f, 20f, 5f));
             Behavior.Apply(new BehaviorShadow(template));
             Behavior.Apply(new BehaviorHitboxNormal(template));
             Behavior.Apply(new BehaviorDecay(template, 50, 400, 30, 32, SoundLoader.AddSound("content/sound/splat.wav")));
+            Behavior.Apply(new BehaviorGrappleHeart(template));
+            return template;
+        });
+        public static Template Executioner = new Template("executioner", () =>
+        {
+            Curio template = new Curio.Templated();
+            Behavior.Apply(new BehaviorIdentity(template, "executioner"));
+            Behavior.Apply(new BehaviorMovable(template, MaskSingle.Copy()));
+            Behavior.Apply(new BehaviorOrientable(template, 0));
+            Behavior.Apply(new BehaviorAlive(template, 4, 0));
+            Behavior.Apply(new BehaviorDrawable(template, Drawable.Executioner, 10));
+            Behavior.Apply(new BehaviorActionHolder(template, ActionSlot.Active));
+            Behavior.Apply(new BehaviorPathfinder(template));
+            Behavior.Apply(new BehaviorLastSeen(template));
+            Behavior.Apply(new BehaviorMaceGore(template, 48 * 3));
+            Behavior.Apply(new BehaviorGruntGeneric(template, 8, 4));
+            Behavior.Apply(new BehaviorMaceGoreAttack(template, 10, 3f, 40f, 20f, 5f));
+            Behavior.Apply(new BehaviorShadow(template));
+            Behavior.Apply(new BehaviorHitboxNormal(template));
+            Behavior.Apply(new BehaviorDecay(template, 50, 300, 30, 32, SoundLoader.AddSound("content/sound/splat.wav")));
             Behavior.Apply(new BehaviorGrappleHeart(template));
             return template;
         });

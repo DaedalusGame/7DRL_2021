@@ -34,6 +34,8 @@ namespace _7DRL_2021.Behaviors
         public float Footstep;
         public int FootstepOffset = +1;
         public LerpFloat ForwardBack = new LerpFloat(0);
+        public bool LevelTransition = false;
+        public float HairFrame;
 
         static SoundReference SoundDeath = SoundLoader.AddSound("content/sound/kill.wav");
 
@@ -71,12 +73,15 @@ namespace _7DRL_2021.Behaviors
 
             UpdateFootstep(scene);
 
-            if (ForwardBack.End > 0 && Momentum.Amount <= 0)
+            bool faceForward = (Momentum.Amount > 0 || LevelTransition);
+            if (ForwardBack.End > 0 && !faceForward)
                 ForwardBack.Set(0, LerpHelper.Quadratic, 30);
-            if (ForwardBack.End < 1 && Momentum.Amount > 0)
+            if (ForwardBack.End < 1 && faceForward)
                 ForwardBack.Set(1, LerpHelper.Quadratic, 30);
 
             ForwardBack.Update();
+
+            HairFrame += LevelTransition ? 1 : scene.TimeMod;
 
             if (Curio.IsDead() && !scene.IsGameOver)
             {
@@ -112,10 +117,10 @@ namespace _7DRL_2021.Behaviors
                 var lateral = Util.AngleToVector(angle + MathHelper.PiOver2);
                 var particle = new ExplosionParticle(scene, SpriteLoader.Instance.AddSprite("content/effect_moon"), Curio.GetVisualTarget() + FootstepOffset * lateral * 6 + offset * -12, 20)
                 {
+                    Angle = angle + MathHelper.Pi,
                     Color = Color.White,
                     DrawPass = DrawPass.EffectLowAdditive,
                 };
-                particle.Angle = angle + MathHelper.Pi;
                 //new ScreenShakeRandom(scene, 0.5f, 5, LerpHelper.QuadraticIn);
                 FootstepOffset *= -1;
             }

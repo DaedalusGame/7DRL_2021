@@ -45,6 +45,8 @@ namespace _7DRL_2021
         public static Card MaxHP = new CardMaxHP(2);
         public static Card DoubleHeal = new CardDoubleHeal(2);
         public static Card DestructionWave = new CardDestructionWave(2);
+        public static Card ButterflyKnives = new CardButterflyKnives(2);
+        public static Card BloodThorn = new CardBloodThorn(2);
         public static Card Nemesis = new CardNemesis(2);
         public static Card Wraith = new CardWraith(3);
     }

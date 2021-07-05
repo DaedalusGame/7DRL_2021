@@ -20,6 +20,7 @@ namespace _7DRL_2021.Results
         public float Slide => Frame.Slide;
 
         List<ICurio> AlreadyHit = new List<ICurio>();
+        public List<IModifier> Modifiers = new List<IModifier>();
 
         public static SoundReference Sound = SoundLoader.AddSound("content/sound/swish.wav");
 
@@ -60,7 +61,7 @@ namespace _7DRL_2021.Results
         {
             AlreadyHit.Add(target);
             var actions = new List<ActionWrapper>();
-            actions.Add(new ActionSlashHit(Origin, target, SlashStart, SlashEnd).InSlot(ActionSlot.Active));
+            actions.Add(new ActionSlashHit(Origin, target, this).InSlot(ActionSlot.Active));
             actions.Apply(target);
             /*Random random = new Random();
             var world = Origin.GetWorld();
@@ -81,7 +82,7 @@ namespace _7DRL_2021.Results
         private void DamageArea()
         {
             var tile = Origin.GetMainTile();
-            var areaPositions = Enumerable.Range(Math.Min(SlashStart, SlashEnd), Math.Abs(SlashEnd - SlashStart));
+            var areaPositions = Enumerable.Range(Math.Min(SlashStart, SlashEnd), Math.Abs(SlashEnd - SlashStart) + 1);
             foreach(var position in areaPositions)
             {
                 var angle = Origin.GetAngle() + position * MathHelper.PiOver4;

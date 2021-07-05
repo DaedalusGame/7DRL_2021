@@ -80,7 +80,7 @@ namespace _7DRL_2021.Cards
 
         public override void Apply(SceneGame world, Vector2 cardPos)
         {
-            Behavior.Apply(new BehaviorDestructionWave(world.PlayerCurio));
+            Behavior.Apply(new BehaviorSkillDestructionWave(world.PlayerCurio));
         }
 
         public override bool CanDestroy(SceneGame world)
@@ -95,7 +95,69 @@ namespace _7DRL_2021.Cards
 
         public override bool IsValid(SceneGame world)
         {
-            return !world.PlayerCurio.HasBehaviors<BehaviorDestructionWave>();
+            return !world.PlayerCurio.HasBehaviors<BehaviorSkillDestructionWave>();
+        }
+    }
+
+    class CardBloodThorn : Card
+    {
+        public CardBloodThorn(int deckAmount) : base("blood_thorn", deckAmount)
+        {
+            Sprite = SpriteLoader.Instance.AddSprite("content/card_thorn");
+            Name = $"Blood Thorn";
+            Description = $"Performing a slash while blade is bloody releases a wall of thorns.";
+            Value = 5000;
+        }
+
+        public override void Apply(SceneGame world, Vector2 cardPos)
+        {
+            Behavior.Apply(new BehaviorSkillBloodThorn(world.PlayerCurio));
+        }
+
+        public override bool CanDestroy(SceneGame world)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Destroy(SceneGame world, Vector2 cardPos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool IsValid(SceneGame world)
+        {
+            return !world.PlayerCurio.HasBehaviors<BehaviorSkillBloodThorn>();
+        }
+    }
+
+    class CardButterflyKnives : Card
+    {
+        public CardButterflyKnives(int deckAmount) : base("butterfly_knife", deckAmount)
+        {
+            Sprite = SpriteLoader.Instance.AddSprite("content/card_butterfly_knife");
+            Name = $"Monarch Knife";
+            Description = $"Performing a slash from forward to back releases 3 knives.";
+            Value = 5000;
+        }
+
+        public override void Apply(SceneGame world, Vector2 cardPos)
+        {
+            Behavior.Apply(new BehaviorSkillButterflyKnives(world.PlayerCurio));
+        }
+
+        public override bool CanDestroy(SceneGame world)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Destroy(SceneGame world, Vector2 cardPos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool IsValid(SceneGame world)
+        {
+            return !world.PlayerCurio.HasBehaviors<BehaviorSkillButterflyKnives>();
         }
     }
 }

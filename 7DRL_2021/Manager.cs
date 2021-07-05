@@ -167,7 +167,7 @@ namespace _7DRL_2021
 
         private static void AddToSystem(ICurio curio, Behavior behavior)
         {
-            foreach(BehaviorSystem system in BehaviorSystem.AllSystems)
+            foreach(IBehaviorSystem system in BehaviorSystem.AllSystems)
             {
                 if (system.Accepts(curio, behavior))
                     system.Add(curio, behavior);

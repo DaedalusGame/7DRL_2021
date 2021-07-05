@@ -10,16 +10,17 @@ namespace _7DRL_2021.Results
     {
         public ICurio Origin { get; set; }
         public ICurio Target { get; set; }
-        public int SlashStart, SlashEnd;
+        public int SlashStart => Slash.SlashStart;
+        public int SlashEnd => Slash.SlashEnd;
+        public ActionSwordSlash Slash;
 
         public bool Done => true;
 
-        public ActionSlashHit(ICurio origin, ICurio target, int slashStart, int slashEnd)
+        public ActionSlashHit(ICurio origin, ICurio target, ActionSwordSlash slash)
         {
             Origin = origin;
             Target = target;
-            SlashStart = slashStart;
-            SlashEnd = slashEnd;
+            Slash = slash;
         }
 
         public void Run()

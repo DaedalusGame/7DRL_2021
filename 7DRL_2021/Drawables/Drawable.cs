@@ -28,8 +28,10 @@ namespace _7DRL_2021.Drawables
         public static DrawablePlayer Player = new DrawablePlayer("player");
         public static DrawableGrunt Grunt = new DrawableGrunt("grunt", SpriteLoader.Instance.AddSprite("content/grunt_body"), SpriteLoader.Instance.AddSprite("content/grunt_weapon"));
         public static DrawableGrunt Bulwark = new DrawableGrunt("bulwark", SpriteLoader.Instance.AddSprite("content/bulwark_body"), SpriteLoader.Instance.AddSprite("content/bulwark_weapon"));
+        public static DrawableGrunt Executioner = new DrawableGrunt("executioner", SpriteLoader.Instance.AddSprite("content/executioner_body"), SpriteLoader.Instance.AddSprite("content/executioner_weapon"));
         public static DrawableLich Lich = new DrawableLich("lich");
         public static DrawableNemesis Nemesis = new DrawableNemesis("nemesis");
         public static DrawableRat Rat = new DrawableRat("rat");
+        public static DrawableProjectile EnergyKnife = new DrawableProjectile("energy_knife", SpriteLoader.Instance.AddSprite("content/energy_dagger"));
     }
 }

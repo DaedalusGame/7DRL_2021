@@ -67,12 +67,10 @@ namespace _7DRL_2021.Behaviors
         public void Draw(SceneGame scene, DrawPass pass)
         {
             var tile = Curio.GetMainTile();
-            Color colorStart = ColorStart.WithAlpha(Frame.Slide);
-            Color colorEnd = ColorStart.WithAlpha(Frame.Slide);
             if (pass == DrawPass.EffectLowAdditive)
             {
-                SkillUtil.DrawArea(scene, GetImpactArea(), colorStart, colorEnd);
-                SkillUtil.DrawImpact(scene, tile, ColorStart, ColorEnd);
+                SkillUtil.DrawArea(scene, GetImpactArea(), ColorStart, ColorEnd, Frame.Slide);
+                SkillUtil.DrawImpact(scene, tile, ColorStart, ColorEnd, Frame.Slide);
             }
             DrawArcObject(scene, pass);
         }

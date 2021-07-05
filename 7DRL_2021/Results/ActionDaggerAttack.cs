@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021.Results
 {
-    class ActionDaggerAttack : IActionHasOrigin, ITickable, ISlider
+    class ActionDaggerAttack : IActionHasOrigin, ITickable, IDrawable
     {
         public bool Done => Frame.Done;
         public ICurio Origin { get; set; }
@@ -16,9 +16,11 @@ namespace _7DRL_2021.Results
         private Point Offset;
         private Slider Frame;
         private float TimeUpswing;
-        public float Slide => Frame.Slide;
-        public AoEVisual VisualAoE;
-        public Strike VisualStrike;
+
+        public double DrawOrder => 0;
+
+        public Color ColorStart => Color.IndianRed;
+        public Color ColorEnd => Color.Orange;
 
         public ActionDaggerAttack(ICurio origin, Point offset, float timeUpswing, float time)
         {
@@ -34,11 +36,6 @@ namespace _7DRL_2021.Results
             var dagger = Origin.GetBehavior<BehaviorDagger>();
             var target = GetTarget();
             dagger.Upswing = new Slider(TimeUpswing);
-            VisualAoE = new AoEVisual(world, Origin.GetVisualTarget())
-            {
-                ShouldDestroy = () => Done || Origin.IsDeadOrDestroyed(),
-            };
-            VisualAoE.Set(target);
         }
 
         private MapTile GetTarget()
@@ -96,14 +93,6 @@ namespace _7DRL_2021.Results
             var dagger = Origin.GetBehavior<BehaviorDagger>();
             if (dagger.Upswing.Done)
             {
-                if(VisualStrike == null)
-                {
-                    var neighbor = tile.GetNeighborOrNull(Offset.X, Offset.Y);
-                    if (neighbor != null)
-                    {
-                        VisualStrike = new Strike(scene, Origin.GetVisualTarget(), neighbor.VisualTarget, this);
-                    }
-                }
                 bool shouldAttack = !Frame.Done;
                 Frame += scene.TimeMod;
                 if (Frame.Done && shouldAttack)
@@ -111,6 +100,42 @@ namespace _7DRL_2021.Results
                     DamageArea();
                 }
             }
+        }
+
+        public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)
+        {
+            return scene.Map == Origin.GetMap();
+        }
+
+        public IEnumerable<DrawPass> GetDrawPasses()
+        {
+            yield return DrawPass.EffectAdditive;
+            yield return DrawPass.EffectLowAdditive;
+        }
+
+        public void Draw(SceneGame scene, DrawPass pass)
+        {
+            if (Origin.IsDeadOrDestroyed())
+                return;
+            var tile = Origin.GetMainTile();
+            var target = GetTarget();
+            var dagger = Origin.GetBehavior<BehaviorDagger>();
+            if (pass == DrawPass.EffectLowAdditive)
+            {
+                SkillUtil.DrawArea(scene, new[] { target }, ColorStart, ColorEnd, dagger.Upswing.Slide);
+                SkillUtil.DrawImpact(scene, target, ColorStart, ColorEnd, dagger.Upswing.Slide);
+            }
+            if (pass == DrawPass.EffectAdditive)
+            {
+                SkillUtil.DrawImpactLine(scene, AoEVisual.GetStraight(Origin.GetVisualTarget(), target.GetVisualTarget()), ColorStart, ColorEnd, dagger.Upswing.Slide);
+                if(dagger.Upswing.Done && !Frame.Done)
+                    SkillUtil.DrawStrike(scene, Origin.GetVisualTarget(), target.GetVisualTarget(), Frame.Slide, Color.White);
+            }
+        }
+
+        public void DrawIcon(SceneGame scene, Vector2 pos)
+        {
+            throw new NotImplementedException();
         }
     }
 }

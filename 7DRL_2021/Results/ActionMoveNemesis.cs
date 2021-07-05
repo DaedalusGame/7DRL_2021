@@ -66,7 +66,7 @@ namespace _7DRL_2021.Results
                 int radius = 240;
                 if (Vector2.DistanceSquared(Origin.GetVisualTarget(), Target.GetVisualTarget()) < radius * radius)
                     EmitWraith();
-                ShootFrame.Time = 0;
+                ShootFrame.Reset();
             }
             if (Frame.Done)
             {
