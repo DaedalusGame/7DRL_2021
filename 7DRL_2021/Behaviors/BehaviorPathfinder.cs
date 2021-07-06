@@ -62,7 +62,7 @@ namespace _7DRL_2021.Behaviors
                 if (path != null)
                     Path = path;
                 else
-                    Cooldown.Reset();
+                    Cooldown.Time = 0;
             }
         }
 

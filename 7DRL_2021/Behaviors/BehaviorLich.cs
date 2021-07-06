@@ -55,8 +55,11 @@ namespace _7DRL_2021.Behaviors
             var orientable = Curio.GetBehavior<BehaviorOrientable>();
             var tile = Curio.GetMainTile();
 
-            SwordAngle.Update(scene.TimeMod);
-            SwordScale.Update(scene.TimeMod);
+            if (Curio.IsAlive())
+            {
+                SwordAngle.Update(scene.TimeMod);
+                SwordScale.Update(scene.TimeMod);
+            }
 
             if (active.Done && Curio.IsAlive())
             {

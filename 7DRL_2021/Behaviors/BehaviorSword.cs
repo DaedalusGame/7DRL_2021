@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using _7DRL_2021.Results;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -118,6 +119,9 @@ namespace _7DRL_2021.Behaviors
 
         public void Tick(SceneGame scene)
         {
+            var active = Curio.GetActionHolder(ActionSlot.Active);
+            if (StabTargets.Any())
+                active.CurrentActions.RemoveAll(x => x is ActionKeepMoving);
             StabTargets.RemoveAll(x => x.Removed);
         }
 

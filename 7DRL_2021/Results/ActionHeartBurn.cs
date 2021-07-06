@@ -42,8 +42,8 @@ namespace _7DRL_2021.Results
 
             new TimeFade(world, 0.05f, LerpHelper.ExponentialIn, 40);
 
-            //Target.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 5);
-            //Target.GetShakeHelper()?.AddShakeRandom(3, LerpHelper.QuadraticOut, 5);
+            Target.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 5);
+            Target.GetShakeHelper()?.AddShakeRandom(3, LerpHelper.QuadraticOut, 5);
             new HitStop(world, 0, 5);
 
             alive.SetDamage(alive.HP);
@@ -66,6 +66,8 @@ namespace _7DRL_2021.Results
         public void Tick(SceneGame scene)
         {
             var exploded = ExplosionTime.Done;
+            var active = Origin.GetActionHolder(ActionSlot.Active);
+            var passive = Origin.GetActionHolder(ActionSlot.Passive);
 
             ExplosionTime += scene.TimeMod;
 
@@ -100,6 +102,10 @@ namespace _7DRL_2021.Results
                 }
 
                 Time += scene.TimeMod;
+            }
+            else
+            {
+                active.CurrentActions.RemoveAll(x => x is ActionKeepMoving);
             }
         }
     }

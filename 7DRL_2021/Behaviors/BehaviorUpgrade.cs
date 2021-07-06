@@ -302,13 +302,16 @@ namespace _7DRL_2021.Behaviors
 
             foreach (var stabHit in stabHits.ToList())
             {
-                e.Actions.RemoveAll(x => x.Action is ActionDamage);
-
-                var actions = new List<ActionWrapper>()
+                if (e.Actions.Any(x => x.Action is ActionDamage))
                 {
-                    new ActionHeartBurn(stabHit.Origin, stabHit.Target, 1000).InSlot(ActionSlot.Active),
-                };
-                actions.Apply(stabHit.Origin);
+                    e.Actions.RemoveAll(x => x.Action is ActionDamage);
+
+                    var actions = new List<ActionWrapper>()
+                    {
+                        new ActionHeartBurn(stabHit.Origin, stabHit.Target, 1000).InSlot(ActionSlot.Active),
+                    };
+                    actions.Apply(stabHit.Origin);
+                }
             }
         }
     }

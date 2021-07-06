@@ -119,7 +119,7 @@ namespace _7DRL_2021
             //Behavior.Apply(new BehaviorSkillButterflyKnives(template)); //DEBUG
             //Behavior.Apply(new BehaviorSkillBloodThorn(template)); //DEBUG
             //Behavior.Apply(new BehaviorSkillVampireBlade(template)); //DEBUG
-            Behavior.Apply(new BehaviorSkillBloodfireBlade(template)); //DEBUG
+            //Behavior.Apply(new BehaviorSkillBloodfireBlade(template)); //DEBUG
             return template;
         });
         public static Template Grunt = new Template("grunt", () =>
