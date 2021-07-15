@@ -14,7 +14,10 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_bubble");
             Name = "Prolong";
-            Description = $"Restore {Symbol.Heart.FormatDescribe("all")}";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("Restore ");
+                textBuilder.AppendDescribe(Symbol.Heart, "all", Color.White);
+            };
             Value = 1500;
         }
 

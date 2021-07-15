@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021
 {
-    class MapTile : ICurio, IDrawable
+    class MapTile : ICurio, IDrawable, ITooltipProvider
     {
         public Guid GlobalID
         {
@@ -86,9 +86,9 @@ namespace _7DRL_2021
             return $"({X},{Y})";
         }
 
-        public void AddTooltip(ref string tooltip)
+        public void AddTooltip(TextBuilder tooltip)
         {
-
+            //NOOP
         }
 
         public bool ShouldDraw(SceneGame scene, Vector2 cameraPosition)

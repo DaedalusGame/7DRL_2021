@@ -13,7 +13,9 @@ namespace _7DRL_2021
         public int DeckAmount;
         public SpriteReference Sprite;
         public string Name = "UNNAMED";
-        public string Description = "REPORT THIS";
+        public Action<TextBuilder> Description = (textBuilder) => {
+            textBuilder.AppendText("REPORT THIS", new TextFormatting(), new DialogFormattingInstant());
+        };
         public int Value = 0;
 
         static Card()

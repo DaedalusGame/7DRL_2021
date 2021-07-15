@@ -1079,7 +1079,7 @@ namespace _7DRL_2021
     class Score : VisualEffect
     {
         Vector2 Position;
-        int Amount;
+        public TextBuilder Text;
         bool Big;
         public LerpFloat Flicker = new LerpFloat(0);
         public float FlickerTime;
@@ -1087,9 +1087,27 @@ namespace _7DRL_2021
         public Score(SceneGame world, Vector2 position, int amount, bool big, int time) : base(world)
         {
             Position = position;
-            Amount = amount;
             Big = big;
             Frame = new Slider(time);
+            Text = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity, new TextFormatting()
+            {
+                Bold = Big,
+                GetParams = (pos) => new DialogParams()
+                {
+                    Color = Color.White,
+                    Border = Color.Black,
+                    Scale = Vector2.One,
+                }
+            }, new DialogFormattingScore(2, new SubSlider(Frame, 0, 20)));
+            Text.StartLine(LineAlignment.Center);
+            var scoreText = amount.ToString();
+            if (!Big)
+                scoreText = Game.ConvertToSmallPixelText(scoreText);
+            Text.AppendText(scoreText);
+            Text.EndLine();
+            Text.EndContainer();
+            Text.Finish();
+            Text.DefaultDialog.Show();
         }
 
         public void FromWorld()
@@ -1097,14 +1115,14 @@ namespace _7DRL_2021
             Position = Vector2.Transform(Position, World.WorldTransform);
         }
 
-        private Color GetTextColor(int index)
+        /*private Color GetTextColor(int index)
         {
             string text = Amount.ToString();
             float width = 8;
             float center = (float)LerpHelper.Quadratic(-width, text.Length + width, Frame.GetSubSlide(0, 30));
             float dist = Math.Abs(index - center);
             return Color.Lerp(Color.Gold, Color.Black, (float)LerpHelper.QuadraticIn(0, 1, MathHelper.Clamp(dist / width, 0, 1)));
-        }
+        }*/
 
         public override void Update()
         {
@@ -1121,33 +1139,73 @@ namespace _7DRL_2021
             {
                 Flicker.Set(0.5f, LerpHelper.Linear, Frame.EndTime * 0.2f);
             }
+            Text.Update();
         }
 
         public override void Draw(SceneGame scene, DrawPass pass)
         {
-            var text = Amount.ToString();
-            var textParameters = new TextParameters();
-            textParameters.SetColor(index => Color.White, GetTextColor);
-          
-            if(Big)
-            {
-                textParameters.SetBold(true);
-            }
-            else
-            {
-                text = Game.ConvertToSmallPixelText(text);
-            }
-
-            scene.PushSpriteBatch(transform: Matrix.CreateTranslation(new Vector3(-Position,0)) * Matrix.CreateScale(new Vector3(2, 2, 0)) * Matrix.CreateTranslation(new Vector3(Position, 0)));
-            var offset = new Vector2(0, -16 * (float)LerpHelper.QuadraticOut(0, 1, Frame.GetSubSlide(0, 20)));
+            var offset = new Vector2(0, -32 * (float)LerpHelper.QuadraticOut(0, 1, Frame.GetSubSlide(0, 20)));
             if (FlickerTime < 0.5f)
-                scene.DrawText(text, Position + offset, Alignment.Center, textParameters);
-            scene.PopSpriteBatch();
+                Text.Draw(Position + offset, World.FontRenderer, Matrix.CreateScale(new Vector3(2, 2, 0)));
         }
 
         public override IEnumerable<DrawPass> GetDrawPasses()
         {
             yield return DrawPass.UI;
+        }
+    }
+
+    class DialogFormattingScore : DialogFormatting
+    {
+        int TextSpeed;
+        ISlider AppearSlide;
+
+        public DialogFormattingScore(int textSpeed, ISlider appearSlide)
+        {
+            TextSpeed = textSpeed;
+            AppearSlide = appearSlide;
+        }
+
+        protected override void SetupDialog()
+        {
+            foreach (var element in Elements)
+            {
+                element.Dialog.ShowPrevious = GetPrevious(element)?.Dialog;
+                element.Dialog.TransformShow = TransformShow;
+                element.Dialog.ShowSlider = new DialogSliderCharacter(element is TextElementSpace ? 1 : TextSpeed, 20, element.Characters);
+                element.Dialog.HidePrevious = GetPrevious(element)?.Dialog;
+                element.Dialog.TransformHide = TransformHide;
+                element.Dialog.HideSlider = new DialogSliderCharacter(element is TextElementSpace ? 1 : TextSpeed, 20, element.Characters);
+            }
+        }
+
+        private DialogParams TransformShow(DialogParams param, TextCursorPosition pos, float slide)
+        {
+            if (slide <= 0)
+            {
+                //param.Color = Color.Transparent;
+                //param.Border = Color.Transparent;
+            }
+            else
+            {
+                float angle = Util.RandomNoise(pos.GlobalCharacter) * MathHelper.TwoPi;
+                //param.Offset = Vector2.Lerp(Util.AngleToVector(angle) * 20, Vector2.Zero, MathHelper.Clamp(slide * 2, 0, 1));
+                //param.Scale = Vector2.Lerp(new Vector2(3, 3), Vector2.One, MathHelper.Clamp(slide * 2, 0, 1));
+                var colorSlide = (float)LerpHelper.ForwardReverse(1, 0, slide);
+                param.Border = Color.Lerp(Color.Gold, Color.Black, colorSlide);
+            }
+            param.Offset = Vector2.Lerp(-pos.Position, Vector2.Zero, (float)LerpHelper.QuadraticOut(0, 1, AppearSlide.Slide));
+            return param;
+        }
+
+        private static DialogParams TransformHide(DialogParams param, TextCursorPosition pos, float slide)
+        {
+            if (slide >= 1)
+            {
+                param.Color = Color.Transparent;
+                param.Border = Color.Transparent;
+            }
+            return param;
         }
     }
 

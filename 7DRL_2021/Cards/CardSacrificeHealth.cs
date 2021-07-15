@@ -17,7 +17,11 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_sacrifice");
             Name = "Sacrifice";
-            Description = $"Lose {Symbol.Heart.FormatDescribe(healthCost)}. +{score} points.";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("Lose ");
+                textBuilder.AppendDescribe(Symbol.Heart, healthCost.ToString(), Color.White);
+                textBuilder.AppendText($". +{score} points.");
+            };
             HealthCost = healthCost;
             Score = score;
         }

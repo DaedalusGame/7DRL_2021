@@ -31,44 +31,9 @@ namespace _7DRL_2021
             AllSymbols.Add(this);
         }
 
-        public string FormatStatus(string text, Color color)
-        {
-            return $"{Game.FormatColor(color)}{Game.FormatBorder(Color.Black)}{Game.FORMAT_BOLD}{Game.FormatSymbol(this)} {text}{Game.FORMAT_RESET}";
-        }
-
-        public string FormatStored(int amount)
-        {
-            return FormatStatus(amount.ToString(), Color.White);
-        }
-
-        public string FormatGain(int amount)
-        {
-            return FormatDescribe(amount.ToString("+#;-#;0"));
-        }
-
-        public string FormatDescribe(int amount)
-        {
-            return FormatDescribe(amount.ToString());
-        }
-
-        public string FormatDescribe(string amount)
-        {
-            return $"{Game.FormatColor(Color.White)}{Game.FormatBorder(Color.Black)}{Game.FORMAT_BOLD}{amount} {Game.FormatSymbol(this)}{Game.FORMAT_RESET}";
-        }
-
-        public string FormatDamage(int damage)
-        {
-            return $"{Game.FormatColor(Color.White)}{Game.FormatBorder(Color.Black)}{Game.FORMAT_BOLD}{damage:+0;-#} {Game.FormatSymbol(this)}{Game.FORMAT_RESET}";
-        }
-
-        public virtual void DrawIcon(Scene scene, Vector2 pos, float slide)
+        public virtual void DrawIcon(Scene scene, Vector2 pos, DialogParams parameters, float slide)
         {
             scene.DrawSprite(Sprite, 0, pos, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
-        }
-
-        public virtual void DrawIcon(Scene scene, Vector2 pos, TextParameters parameters, float slide)
-        {
-            DrawIcon(scene, pos, slide);
         }
     }
 
@@ -78,9 +43,9 @@ namespace _7DRL_2021
         {
         }
 
-        public override void DrawIcon(Scene scene, Vector2 pos, TextParameters parameters, float slide)
+        public override void DrawIcon(Scene scene, Vector2 pos, DialogParams parameters, float slide)
         {
-            scene.DrawSpriteExt(Sprite, 0, pos, Sprite.Middle, 0, Vector2.One, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, parameters.Color(0), 0);
+            scene.DrawSpriteExt(Sprite, 0, pos, Sprite.Middle, 0, Vector2.One, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, parameters.Color, 0);
         }
     }
 
@@ -90,7 +55,7 @@ namespace _7DRL_2021
         {
         }
 
-        public override void DrawIcon(Scene scene, Vector2 pos, float slide)
+        public override void DrawIcon(Scene scene, Vector2 pos, DialogParams parameters, float slide)
         {
             int amount = (int)Math.Round(slide * Sprite.Height);
             if (amount < 0)

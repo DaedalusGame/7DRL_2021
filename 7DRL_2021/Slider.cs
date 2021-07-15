@@ -80,4 +80,19 @@ namespace _7DRL_2021
             return $"{Time} ({Slide})";
         }
     }
+
+    class SubSlider : ISlider
+    {
+        Slider Slider;
+        float Start;
+        float End;
+        public float Slide => Slider.GetSubSlide(Start, End);
+
+        public SubSlider(Slider slider, float start, float end)
+        {
+            Slider = slider;
+            Start = start;
+            End = end;
+        }
+    }
 }

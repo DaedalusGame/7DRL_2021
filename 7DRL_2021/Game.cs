@@ -20,8 +20,8 @@ namespace _7DRL_2021
         public Texture2D Noise;
         public Microsoft.Xna.Framework.Graphics.Effect Shader;
 
-        FrameCounter FPS = new FrameCounter();
-        FrameCounter GFPS = new FrameCounter();
+        public FrameCounter FPS = new FrameCounter();
+        public FrameCounter GFPS = new FrameCounter();
 
         public Scene Scene;
 
@@ -124,7 +124,7 @@ namespace _7DRL_2021
             for (int i = 0; i < FontSpritesAmount; i++)
             {
                 FontSprites[i] = SpriteLoader.Instance.AddSprite("content/font/font_" + i + "_0");
-                //FontSprites[i].ShouldLoad = true;
+                FontSprites[i].ShouldLoad = true;
                 int fontIndex = i;
                 FontSprites[i].SetLoadFunction(() => LoadFontPart(FontSprites[fontIndex], fontIndex));
             }
@@ -202,9 +202,9 @@ namespace _7DRL_2021
             Scene.Draw(gameTime);
 
             FPS.Update(gameTime);
-            SpriteBatch.Begin(blendState: BlendState.NonPremultiplied);
-            DrawText($"FPS: {FPS.AverageFramesPerSecond.ToString("f1")}\nGFPS: {GFPS.AverageFramesPerSecond.ToString("f1")}", new Vector2(0, 0), Alignment.Left, new TextParameters().SetColor(Color.White, Color.Black));
-            SpriteBatch.End();
+            //SpriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+            //DrawText($"FPS: {FPS.AverageFramesPerSecond.ToString("f1")}\nGFPS: {GFPS.AverageFramesPerSecond.ToString("f1")}", new Vector2(0, 0), Alignment.Left, new TextParameters().SetColor(Color.White, Color.Black));
+            //SpriteBatch.End();
 
             base.Draw(gameTime);
         }
@@ -264,7 +264,7 @@ namespace _7DRL_2021
             return convertedText.ToString();
         }
 
-        public static string FormatBlinkingCursor(int tick, int frequency)
+        /*public static string FormatBlinkingCursor(int tick, int frequency)
         {
             bool on = (tick % frequency) < (frequency / 2);
             string format = !on ? $"{FormatColor(Color.Transparent)}{FormatBorder(Color.Transparent)}" : "";
@@ -358,6 +358,6 @@ namespace _7DRL_2021
         public void DrawText(string str, Vector2 drawpos, Alignment alignment, TextParameters parameters)
         {
             FontUtil.SetupString(str, drawpos, alignment, parameters, this);
-        }
+        }*/
     }
 }

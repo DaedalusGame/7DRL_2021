@@ -14,7 +14,9 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_nemesis");
             Name = $"Omicron";
-            Description = $"Nemesis becomes killable and must be killed next level. This is the final challenge.";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("Nemesis becomes killable and must be killed next level. This is the final challenge.");
+            };
             Value = 2000;
         }
 
@@ -45,7 +47,9 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_bell");
             Name = $"Doom";
-            Description = $"The Bell Wraiths are summoned instantly next level. Hearts give 500% score.";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("The Bell Wraiths are summoned instantly next level. Hearts give 500% score.");
+            };
             Value = 2000;
         }
 

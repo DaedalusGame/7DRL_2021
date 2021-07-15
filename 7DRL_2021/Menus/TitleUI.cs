@@ -16,6 +16,8 @@ namespace _7DRL_2021.Menus
         protected override IEnumerable<IMenuArea> MenuAreas => Enumerable.Empty<IMenuArea>();
         protected override IEnumerable<SubMenuHandler> SubMenuHandlers => new SubMenuHandler[] { TitleMenu, SubMenu };
 
+        public override FontRenderer FontRenderer => Scene.FontRenderer;
+
         public TitleUI(SceneTitle scene)
         {
             Scene = scene;
@@ -39,7 +41,7 @@ namespace _7DRL_2021.Menus
 
     class TitleMenu : MenuTextSelection
     {
-        public TitleMenu(TitleUI ui) : base(String.Empty, new Vector2(ui.Scene.Viewport.Width / 2, ui.Scene.Viewport.Height / 2), 256, 8)
+        public TitleMenu(TitleUI ui) : base(ui.Scene, String.Empty, new Vector2(ui.Scene.Viewport.Width / 2, ui.Scene.Viewport.Height / 2), 256, 8)
         {
             Add(new ActAction("New Game", "", () =>
             {

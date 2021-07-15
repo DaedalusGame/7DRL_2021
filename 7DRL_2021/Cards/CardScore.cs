@@ -16,7 +16,9 @@ namespace _7DRL_2021.Cards
             Score = score;
             Sprite = SpriteLoader.Instance.AddSprite("content/card_blood");
             Name = $"{score} Score";
-            Description = $"+{score} points";
+            Description = (textBuilder) => {
+                textBuilder.AppendText($"+{score} points.");
+            };
         }
 
         public override void Apply(SceneGame world, Vector2 cardPos)

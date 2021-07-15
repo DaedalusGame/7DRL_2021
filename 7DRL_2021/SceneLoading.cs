@@ -10,15 +10,22 @@ namespace _7DRL_2021
     class SceneLoading : Scene
     {
         int Ticks = 0;
+        TextBuilder LoadingText;
 
         public SceneLoading(Game game) : base(game)
         {
+            LoadingText = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity);
+            LoadingText.StartLine(LineAlignment.Center);
+            LoadingText.AppendText("Restarting Game...");
+            LoadingText.EndLine();
+            LoadingText.EndContainer();
+            LoadingText.Finish();
         }
 
         public override void Draw(GameTime gameTime)
         {
             PushSpriteBatch();
-            DrawText("Restarting Game...", new Vector2(Viewport.Width / 2, Viewport.Height / 2), Alignment.Center, new TextParameters().SetBold(true).SetColor(Color.White, Color.Black));
+            LoadingText.Draw(new Vector2(Viewport.Width / 2, Viewport.Height / 2), FontRenderer);
             PopSpriteBatch();
         }
 

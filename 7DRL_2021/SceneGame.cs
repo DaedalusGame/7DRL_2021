@@ -125,7 +125,7 @@ namespace _7DRL_2021
         public RenderTarget2D BloodMapAdditive;
         public RenderTarget2D BloodMapMultiply;
 
-        string Tooltip = "Test";
+        TextBuilder TooltipText;
         public Point? TileCursor;
 
         public bool IsGameOver;
@@ -529,14 +529,19 @@ namespace _7DRL_2021
             if (MenuCursor != null)
                 TileCursor = null;
 
-            Tooltip = string.Empty;
-            if (Map != null && TileCursor.HasValue)
+            TooltipText = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity);
+            if(MenuCursor != null)
+            {
+                MenuCursor.AddTooltip(TooltipText);
+            }
+            else if (Map != null && TileCursor.HasValue)
             {
                 MapTile tile = Map.GetTile(TileCursor.Value.X, TileCursor.Value.Y);
                 if (tile != null)
-                    tile.AddTooltip(ref Tooltip);
+                    tile.AddTooltip(TooltipText);
             }
-            Tooltip = Tooltip.Trim();
+            TooltipText.EndContainer();
+            TooltipText.Finish();
         }
 
         public override void Draw(GameTime gameTime)
@@ -705,6 +710,10 @@ namespace _7DRL_2021
 
             Menu.Draw(this);
 
+            var mousePos = new Vector2(InputState.MouseX, InputState.MouseY);
+            var mouseCursor = SpriteLoader.Instance.AddSprite("content/ui_mouse_cursor");
+            DrawSprite(mouseCursor, 0, mousePos, SpriteEffects.None, 0);
+
             DrawTooltip();
 
             PopSpriteBatch();
@@ -712,11 +721,10 @@ namespace _7DRL_2021
 
         private void DrawTooltip()
         {
-            if (!string.IsNullOrWhiteSpace(Tooltip))
+            if (TooltipText != null && !TooltipText.IsEmpty())
             {
                 SpriteReference ui_tooltip = SpriteLoader.Instance.AddSprite("content/ui_box");
-                TextParameters tooltipParameters = new TextParameters().SetColor(Color.White, Color.Black);
-                int tooltipWidth = FontUtil.GetStringWidth(Tooltip, tooltipParameters);
+                int tooltipWidth = (int)TooltipText.GetContentWidth();
                 int screenWidth = Viewport.Width - 8 - InputState.MouseX + 4;
                 bool invert = false;
                 if (tooltipWidth > screenWidth)
@@ -724,15 +732,13 @@ namespace _7DRL_2021
                     screenWidth = Viewport.Width - screenWidth;
                     invert = true;
                 }
-                tooltipParameters = new TextParameters().SetColor(Color.White, Color.Black).SetConstraints(screenWidth, int.MaxValue);
-                tooltipWidth = FontUtil.GetStringWidth(Tooltip, tooltipParameters);
-                int tooltipHeight = FontUtil.GetStringHeight(Tooltip, tooltipParameters);
+                int tooltipHeight = (int)TooltipText.GetContentHeight();
                 int tooltipX = InputState.MouseX + 4;
                 int tooltipY = Math.Max(0, InputState.MouseY - 4 - tooltipHeight);
                 if (invert)
                     tooltipX -= tooltipWidth;
-                DrawUI(ui_tooltip, new Rectangle(tooltipX, tooltipY, tooltipWidth, tooltipHeight), Color.White);
-                DrawText(Tooltip, new Vector2(tooltipX, tooltipY), Alignment.Left, tooltipParameters);
+                DrawUI(ui_tooltip, new Rectangle(tooltipX-2, tooltipY-2, tooltipWidth+4, tooltipHeight+4), Color.White);
+                TooltipText.Draw(new Vector2(tooltipX, tooltipY), FontRenderer);
             }
         }
 

@@ -13,7 +13,9 @@ namespace _7DRL_2021.Cards
         public CardSwordBeam() : base("sword_beam", 3)
         {
             Name = "Vacuum Wave";
-            Description = $"When flicking your blade, fire a vacuum wave that stuns an enemy.";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("When flicking your blade, fire a vacuum wave that stuns an enemy.");
+            };
         }
 
         public override void Apply(SceneGame world, Vector2 cardPos)
@@ -43,7 +45,10 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_eater");
             Name = $"Ravenous Hunger";
-            Description = $"Consumed Hearts heal {Symbol.Heart.FormatDescribe(2)}";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("Consumed Hearts heal ");
+                textBuilder.AppendDescribe(Symbol.Heart, "2", Color.White);
+            };
             Value = 5000;
         }
 
@@ -74,7 +79,9 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_moon");
             Name = $"Night Terror";
-            Description = $"Performing a full slash while holding a heart destroys all nearby enemies.";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("Performing a full slash while holding a heart destroys all nearby enemies.");
+            };
             Value = 5000;
         }
 
@@ -105,7 +112,9 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_thorn");
             Name = $"Blood Thorn";
-            Description = $"Performing a slash while blade is bloody releases a wall of thorns.";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("Performing a slash while blade is bloody releases a wall of thorns.");
+            };
             Value = 5000;
         }
 
@@ -136,7 +145,9 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_butterfly_knife");
             Name = $"Monarch Knife";
-            Description = $"Performing a slash from forward to back releases 3 knives.";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("Performing a slash from forward to back releases 3 knives.");
+            };
             Value = 5000;
         }
 

@@ -14,7 +14,10 @@ namespace _7DRL_2021.Cards
         {
             Sprite = SpriteLoader.Instance.AddSprite("content/card_crystal");
             Name = "Mutate";
-            Description = $"Gain {Symbol.Heart.FormatDescribe("1")}";
+            Description = (textBuilder) => {
+                textBuilder.AppendText("Gain ");
+                textBuilder.AppendDescribe(Symbol.Heart, "1", Color.White);
+            };
             Value = 12000;
         }
 

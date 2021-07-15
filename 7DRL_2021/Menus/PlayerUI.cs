@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Curryfy.PartialSubsetFuncExtensions;
 
 namespace _7DRL_2021.Menus
 {
@@ -33,7 +34,7 @@ namespace _7DRL_2021.Menus
         {
             BlocksInput = true,
         };
-        SubMenuHandler<ControlInfo> ControlInfoWindow = new SubMenuHandler<ControlInfo>()
+        SubMenuHandler<ControlInfo> ControlInfo = new SubMenuHandler<ControlInfo>()
         {
             AllowInput = () => false,
         };
@@ -43,9 +44,35 @@ namespace _7DRL_2021.Menus
         public ICurio Player => Scene.PlayerCurio;
         public ICurio Camera => Scene.CameraCurio;
         public LerpFloat Score = new LerpFloat(0);
+        public string Momentum {
+            get
+            {
+                var player = Player.GetBehavior<BehaviorPlayer>();
+                if (player != null)
+                {
+                    var momentum = player.Momentum;
+                    return Game.ConvertToSmallPixelText($"+{momentum.Amount - 32}");
+                }
+                return string.Empty;
+            }
+        }
 
-        protected override IEnumerable<SubMenuHandler> SubMenuHandlers => new SubMenuHandler[] { SubMenu, GameOverMenu, ControlInfoWindow };
+        protected override IEnumerable<SubMenuHandler> SubMenuHandlers
+        {
+            get
+            {
+                yield return SubMenu;
+                yield return GameOverMenu;
+                if(!SubMenu.IsOpen && !GameOverMenu.IsOpen)
+                    yield return ControlInfo;
+            }
+        }
+
         protected override IEnumerable<IMenuArea> MenuAreas => Enumerable.Empty<IMenuArea>();
+
+        TextBuilder ScoreText;
+        TextBuilder MomentumText;
+        public override FontRenderer FontRenderer => Scene.FontRenderer;
 
         public override bool ShouldClose
         {
@@ -62,19 +89,154 @@ namespace _7DRL_2021.Menus
         public PlayerUI(SceneGame scene)
         {
             Scene = scene;
-            ControlInfoWindow.Open(new ControlInfo(new[] {
-                $"{FormatAsKey("WASD")} or {FormatAsKey("Numpad")} Move",
-                $"{Game.FormatSymbol(Symbol.KeyShift)}+{FormatAsKey("WASD")} Move diagonally",
-                $"Moving {FormatAsKey("↑")} accelerates, adding some momentum.",
-                $"Moving {FormatAsKey("←↖↗→")} turns in that direction, using up some momentum.",
-                $"Moving {FormatAsKey("↓")} brakes, removing some momentum.",
-                $"Moving {Game.FormatSymbol(Symbol.KeyCtrl)}+{FormatAsKey("←↖↗→")} moves sideways without changing direction.",
-                $"{Game.FormatSymbol(Symbol.KeySpace)} Skip turn",
-                $"{FormatAsKey("X")} Slash",
-                $"{FormatAsKey("C")} Draw/Sheathe",
-                $"{FormatAsKey("V")} Grappling Hook",
-                $"Sheathing while holding a heart restores {Symbol.Heart.FormatDescribe(1)}",
+            InitScore();
+            InitMomentum();
+
+            void relativeMovement(TextBuilder tooltip)
+            {
+                tooltip.StartLine(LineAlignment.Left);
+                tooltip.AppendText("Relative to current facing.");
+                tooltip.EndLine();
+            }
+            void heartInfo(TextBuilder tooltip)
+            {
+                tooltip.StartLine(LineAlignment.Left);
+                tooltip.AppendText("Test");
+                tooltip.EndLine();
+            }
+
+            ControlInfo.Open(new Menus.ControlInfo(scene, new[] {
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} or {1} Move.",
+                        (TextElementer)(builder => builder.AppendAsKey("WASD")),
+                        (TextElementer)(builder => builder.AppendAsKey("Numpad")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0}+{1} Move diagonally.",
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyShift)),
+                        (TextElementer)(builder => builder.AppendAsKey("WASD")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Moving {0} accelerates, adding some momentum.",
+                        (TextElementer)(builder => {
+                            builder.StartMenuArea(10, new TooltipProviderFunction(relativeMovement));
+                            builder.AppendAsKey("↑", new Color(168, 247, 255));
+                            builder.EndMenuArea();
+                        }));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Moving {0} turns in that direction, using up some momentum.",
+                        (TextElementer)(builder => {
+                            builder.StartMenuArea(10, new TooltipProviderFunction(relativeMovement));
+                            builder.AppendAsKey("←↖↗→", new Color(168, 247, 255));
+                            builder.EndMenuArea();
+                        }));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Moving {0} brakes, removing some momentum.",
+                        (TextElementer)(builder => {
+                            builder.StartMenuArea(10, new TooltipProviderFunction(relativeMovement));
+                            builder.AppendAsKey("↓", new Color(168, 247, 255));
+                            builder.EndMenuArea();
+                        }));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Moving {0} while holding {1} moves sideways without changing direction.",
+                        (TextElementer)(builder => {
+                            builder.StartMenuArea(10, new TooltipProviderFunction(relativeMovement));
+                            builder.AppendAsKey("←↖↗→", new Color(168, 247, 255));
+                            builder.EndMenuArea();
+                        }),
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyCtrl)));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Skip turn",
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeySpace)));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Slash",
+                        (TextElementer)(builder => builder.AppendAsKey("X")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Draw/Sheathe",
+                        (TextElementer)(builder => builder.AppendAsKey("C")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Grappling Hook",
+                        (TextElementer)(builder => builder.AppendAsKey("V")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Sheathing while holding a heart restores {0}.",
+                        (TextElementer)(builder => {
+                            builder.StartMenuArea(10, new TooltipProviderFunction(heartInfo));
+                            builder.AppendDescribe(Symbol.Heart, "1", Color.White);
+                            builder.EndMenuArea();
+                        }));
+                }),
             }));
+        }
+
+        private void InitMomentum()
+        {
+            var format = new TextFormatting()
+            {
+                Bold = false,
+                GetParams = (pos) => new DialogParams()
+                {
+                    Color = Color.White,
+                    Border = Color.Black,
+                    Scale = Vector2.One,
+                }
+            };
+            var dialog = new DialogFormattingIdentity();
+            MomentumText = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity);
+            MomentumText.StartLine(LineAlignment.Left);
+            MomentumText.AppendElement(new TextElementDynamic(() => Momentum, 64, format, dialog));
+            MomentumText.EndLine();
+            MomentumText.EndContainer();
+            MomentumText.Finish();
+        }
+
+        private void InitScore()
+        {
+            var formatBack = new TextFormatting()
+            {
+                Bold = true,
+                GetParams = (pos) => new DialogParams()
+                {
+                    Color = Color.Gray,
+                    Border = Color.Black,
+                    Scale = Vector2.One,
+                }
+            };
+            var formatFront = new TextFormatting()
+            {
+                Bold = true,
+                GetParams = (pos) => new DialogParams()
+                {
+                    Color = Color.White,
+                    Border = Color.Black,
+                    Scale = Vector2.One,
+                }
+            };
+            var dialog = new DialogFormattingIdentity();
+            ScoreText = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity);
+            ScoreText.StartLine(LineAlignment.Right);
+            ScoreText.AppendElement(new TextElementCounter(() => (int)Math.Round(Score.Value), 8, formatFront, formatBack, dialog));
+            ScoreText.EndLine();
+            ScoreText.EndContainer();
+            ScoreText.Finish();
         }
 
         private bool IsGameOver()
@@ -223,7 +385,7 @@ namespace _7DRL_2021.Menus
 
             if (!SubMenu.IsOpen && !GameOverMenu.IsOpen)
             {
-                ControlInfoWindow.Draw(scene);
+                ControlInfo.Draw(scene);
             }
 
             scene.SpriteBatch.Draw(scene.Pixel, new Rectangle(0, 0, scene.Viewport.Width, scene.Viewport.Height), new Color(0, 0, 0, GameOver.Slide * 0.5f));
@@ -244,7 +406,7 @@ namespace _7DRL_2021.Menus
 
         private void DrawScore(Scene scene)
         {
-            int score = (int)Math.Round(Math.Min(Score.Value, 99999999));
+            /*int score = (int)Math.Round(Math.Min(Score.Value, 99999999));
             string text = score.ToString();
             string textBackground = "00000000";
             var textParameters = new TextParameters().SetColor(Color.White, Color.Black).SetBold(true);
@@ -253,7 +415,8 @@ namespace _7DRL_2021.Menus
             scene.PushSpriteBatch(transform: Matrix.CreateTranslation(new Vector3(-position, 0)) * Matrix.CreateScale(new Vector3(2, 2, 0)) * Matrix.CreateTranslation(new Vector3(position, 0)));
             scene.DrawText(textBackground, position, Alignment.Right, textParametersBackground);
             scene.DrawText(text, position, Alignment.Right, textParameters);
-            scene.PopSpriteBatch();
+            scene.PopSpriteBatch();*/
+            ScoreText.Draw(new Vector2(scene.Viewport.Width - 32, 32), FontRenderer, Matrix.CreateScale(2,2,1));
         }
 
         private void DrawHearts(Scene scene, BehaviorAlive alive)
@@ -289,8 +452,7 @@ namespace _7DRL_2021.Menus
             }
             if (momentum.Amount > 32)
             {
-                var momentumText = Game.ConvertToSmallPixelText($"+{momentum.Amount - 32}");
-                scene.DrawText(momentumText, new Vector2(compassX + 128 + 8, compassY - 11 + 32), Alignment.Left, new TextParameters().SetColor(Color.White, Color.Black));
+                MomentumText.Draw(new Vector2(compassX + 128 + 8, compassY - 11 + 32), FontRenderer);
             }
         }
     }
@@ -314,17 +476,41 @@ namespace _7DRL_2021.Menus
             AddressV = TextureAddressMode.Clamp,
             Filter = TextureFilter.Point,
         };
+        public override FontRenderer FontRenderer => Scene.FontRenderer;
 
         public SwordInput(SceneGame scene)
         {
             Scene = scene;
-            ControlInfo.Open(new Menus.ControlInfo(new[] {
-                $"{FormatAsKey("WASD")} Select Slash direction",
-                $"{Game.FormatSymbol(Symbol.KeyShift)}+{FormatAsKey("WASD")} Select diagonal Slash direction",
-                $"{Game.FormatSymbol(Symbol.KeyEnter)} Confirm Slash",
-                $"{Game.FormatSymbol(Symbol.KeyEscape)} Cancel",
-                $"Wide slashes take more time to complete.",
-                $"Slashing while stabbing an enemy rips the heart out.",
+            ControlInfo.Open(new Menus.ControlInfo(scene, new[] {
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Select Slash direction.",
+                        (TextElementer)(builder => builder.AppendAsKey("WASD")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0}+{1} Select diagonal Slash direction.",
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyShift)),
+                        (TextElementer)(builder => builder.AppendAsKey("WASD")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Confirm Slash.",
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyEnter)));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Cancel.", (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyEscape)));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Wide slashes take more time to complete.");
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Slashing while stabbing an enemy rips the {0} out.", 
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.Heart)));
+                }),
             }));
         }
 
@@ -433,17 +619,42 @@ namespace _7DRL_2021.Menus
             AddressV = TextureAddressMode.Clamp,
             Filter = TextureFilter.Point,
         };
+        public override FontRenderer FontRenderer => Scene.FontRenderer;
 
         public GrappleInput(SceneGame scene)
         {
             Scene = scene;
-            ControlInfo.Open(new Menus.ControlInfo(new[] {
-                $"{FormatAsKey("WASD")} Select Grapple direction",
-                $"{Game.FormatSymbol(Symbol.KeyShift)}+{FormatAsKey("WASD")} Select diagonal Grapple direction",
-                $"{Game.FormatSymbol(Symbol.KeyEnter)} Confirm Grapple",
-                $"{Game.FormatSymbol(Symbol.KeyEscape)} Cancel",
-                $"You cannot grapple in the same direction as your sword.",
-                $"Grappling an injured enemy rips the heart out.",
+            ControlInfo.Open(new Menus.ControlInfo(scene, new[] {
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Select Grapple direction.",
+                        (TextElementer)(builder => builder.AppendAsKey("WASD")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0}+{1} Select diagonal Grapple direction.", 
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyShift)),
+                        (TextElementer)(builder => builder.AppendAsKey("WASD")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Confirm Grapple.", 
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyEnter)));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Cancel.", 
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyEscape)));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("You cannot grapple in the same direction as your sword.");
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Grappling an injured enemy rips the {0} out.", 
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.Heart)));
+                }),
             }));
         }
 
@@ -552,17 +763,40 @@ namespace _7DRL_2021.Menus
             AddressV = TextureAddressMode.Clamp,
             Filter = TextureFilter.Point,
         };
+        public override FontRenderer FontRenderer => Scene.FontRenderer;
 
         public GripInput(SceneGame scene)
         {
             Scene = scene;
-            ControlInfo.Open(new Menus.ControlInfo(new[] {
-                $"{FormatAsKey("WASD")} Select Dash direction",
-                $"{Game.FormatSymbol(Symbol.KeyShift)}+{FormatAsKey("WASD")} Select diagonal Dash direction",
-                $"{Game.FormatSymbol(Symbol.KeyEnter)} Confirm Dash",
-                $"{Game.FormatSymbol(Symbol.KeyEscape)} Cancel",
-                $"You can only dash in {FormatAsKey("↖↑↗")}.",
-                $"Dash Cancel resets momentum to 0.",
+            ControlInfo.Open(new Menus.ControlInfo(scene, new[] {
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Select Dash direction.",
+                        (TextElementer)(builder => builder.AppendAsKey("WASD")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0}+{1} Select diagonal Dash direction.",
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyShift)),
+                        (TextElementer)(builder => builder.AppendAsKey("WASD")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Confirm Dash.",
+                        (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyEnter)));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("{0} Cancel.", (TextElementer)(builder => builder.AppendSymbol(Symbol.KeyEscape)));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("You can only dash in {0}.", (TextElementer)(builder => builder.AppendAsKey("↖↑↗")));
+                }),
+                new ControlInfo.ControlTag(textBuilder =>
+                {
+                    textBuilder.AppendFormat("Dash Cancel resets momentum to 0.");
+                }),
             }));
         }
 
@@ -650,8 +884,9 @@ namespace _7DRL_2021.Menus
     class GameOverMenu : MenuTextSelection
     {
         SceneGame Scene;
+        public override FontRenderer FontRenderer => Scene.FontRenderer;
 
-        public GameOverMenu(SceneGame scene) : base(string.Empty, new Vector2(scene.Viewport.Width / 2, scene.Viewport.Height * 3 / 4), 300, 2)
+        public GameOverMenu(SceneGame scene) : base(scene, string.Empty, new Vector2(scene.Viewport.Width / 2, scene.Viewport.Height * 3 / 4), 300, 2)
         {
             Scene = scene;
             Add(new ActAction("Return to Title", "Return to Titlescreen.", () =>
@@ -668,7 +903,7 @@ namespace _7DRL_2021.Menus
         {
             base.Draw(scene);
 
-            string gameOverName = $"{Game.FormatColor(Color.White)}GAME OVER";
+            /*string gameOverName = $"{Game.FormatColor(Color.White)}GAME OVER";
             if (Scene.GameOverWin)
                 gameOverName = $"{Game.FormatColor(Color.White)}VICTORY ACHIEVED";
 
@@ -694,7 +929,7 @@ namespace _7DRL_2021.Menus
             builderStats.Append($"{Game.FORMAT_BOLD}Cards Crushed:{Game.FORMAT_BOLD} {Scene.CardsCrushed}\n");
             
             TextParameters parametersStats = new TextParameters().SetColor(Color.White, Color.Black).SetConstraints(width, null);
-            scene.DrawText(builderStats.ToString(), new Vector2(x - width / 2, y + 64), Alignment.Center, parametersStats);
+            scene.DrawText(builderStats.ToString(), new Vector2(x - width / 2, y + 64), Alignment.Center, parametersStats);*/
         }
     }
 
@@ -729,7 +964,7 @@ namespace _7DRL_2021.Menus
 
             public void Draw(SceneGame scene)
             {
-                var sprite = Card.Sprite;
+                /*var sprite = Card.Sprite;
                 Vector2 shake = Util.AngleToVector(Random.NextAngle()) * Shake;
                 Vector2 pos = CurrentPosition + shake;
                 var rect = new Rectangle((int)pos.X-80,(int)pos.Y,160,256);
@@ -744,7 +979,7 @@ namespace _7DRL_2021.Menus
                 if(sprite != null)
                     scene.DrawSpriteExt(sprite, 0, pos - sprite.Middle, sprite.Middle, 0, new Vector2(3), SpriteEffects.None, Color.White, 0);
                 scene.DrawText(Card.Description, rect.Location.ToVector2() + new Vector2(0, 64), Alignment.Center, descriptionParameters);
-                scene.PopSpriteBatch();
+                scene.PopSpriteBatch();*/
             }
         }
 
@@ -756,16 +991,17 @@ namespace _7DRL_2021.Menus
         List<UICard> Cards = new List<UICard>();
 
         protected override IEnumerable<IMenuArea> MenuAreas => Enumerable.Empty<IMenuArea>();
+        public override FontRenderer FontRenderer => Scene.FontRenderer;
 
         public BetweenLevelMenu(SceneGame scene)
         {
             Scene = scene;
-            ControlInfo.Open(new Menus.ControlInfo(new[] {
+            /*ControlInfo.Open(new Menus.ControlInfo(new[] {
                 $"{FormatAsKey("WASD")} Select Card",
                 $"{FormatAsKey("1-9")} Select Card",
                 $"{Game.FormatSymbol(Symbol.KeyEnter)} Accept selected Card",
                 $"{Game.FormatSymbol(Symbol.KeyEscape)} Reject all Cards",
-            }));
+            }));*/
             CurrentAction = Scheduler.Instance.RunAndWait(RoutineSetup());
         }
 

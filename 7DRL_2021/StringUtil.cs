@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021
 {
-    static class StringUtil
+    /*static class StringUtil
     {
         public static int GetWidth(this FormatToken token)
         {
@@ -81,5 +81,5 @@ namespace _7DRL_2021
                 return ToFormatString((int)color.PackedValue);
             }
         }
-    }
+    }*/
 }

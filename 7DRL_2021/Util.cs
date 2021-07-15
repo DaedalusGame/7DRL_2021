@@ -482,5 +482,19 @@ namespace _7DRL_2021
         {
             return new Point((int)Math.Floor(vector.X), (int)Math.Floor(vector.Y));
         }
+
+        public static T PopFirst<T>(this LinkedList<T> list)
+        {
+            var t = list.First();
+            list.RemoveFirst();
+            return t;
+        }
+
+        public static T PopLast<T>(this LinkedList<T> list)
+        {
+            var t = list.Last();
+            list.RemoveLast();
+            return t;
+        }
     }
 }

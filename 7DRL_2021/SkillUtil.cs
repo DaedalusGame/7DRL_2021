@@ -147,7 +147,7 @@ namespace _7DRL_2021
             var pointer = SpriteLoader.Instance.AddSprite("content/ui_pointer_small");
 
             var uiPos = Vector2.Transform(pos, scene.WorldTransform);
-            var textParameters = new TextParameters().SetColor(Color.White, Color.Black);
+            //var textParameters = new TextParameters().SetColor(Color.White, Color.Black);
 
             float angle = 0;
             float distance = 24;
@@ -163,7 +163,7 @@ namespace _7DRL_2021
                 angle = Util.VectorToAngle(-delta);
                 distance = 0;
             }
-            scene.DrawText(Game.ConvertToSmallPixelText(text), uiPos + new Vector2(0, -24 - distance), Alignment.Center, textParameters);
+            //scene.DrawText(Game.ConvertToSmallPixelText(text), uiPos + new Vector2(0, -24 - distance), Alignment.Center, textParameters);
             scene.DrawSpriteExt(pointer, 0, uiPos + distance * Util.AngleToVector(angle) - pointer.Middle, pointer.Middle, angle, SpriteEffects.None, 0);
         }
     }

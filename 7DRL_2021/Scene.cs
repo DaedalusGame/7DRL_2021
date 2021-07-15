@@ -87,6 +87,7 @@ namespace _7DRL_2021
         public Matrix WorldTransform;
         public Matrix Projection;
 
+        public FontRenderer FontRenderer;
         public RenderTarget2D CurrentRenderTarget, LastRenderTarget;
 
         Stack<DrawStackFrame> SpriteBatchStack = new Stack<DrawStackFrame>();
@@ -127,6 +128,7 @@ namespace _7DRL_2021
         public Scene(Game game)
         {
             Game = game;
+            FontRenderer = new FontRenderer(this);
         }
 
         public abstract void Update(GameTime gameTime);
@@ -307,10 +309,10 @@ namespace _7DRL_2021
             return Game.ConvertToSmallPixelText(text);
         }
 
-        public void DrawText(string str, Vector2 drawpos, Alignment alignment, TextParameters parameters)
+        /*public void DrawText(string str, Vector2 drawpos, Alignment alignment, TextParameters parameters)
         {
             Game.DrawText(str, drawpos, alignment, parameters);
-        }
+        }*/
 
         public void DrawSprite(SpriteReference sprite, int frame, Vector2 position, SpriteEffects mirror, float depth)
         {
