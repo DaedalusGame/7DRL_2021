@@ -94,24 +94,10 @@ namespace _7DRL_2021
     {
         public static Random Random = new Random();
 
-        public SceneGame World { get; set; }
-        public Map Map { get; set; }
         public double DrawOrder => 0;
         public bool Destroyed { get; set; }
 
-        public bool Timeless;
         public Slider Frame;
-
-        public VisualEffect(SceneGame world)
-        {
-            World = world;
-            World.VisualEffects.AddLater(this);
-        }
-
-        public float GetTimeMod()
-        {
-            return Timeless ? 1 : World.TimeMod;
-        }
 
         public void Destroy()
         {
@@ -143,7 +129,24 @@ namespace _7DRL_2021
         }
     }
 
-    abstract class ScreenFlash : VisualEffect
+    abstract class VisualEffect<T> : VisualEffect where T : Scene
+    {
+        public T World { get; set; }
+        public bool Timeless;
+
+        public VisualEffect(T world)
+        {
+            World = world;
+            World.VisualEffects.AddLater(this);
+        }
+
+        public float GetTimeMod()
+        {
+            return Timeless ? 1 : World.TimeMod;
+        }
+    }
+
+    abstract class ScreenFlash : VisualEffect<SceneGame>
     {
         public abstract ColorMatrix ScreenColor
         {
@@ -244,7 +247,7 @@ namespace _7DRL_2021
         }
     }
 
-    abstract class ScreenGlitch : VisualEffect
+    abstract class ScreenGlitch : VisualEffect<Scene>
     {
         public abstract GlitchParams Glitch
         {
@@ -316,7 +319,7 @@ namespace _7DRL_2021
         }
     }
 
-    abstract class ScreenShake : VisualEffect
+    abstract class ScreenShake : VisualEffect<Scene>
     {
         public Vector2 Offset;
 
@@ -386,7 +389,7 @@ namespace _7DRL_2021
         }
     }
 
-    abstract class TimeWarp : VisualEffect
+    abstract class TimeWarp : VisualEffect<Scene>
     {
         public abstract float TimeMod { get; }
 
@@ -441,7 +444,7 @@ namespace _7DRL_2021
         }
     }
 
-    class SparkParticle : VisualEffect
+    class SparkParticle : VisualEffect<Scene>
     {
         SpriteReference Sprite;
         Vector2 Position;
@@ -482,7 +485,7 @@ namespace _7DRL_2021
         }
     }
 
-    class CutterParticle : VisualEffect
+    class CutterParticle : VisualEffect<Scene>
     {
         SpriteReference Sprite;
         Vector2 Position;
@@ -523,7 +526,7 @@ namespace _7DRL_2021
         }
     }
 
-    class TrailParticle : VisualEffect
+    class TrailParticle : VisualEffect<Scene>
     {
         SpriteReference Sprite;
         int SubImage;
@@ -561,7 +564,7 @@ namespace _7DRL_2021
         }
     }
 
-    class SmokeParticle : VisualEffect
+    class SmokeParticle : VisualEffect<Scene>
     {
         SpriteReference Sprite;
         int SubImage;
@@ -628,7 +631,7 @@ namespace _7DRL_2021
         }
     }
 
-    class SmokeParticleTimeless : VisualEffect
+    class SmokeParticleTimeless : VisualEffect<Scene>
     {
         SpriteReference Sprite;
         int SubImage;
@@ -695,7 +698,7 @@ namespace _7DRL_2021
         }
     }
 
-    class ExplosionParticle : VisualEffect
+    class ExplosionParticle : VisualEffect<Scene>
     {
         SpriteReference Sprite;
         Vector2 Position;
@@ -726,7 +729,7 @@ namespace _7DRL_2021
 
         public override void Draw(SceneGame scene, DrawPass pass)
         {
-            int subImage = scene.AnimationFrame(Sprite, Frame.Time, Frame.EndTime);
+            int subImage = scene.AnimationFrame(Sprite, Frame.Slide);
             float size = Size;
             if (Sprite == null)
                 scene.SpriteBatch.Draw(scene.Pixel, CurrentPosition, null, Color, Angle, Vector2.One, 1, SpriteEffects.None, 0);
@@ -752,7 +755,7 @@ namespace _7DRL_2021
         }
     }
 
-    class Strike : VisualEffect
+    class Strike : VisualEffect<Scene>
     {
         Vector2 Start;
         Vector2 End;
@@ -791,7 +794,7 @@ namespace _7DRL_2021
         }
     }
 
-    class Wave : VisualEffect
+    class Wave : VisualEffect<Scene>
     {
         static SamplerState SamplerState = new SamplerState()
         {
@@ -838,7 +841,7 @@ namespace _7DRL_2021
         }
     }
 
-    class BloodStain : VisualEffect
+    class BloodStain : VisualEffect<SceneGame>
     {
         SpriteReference Sprite;
         int SubImage;
@@ -888,7 +891,7 @@ namespace _7DRL_2021
         }
     }
 
-    class AoEVisual : VisualEffect
+    class AoEVisual : VisualEffect<SceneGame>
     {
         public Vector2 AnchorStart;
         public Vector2 AnchorEnd;
@@ -974,7 +977,7 @@ namespace _7DRL_2021
         }
     }
 
-    class Slash : VisualEffect
+    class Slash : VisualEffect<Scene>
     {
         static SamplerState SamplerState = new SamplerState()
         {
@@ -1029,7 +1032,7 @@ namespace _7DRL_2021
         }
     }
 
-    class BigStar : VisualEffect
+    class BigStar : VisualEffect<Scene>
     {
         public SpriteReference Sprite;
         public Func<Vector2> Anchor;
@@ -1044,7 +1047,7 @@ namespace _7DRL_2021
         public Color Color = Color.White;
         public DrawPass DrawPass;
 
-        public BigStar(SceneGame world, SpriteReference sprite, Func<Vector2> anchor) : base(world)
+        public BigStar(Scene world, SpriteReference sprite, Func<Vector2> anchor) : base(world)
         {
             Sprite = sprite;
             Anchor = anchor;
@@ -1076,7 +1079,7 @@ namespace _7DRL_2021
         }
     }
 
-    class Score : VisualEffect
+    class Score : VisualEffect<SceneGame>
     {
         Vector2 Position;
         public TextBuilder Text;
@@ -1209,7 +1212,7 @@ namespace _7DRL_2021
         }
     }
 
-    class ScoreBlood : VisualEffect
+    class ScoreBlood : VisualEffect<SceneGame>
     {
         Vector2 Start;
         Vector2 End;

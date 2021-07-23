@@ -41,8 +41,45 @@ namespace _7DRL_2021
         }
     }
 
+    class MultiDict<TKey, TValue>
+    {
+        private Dictionary<TKey, List<TValue>> Data = new Dictionary<TKey, List<TValue>>();
+
+        public IEnumerable<TValue> this[TKey key]
+        {
+            get
+            {
+                return Data[key];
+            }
+        }
+
+        public void Add(TKey key, TValue value)
+        {
+            List<TValue> list;
+            if (Data.TryGetValue(key, out list))
+                list.Add(value);
+            else
+                Data.Add(key, new List<TValue>() { value });
+        }
+
+        public IEnumerable<TValue> GetOrEmpty(TKey key)
+        {
+            List<TValue> list;
+            if (Data.TryGetValue(key, out list))
+                return list;
+            else
+                return Enumerable.Empty<TValue>();
+        }
+    }
+
     static class Util
     {
+        public static void SetupRenderTarget(this GraphicsDevice graphicsDevice, ref RenderTarget2D renderTarget, int width, int height)
+        {
+            if (renderTarget == null || renderTarget.IsContentLost)
+                renderTarget = new RenderTarget2D(graphicsDevice, width, height);
+        }
+
         public static bool IsStepTowards(Point target, Point last, Point current)
         {
             return GetDistanceSquared(current, target) <= GetDistanceSquared(last, target);

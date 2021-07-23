@@ -116,7 +116,6 @@ namespace _7DRL_2021
 
         public PlayerUI Menu;
         public Map Map;
-        public DeferredList<VisualEffect> VisualEffects = new DeferredList<VisualEffect>();
         public List<SliderTime> Timers = new List<SliderTime>();
 
         public RenderTarget2D CameraTargetA;
@@ -136,7 +135,7 @@ namespace _7DRL_2021
         public ICurio CameraCurio;
         public Wait Cutscene = Wait.NoWait;
         public float TimeModStandard;
-        public float TimeMod => (WaitForPlayer || WaitForCutscene) ? 0 : TimeModStandard;
+        public override float TimeMod => (WaitForPlayer || WaitForCutscene) ? 0 : TimeModStandard;
         public float TimeModCurrent;
         public bool WaitForPlayer => PlayerCurio.GetActionHolder(ActionSlot.Active)?.Done ?? false;
         public bool WaitForCutscene => !Cutscene.Done;
@@ -483,40 +482,22 @@ namespace _7DRL_2021
 
         public override void Update(GameTime gameTime)
         {
-            IEnumerable<TimeWarp> timeWarps = VisualEffects.OfType<TimeWarp>();
-            if (timeWarps.Any())
-            {
-                TimeModStandard = timeWarps.Aggregate(1f, (x, y) => x * y.TimeMod);
-            }
-            else
-            {
-                TimeModStandard = 1;
-            }
-
-            TimeModCurrent = TimeMod;
+            UpdateTimeModifier();
 
             CurrentTheme?.Update();
             CurrentGameOver?.Update();
 
-            VisualEffects.Update();
-            foreach (var visualEffect in VisualEffects)
-            {
-                visualEffect.Update();
-            }
-            VisualEffects.RemoveAll(x => x.Destroyed);
+            UpdateVisualEffects();
 
-            foreach(var timer in Timers)
+            foreach (var timer in Timers)
             {
                 timer.Update();
             }
             Timers.RemoveAll(x => x.Slide >= 1);
 
-            InputTwinState state = Game.InputState;
-            Menu.Update(this);
-            Menu.HandleInput(this);
+            UpdateInput();
 
             var tickables = Manager.Tickable.GetTickables();
-            //var tickables = Manager.GetCurios(Map).SelectMany(x => x.GetBehaviors().OfType<ITickable>());
             foreach (var tickable in tickables.ToList())
                 tickable.Tick(this);
 
@@ -530,7 +511,7 @@ namespace _7DRL_2021
                 TileCursor = null;
 
             TooltipText = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity);
-            if(MenuCursor != null)
+            if (MenuCursor != null)
             {
                 MenuCursor.AddTooltip(TooltipText);
             }
@@ -544,16 +525,43 @@ namespace _7DRL_2021
             TooltipText.Finish();
         }
 
+        private void UpdateInput()
+        {
+            InputTwinState state = Game.InputState;
+            Menu.Update(this);
+            Menu.HandleInput(this);
+        }
+
+        private void UpdateVisualEffects()
+        {
+            VisualEffects.Update();
+            foreach (var visualEffect in VisualEffects)
+            {
+                visualEffect.Update();
+            }
+            VisualEffects.RemoveAll(x => x.Destroyed);
+        }
+
+        private void UpdateTimeModifier()
+        {
+            IEnumerable<TimeWarp> timeWarps = VisualEffects.OfType<TimeWarp>();
+            if (timeWarps.Any())
+            {
+                TimeModStandard = timeWarps.Aggregate(1f, (x, y) => x * y.TimeMod);
+            }
+            else
+            {
+                TimeModStandard = 1;
+            }
+
+            TimeModCurrent = TimeMod;
+        }
+
         public override void Draw(GameTime gameTime)
         {
-            if (CameraTargetA == null || CameraTargetA.IsContentLost)
-                CameraTargetA = new RenderTarget2D(GraphicsDevice, Viewport.Width, Viewport.Height);
-
-            if (CameraTargetB == null || CameraTargetB.IsContentLost)
-                CameraTargetB = new RenderTarget2D(GraphicsDevice, Viewport.Width, Viewport.Height);
-
-            if (DistortionMap == null || DistortionMap.IsContentLost)
-                DistortionMap = new RenderTarget2D(GraphicsDevice, Viewport.Width, Viewport.Height);
+            Util.SetupRenderTarget(this, ref CameraTargetA, Viewport.Width, Viewport.Height);
+            Util.SetupRenderTarget(this, ref CameraTargetB, Viewport.Width, Viewport.Height);
+            Util.SetupRenderTarget(this, ref DistortionMap, Viewport.Width, Viewport.Height);
             Util.SetupRenderTarget(this, ref BloodMapAdditive, Viewport.Width, Viewport.Height);
             Util.SetupRenderTarget(this, ref BloodMapMultiply, Viewport.Width, Viewport.Height);
 

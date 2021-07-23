@@ -93,7 +93,7 @@ namespace _7DRL_2021
 
             LoadFont();
 
-            Scene = new SceneTitle(this);
+            Scene = new SceneMascot(this);
 
             base.Initialize();
         }

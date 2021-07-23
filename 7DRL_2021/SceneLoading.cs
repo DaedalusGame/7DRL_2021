@@ -12,6 +12,8 @@ namespace _7DRL_2021
         int Ticks = 0;
         TextBuilder LoadingText;
 
+        public override float TimeMod => 1;
+
         public SceneLoading(Game game) : base(game)
         {
             LoadingText = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity);

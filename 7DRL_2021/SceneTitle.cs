@@ -13,6 +13,8 @@ namespace _7DRL_2021
     {
         public TitleUI Menu;
 
+        public override float TimeMod => 1;
+
         public SceneTitle(Game game) : base(game)
         {
             Menu = new TitleUI(this);

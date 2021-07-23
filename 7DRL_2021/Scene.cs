@@ -94,6 +94,9 @@ namespace _7DRL_2021
 
         public InputTwinState InputState => Game.InputState;
 
+        public DeferredList<VisualEffect> VisualEffects = new DeferredList<VisualEffect>();
+        public abstract float TimeMod { get; }
+
         public BlendState NonPremultiplied = new BlendState
         {
             ColorSourceBlend = Blend.SourceAlpha,
@@ -135,9 +138,9 @@ namespace _7DRL_2021
 
         public abstract void Draw(GameTime gameTime);
 
-        public int AnimationFrame(SpriteReference sprite, float frame, float frameEnd)
+        public int AnimationFrame(SpriteReference sprite, float slide)
         {
-            return (int)MathHelper.Clamp(sprite.SubImageCount * frame / frameEnd, 0, sprite.SubImageCount - 1);
+            return (int)MathHelper.Clamp(sprite.SubImageCount * slide, 0, sprite.SubImageCount - 1);
         }
 
         public void SetupNormal(Matrix transform, Matrix projection)
