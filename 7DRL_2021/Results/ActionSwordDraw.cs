@@ -30,13 +30,14 @@ namespace _7DRL_2021.Results
             var sword = new BehaviorSword(Origin, 3);
             Behavior.Apply(sword);
             sword.SetScale(1, LerpHelper.QuadraticOut, this);
-            var star = new BigStar(world, SpriteLoader.Instance.AddSprite("content/effect_star_big"), sword.GetTip)
-            {
-                DrawPass = DrawPass.EffectAdditive,
-            };
+            var star = new BigStar(world, SpriteLoader.Instance.AddSprite("content/effect_star_big"));
             star.Angle.Set(0, MathHelper.TwoPi, LerpHelper.QuadraticOut, 30);
             star.Scale.Set(0, 0.1f, LerpHelper.QuadraticOut, 30);
             star.ShouldDestroy.Set(true, LerpHelper.Linear, 30);
+            var swordEffect = new SwordEffect(world, star, sword, 16)
+            {
+                DrawPass = DrawPass.EffectAdditive,
+            };
         }
 
         public void Tick(SceneGame scene)

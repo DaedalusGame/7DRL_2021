@@ -19,7 +19,10 @@ namespace _7DRL_2021
         IEnumerable<DrawPass> GetDrawPasses();
 
         void Draw(SceneGame scene, DrawPass pass);
+    }
 
+    interface IDrawableIcon
+    {
         void DrawIcon(SceneGame scene, Vector2 pos);
     }
 

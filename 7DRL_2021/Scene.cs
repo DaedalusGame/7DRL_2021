@@ -8,6 +8,25 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021
 {
+    class DoubleBuffer
+    {
+        public RenderTarget2D A;
+        public RenderTarget2D B;
+
+        public void Setup(Scene scene, int width, int height)
+        {
+            Util.SetupRenderTarget(scene, ref A, width, height);
+            Util.SetupRenderTarget(scene, ref B, width, height);
+        }
+
+        public void Swap()
+        {
+            var helper = A;
+            A = B;
+            B = helper;
+        }
+    }
+
     struct GlitchParams
     {
         public float Intensity;
@@ -72,6 +91,8 @@ namespace _7DRL_2021
     {
         protected Game Game;
 
+        protected Random Random = new Random();
+
         public GraphicsDevice GraphicsDevice => Game.GraphicsDevice;
         public SpriteBatch SpriteBatch => Game.SpriteBatch;
         public PrimitiveBatch<VertexPositionColorTexture> PrimitiveBatch => Game.PrimitiveBatch;
@@ -94,8 +115,19 @@ namespace _7DRL_2021
 
         public InputTwinState InputState => Game.InputState;
 
-        public DeferredList<VisualEffect> VisualEffects = new DeferredList<VisualEffect>();
+        public DeferredList<ProtoEffect> ProtoEffects = new DeferredList<ProtoEffect>();
+        /// <summary>
+        /// Time Modifier after modification by things like pausing
+        /// </summary>
         public abstract float TimeMod { get; }
+        /// <summary>
+        /// Time Modifier as calculated by time modifying effects
+        /// </summary>
+        public float TimeModStandard;
+        /// <summary>
+        /// Temporary TIme Modifier for this tick, for performance reasons
+        /// </summary>
+        public float TimeModCurrent;
 
         public BlendState NonPremultiplied = new BlendState
         {
@@ -136,7 +168,72 @@ namespace _7DRL_2021
 
         public abstract void Update(GameTime gameTime);
 
+        public void UpdateProtoEffects()
+        {
+            ProtoEffects.Update();
+            foreach (var protoEffect in ProtoEffects)
+            {
+                protoEffect.Update();
+            }
+            ProtoEffects.RemoveAll(x => x.Destroyed);
+        }
+
+        public void UpdateTimeModifier()
+        {
+            IEnumerable<TimeWarp> timeWarps = ProtoEffects.OfType<TimeWarp>();
+            if (timeWarps.Any())
+            {
+                TimeModStandard = timeWarps.Aggregate(1f, (x, y) => x * y.TimeMod);
+            }
+            else
+            {
+                TimeModStandard = 1;
+            }
+
+            TimeModCurrent = TimeMod;
+        }
+
         public abstract void Draw(GameTime gameTime);
+
+        public void ApplyScreenFlash(ref ColorMatrix color)
+        {
+            IEnumerable<ScreenFlash> screenFlashes = ProtoEffects.OfType<ScreenFlash>();
+            foreach (ScreenFlash screenFlash in screenFlashes)
+            {
+                color *= screenFlash.ScreenColor;
+            }
+        }
+
+        public void ApplyScreenShake(ref Matrix transform)
+        {
+            IEnumerable<ScreenShake> screenShakes = ProtoEffects.OfType<ScreenShake>();
+            if (screenShakes.Any())
+            {
+                ScreenShake screenShake = screenShakes.WithMax(effect => effect.Offset.LengthSquared());
+                if (screenShake != null)
+                    transform *= Matrix.CreateTranslation(screenShake.Offset.X, screenShake.Offset.Y, 0);
+            }
+        }
+
+        public void RenderGlitches(DoubleBuffer buffer)
+        {
+            IEnumerable<ScreenGlitch> screenGlitches = ProtoEffects.OfType<ScreenGlitch>();
+
+            foreach (var glitch in screenGlitches)
+            {
+                GlitchParams glitchParams = glitch.Glitch;
+
+                PushSpriteBatch(samplerState: SamplerState.PointWrap, blendState: NonPremultiplied, shader: Shader, shaderSetup: (transform, projection) =>
+                {
+                    SetupGlitch(Game.Noise, glitchParams, Random, Matrix.Identity, Projection);
+                });
+                SpriteBatch.Draw(buffer.B, buffer.B.Bounds, Color.White);
+                PopSpriteBatch();
+
+                SetRenderTarget(buffer.B);
+                buffer.Swap();
+            }
+        }
 
         public int AnimationFrame(SpriteReference sprite, float slide)
         {

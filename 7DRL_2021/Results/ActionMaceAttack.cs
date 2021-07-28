@@ -84,17 +84,18 @@ namespace _7DRL_2021.Results
             var targetTile = GetTarget();
             if (targetTile != null)
             {
-                new Wave(world, 10)
+                Wave wave = new Wave(world, SpriteLoader.Instance.AddSprite("content/ring_spark_thin"), 10)
                 {
-                    WaveSprite = SpriteLoader.Instance.AddSprite("content/ring_spark_thin"),
-                    Position = targetTile.VisualTarget,
                     Radius = 15,
                     Precision = 20,
                     StartRadius = 0.3f,
                     Thickness = 0.5f,
-                    DrawPass = DrawPass.EffectLowAdditive,
                     InnerLerp = LerpHelper.QuadraticOut,
                     OuterLerp = LerpHelper.QuadraticOut,
+                };
+                new StaticEffect(world, wave, targetTile.VisualTarget)
+                {
+                    DrawPass = DrawPass.EffectLowAdditive,
                 };
 
                 foreach (var target in targetTile.Contents)

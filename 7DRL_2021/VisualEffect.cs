@@ -94,10 +94,23 @@ namespace _7DRL_2021
     {
         public static Random Random = new Random();
 
+        public SceneGame World { get; set; }
+        public bool Timeless;
         public double DrawOrder => 0;
         public bool Destroyed { get; set; }
 
         public Slider Frame;
+
+        public VisualEffect(SceneGame world)
+        {
+            World = world;
+            World.VisualEffects.AddLater(this);
+        }
+
+        public float GetTimeMod()
+        {
+            return Timeless ? 1 : World.TimeMod;
+        }
 
         public void Destroy()
         {
@@ -129,322 +142,7 @@ namespace _7DRL_2021
         }
     }
 
-    abstract class VisualEffect<T> : VisualEffect where T : Scene
-    {
-        public T World { get; set; }
-        public bool Timeless;
-
-        public VisualEffect(T world)
-        {
-            World = world;
-            World.VisualEffects.AddLater(this);
-        }
-
-        public float GetTimeMod()
-        {
-            return Timeless ? 1 : World.TimeMod;
-        }
-    }
-
-    abstract class ScreenFlash : VisualEffect<SceneGame>
-    {
-        public abstract ColorMatrix ScreenColor
-        {
-            get;
-        }
-        public bool Delete = true;
-
-        public ScreenFlash(SceneGame world, float time) : base(world)
-        {
-            Frame = new Slider(time);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (Frame.Done && Delete)
-            {
-                this.Destroy();
-            }
-        }
-
-        public override void Draw(SceneGame scene, DrawPass pass)
-        {
-            //NOOP
-        }
-
-        public override IEnumerable<DrawPass> GetDrawPasses()
-        {
-            return Enumerable.Empty<DrawPass>();
-        }
-    }
-
-    class ScreenBellWraiths : ScreenFlash
-    {
-        public override ColorMatrix ScreenColor => ColorMatrix.Lerp(ColorMatrix.Identity, ColorMatrix.Tint(Color.Red), 0.5f);
-        BehaviorBellTower BellTower;
-        float MinTime;
-        float MaxTime;
-
-        public ScreenBellWraiths(SceneGame world, BehaviorBellTower bellTower, float minTime, float maxTime) : base(world, 0)
-        {
-            BellTower = bellTower;
-            MinTime = minTime;
-            MaxTime = maxTime;
-            Frame = new Slider(Random.NextFloat(minTime, maxTime));
-        }
-
-        public override void Update()
-        {
-            if (BellTower.Removed)
-                Destroy();
-            Frame += 1;
-            if (Frame.Done)
-            {
-                new ScreenGlitchFlash(World, slide => BehaviorBellTower.Params.WithIntensity((1-slide) * 0.3f), 10);
-                Frame.Reset();
-                Frame.EndTime = Random.NextFloat(MinTime, MaxTime);
-            }
-        }
-    }
-
-    class ScreenFlashSimple : ScreenFlash
-    {
-        public virtual Vector2 Position
-        {
-            get;
-            set;
-        }
-        ColorMatrix FlashColor;
-        LerpHelper.Delegate ColorLerp;
-
-        public override ColorMatrix ScreenColor => ColorMatrix.Lerp(ColorMatrix.Identity, FlashColor, (float)ColorLerp(1, 0, Frame.Slide));
-
-        public ScreenFlashSimple(SceneGame world, ColorMatrix color, LerpHelper.Delegate colorLerp, int time) : base(world, time)
-        {
-            FlashColor = color;
-            ColorLerp = colorLerp;
-        }
-    }
-
-    class ScreenFade : ScreenFlash
-    {
-        Func<ColorMatrix> ColorFunction;
-        LerpFloat Lerp;
-
-        public override ColorMatrix ScreenColor => ColorMatrix.Lerp(ColorMatrix.Identity, ColorFunction(), Lerp);
-
-        public ScreenFade(SceneGame world, Func<ColorMatrix> color, float start, bool delete) : base(world, 1)
-        {
-            ColorFunction = color;
-            Lerp = new LerpFloat(start);
-            Delete = false;
-        }
-
-        public override void Update()
-        {
-            Lerp.Update();
-        }
-    }
-
-    abstract class ScreenGlitch : VisualEffect<Scene>
-    {
-        public abstract GlitchParams Glitch
-        {
-            get;
-        }
-
-        public ScreenGlitch(SceneGame world) : base(world)
-        {
-        }
-
-        public override void Draw(SceneGame scene, DrawPass pass)
-        {
-            //NOOP
-        }
-
-        public override IEnumerable<DrawPass> GetDrawPasses()
-        {
-            return Enumerable.Empty<DrawPass>();
-        }
-    }
-
-    class ScreenGlitchFlash : ScreenGlitch
-    {
-        Func<float, GlitchParams> GlitchFunction;
-
-        public override GlitchParams Glitch => GlitchFunction(Frame.Slide);
-
-        public ScreenGlitchFlash(SceneGame world, Func<float, GlitchParams> glitch, int time) : base(world)
-        {
-            GlitchFunction = glitch;
-            Frame = new Slider(time);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (Frame.Done)
-            {
-                this.Destroy();
-            }
-        }
-    }
-
-    class ScreenGlitchFade : ScreenGlitch
-    {
-        Func<float, GlitchParams> FadeInFunction;
-        Func<float, GlitchParams> FadeOutFunction;
-        int TimeIn;
-        int TimeOut;
-
-        public override GlitchParams Glitch => Frame.Time < TimeIn ? FadeInFunction(Frame.GetSubSlide(0, TimeIn)) : FadeOutFunction(Frame.GetSubSlide(TimeIn, TimeIn + TimeOut));
-
-        public ScreenGlitchFade(SceneGame world, Func<float, GlitchParams> fadeIn, Func<float, GlitchParams> fadeOut, int timeIn, int timeOut) : base(world)
-        {
-            FadeInFunction = fadeIn;
-            FadeOutFunction = fadeOut;
-            TimeIn = timeIn;
-            TimeOut = timeOut;
-            Frame = new Slider(timeIn + timeOut);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (Frame.Done)
-            {
-                this.Destroy();
-            }
-        }
-    }
-
-    abstract class ScreenShake : VisualEffect<Scene>
-    {
-        public Vector2 Offset;
-
-        public ScreenShake(SceneGame world, int time) : base(world)
-        {
-            Frame = new Slider(time);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (Frame.Done)
-            {
-                this.Destroy();
-            }
-        }
-
-        public override void Draw(SceneGame scene, DrawPass pass)
-        {
-            //NOOP
-        }
-
-        public override IEnumerable<DrawPass> GetDrawPasses()
-        {
-            return Enumerable.Empty<DrawPass>();
-        }
-    }
-
-    class ScreenShakeRandom : ScreenShake
-    {
-        float Amount;
-        LerpHelper.Delegate Lerp;
-
-        public ScreenShakeRandom(SceneGame world, float amount, int time, LerpHelper.Delegate lerp) : base(world, time)
-        {
-            Lerp = lerp;
-            Amount = amount;
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            double amount = Lerp(Amount, 0, Frame.Slide);
-            double shakeAngle = Random.NextDouble() * Math.PI * 2;
-            int x = (int)Math.Round(Math.Cos(shakeAngle) * amount);
-            int y = (int)Math.Round(Math.Sin(shakeAngle) * amount);
-            Offset = new Vector2(x, y);
-        }
-    }
-
-    class ScreenShakeJerk : ScreenShake
-    {
-        Vector2 Jerk;
-
-        public ScreenShakeJerk(SceneGame world, Vector2 jerk, int time) : base(world, time)
-        {
-            Jerk = jerk;
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            float amount = (1 - Frame.Slide);
-            Offset = Jerk * amount;
-        }
-    }
-
-    abstract class TimeWarp : VisualEffect<Scene>
-    {
-        public abstract float TimeMod { get; }
-
-        public TimeWarp(SceneGame world, int time) : base(world)
-        {
-            Frame = new Slider(time);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (Frame.Done)
-            {
-                this.Destroy();
-            }
-        }
-
-        public override void Draw(SceneGame scene, DrawPass pass)
-        {
-            //NOOP
-        }
-
-        public override IEnumerable<DrawPass> GetDrawPasses()
-        {
-            return Enumerable.Empty<DrawPass>();
-        }
-    }
-
-    class TimeFade : TimeWarp
-    {
-        float TimeModStart;
-        LerpHelper.Delegate Lerp;
-
-        public override float TimeMod => (float)Lerp(TimeModStart, 1, Frame.Slide);
-
-        public TimeFade(SceneGame world, float timeMod, LerpHelper.Delegate lerp, int time) : base(world, time)
-        {
-            TimeModStart = timeMod;
-            Lerp = lerp;
-        }
-    }
-
-    class HitStop : TimeWarp
-    {
-        float TimeModStop;
-
-        public override float TimeMod => TimeModStop;
-
-        public HitStop(SceneGame world, float timeMod, int time) : base(world, time)
-        {
-            TimeModStop = timeMod;
-        }
-    }
-
-    class SparkParticle : VisualEffect<Scene>
+    class SparkParticle : VisualEffect
     {
         SpriteReference Sprite;
         Vector2 Position;
@@ -485,7 +183,7 @@ namespace _7DRL_2021
         }
     }
 
-    class CutterParticle : VisualEffect<Scene>
+    class CutterParticle : VisualEffect
     {
         SpriteReference Sprite;
         Vector2 Position;
@@ -526,7 +224,7 @@ namespace _7DRL_2021
         }
     }
 
-    class TrailParticle : VisualEffect<Scene>
+    class TrailParticle : VisualEffect
     {
         SpriteReference Sprite;
         int SubImage;
@@ -564,7 +262,7 @@ namespace _7DRL_2021
         }
     }
 
-    class SmokeParticle : VisualEffect<Scene>
+    class SmokeParticle : VisualEffect
     {
         SpriteReference Sprite;
         int SubImage;
@@ -631,7 +329,7 @@ namespace _7DRL_2021
         }
     }
 
-    class SmokeParticleTimeless : VisualEffect<Scene>
+    class SmokeParticleTimeless : VisualEffect
     {
         SpriteReference Sprite;
         int SubImage;
@@ -698,7 +396,7 @@ namespace _7DRL_2021
         }
     }
 
-    class ExplosionParticle : VisualEffect<Scene>
+    class ExplosionParticle : VisualEffect
     {
         SpriteReference Sprite;
         Vector2 Position;
@@ -755,7 +453,7 @@ namespace _7DRL_2021
         }
     }
 
-    class Strike : VisualEffect<Scene>
+    class Strike : VisualEffect
     {
         Vector2 Start;
         Vector2 End;
@@ -794,54 +492,7 @@ namespace _7DRL_2021
         }
     }
 
-    class Wave : VisualEffect<Scene>
-    {
-        static SamplerState SamplerState = new SamplerState()
-        {
-            AddressU = TextureAddressMode.Wrap,
-            AddressV = TextureAddressMode.Clamp,
-            Filter = TextureFilter.Point,
-        };
-
-        public SpriteReference WaveSprite;
-        public int Precision = 20;
-        public Vector2 Position;
-
-        public float Radius;
-        public float Thickness;
-        public float StartRadius;
-        public LerpHelper.Delegate InnerLerp;
-        public LerpHelper.Delegate OuterLerp;
-        public DrawPass DrawPass = DrawPass.Effect;
-        public ColorMatrix Color = ColorMatrix.Identity;
-
-        public float Start => (float)InnerLerp(StartRadius - Thickness, 1, Frame.Slide);
-        public float End => (float)OuterLerp(StartRadius, 1, Frame.Slide);
-
-        public Wave(SceneGame world, int time) : base(world)
-        {
-            Frame = new Slider(time);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (Frame.Done)
-                Destroy();
-        }
-
-        public override void Draw(SceneGame scene, DrawPass pass)
-        {
-            scene.DrawCircle(WaveSprite, SamplerState, Position, 100, 0, MathHelper.TwoPi, Radius, 0, Precision, Start, End, Color, scene.NonPremultiplied);
-        }
-
-        public override IEnumerable<DrawPass> GetDrawPasses()
-        {
-            yield return DrawPass;
-        }
-    }
-
-    class BloodStain : VisualEffect<SceneGame>
+    class BloodStain : VisualEffect
     {
         SpriteReference Sprite;
         int SubImage;
@@ -891,7 +542,7 @@ namespace _7DRL_2021
         }
     }
 
-    class AoEVisual : VisualEffect<SceneGame>
+    class AoEVisual : VisualEffect
     {
         public Vector2 AnchorStart;
         public Vector2 AnchorEnd;
@@ -977,7 +628,7 @@ namespace _7DRL_2021
         }
     }
 
-    class Slash : VisualEffect<Scene>
+    class Slash : VisualEffect
     {
         static SamplerState SamplerState = new SamplerState()
         {
@@ -1032,45 +683,28 @@ namespace _7DRL_2021
         }
     }
 
-    class BigStar : VisualEffect<Scene>
+    class StaticEffect : VisualEffect
     {
-        public SpriteReference Sprite;
-        public Func<Vector2> Anchor;
+        public ProtoEffectDrawable ProtoEffect;
+        public Vector2 Position;
 
-        public LerpFloat Angle = new LerpFloat(0);
-        public LerpFloat Scale = new LerpFloat(0);
-        public LerpFloat Flicker = new LerpFloat(0);
-        public LerpBoolean ShouldDestroy = new LerpBoolean(false);
-        public float FlickerTime;
-        public LerpHelper.Delegate FlickerLerp = LerpHelper.Linear;
-
-        public Color Color = Color.White;
         public DrawPass DrawPass;
 
-        public BigStar(Scene world, SpriteReference sprite, Func<Vector2> anchor) : base(world)
+        public StaticEffect(SceneGame world, ProtoEffectDrawable protoEffect, Vector2 pos) : base(world)
         {
-            Sprite = sprite;
-            Anchor = anchor;
+            ProtoEffect = protoEffect;
+            Position = pos;
         }
 
         public override void Update()
         {
-            Angle.Update();
-            Scale.Update();
-            Flicker.Update();
-            ShouldDestroy.Update();
-            FlickerTime += Flicker;
-            if (FlickerTime < 0 || FlickerTime > 1)
-            {
-                FlickerTime = Util.PositiveMod(FlickerTime, 1);
-            }
-            if (ShouldDestroy)
+            if (ProtoEffect.Destroyed)
                 Destroy();
         }
 
         public override void Draw(SceneGame scene, DrawPass pass)
         {
-            scene.DrawSpriteExt(Sprite, 0, Anchor() - Sprite.Middle, Sprite.Middle, Angle, new Vector2(Scale * (float)FlickerLerp(1, 0.5, FlickerTime)), SpriteEffects.None, Color, 0);
+            ProtoEffect.Draw(scene, Position);
         }
 
         public override IEnumerable<DrawPass> GetDrawPasses()
@@ -1079,7 +713,39 @@ namespace _7DRL_2021
         }
     }
 
-    class Score : VisualEffect<SceneGame>
+    class SwordEffect : VisualEffect
+    {
+        public ProtoEffectDrawable ProtoEffect;
+        public BehaviorSword Sword;
+        public float BladeLength;
+
+        public DrawPass DrawPass;
+
+        public SwordEffect(SceneGame world, ProtoEffectDrawable protoEffect, BehaviorSword sword, float bladeLength) : base(world)
+        {
+            ProtoEffect = protoEffect;
+            Sword = sword;
+            BladeLength = bladeLength;
+        }
+
+        public override void Update()
+        {
+            if (ProtoEffect.Destroyed)
+                Destroy();
+        }
+
+        public override void Draw(SceneGame scene, DrawPass pass)
+        {
+            ProtoEffect.Draw(scene, Sword.GetBlade(BladeLength));
+        }
+
+        public override IEnumerable<DrawPass> GetDrawPasses()
+        {
+            yield return DrawPass;
+        }
+    }
+
+    class Score : VisualEffect
     {
         Vector2 Position;
         public TextBuilder Text;
@@ -1212,7 +878,7 @@ namespace _7DRL_2021
         }
     }
 
-    class ScoreBlood : VisualEffect<SceneGame>
+    class ScoreBlood : VisualEffect
     {
         Vector2 Start;
         Vector2 End;

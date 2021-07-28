@@ -114,7 +114,7 @@ namespace _7DRL_2021
             var behavior = curio.GetBehavior<BehaviorDrawable>();
             if (behavior != null)
                 behavior.DrawIcon(scene, pos);
-            else if (curio is IDrawable drawable)
+            else if (curio is IDrawableIcon drawable)
                 drawable.DrawIcon(scene, pos);
         }
 

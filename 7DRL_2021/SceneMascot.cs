@@ -133,8 +133,7 @@ namespace _7DRL_2021
     {
         public class Data : ITickableState
         {
-            Slider Frame;
-
+            public Slider Frame;
             public float Slide => Frame.Slide;
 
             public Data(float time)
@@ -190,13 +189,30 @@ namespace _7DRL_2021
         Empty,
         FadeIn,
         OpenEye,
-        IdleTime,
+        Idle,
         FadeOut,
         Finish,
     }
 
     class SceneMascot : Scene
     {
+        class VisualEffect
+        {
+            public ProtoEffectDrawable ProtoEffect;
+            public Vector2 Position;
+
+            public VisualEffect(ProtoEffectDrawable protoEffect, Vector2 position)
+            {
+                ProtoEffect = protoEffect;
+                Position = position;
+            }
+
+            public void Draw(Scene scene)
+            {
+                ProtoEffect.Draw(scene, Position);
+            }
+        }
+
         const int EmptyTime = 60;
         const int FadeInTime = 30;
         const int OpenEyeTime = 30;
@@ -205,34 +221,48 @@ namespace _7DRL_2021
 
         MascotMachine MascotSM;
         FlashHelper MascotFlash = new FlashHelper();
+        Slider MascotBlink = new Slider(1, 1);
 
-        public override float TimeMod => 1;
+        List<VisualEffect> VisualEffects = new List<VisualEffect>();
+
+        public override float TimeMod => TimeModStandard;
 
         public SceneMascot(Game game) : base(game)
         {
             MascotSM = new MascotMachine();
             MascotSM.AddState(MascotState.Empty, new MascotMachine.Transfer(MascotState.FadeIn), (state, content, input) => new MascotMachine.Data(EmptyTime));
             MascotSM.AddState(MascotState.FadeIn, new MascotMachine.Transfer(MascotState.OpenEye), (state, content, input) => new MascotMachine.Data(FadeInTime));
-            MascotSM.AddState(MascotState.OpenEye, new MascotMachine.Transfer(MascotState.IdleTime), (state, content, input) => new MascotMachine.Data(OpenEyeTime));
-            MascotSM.AddState(MascotState.IdleTime, new MascotMachine.Transfer(MascotState.FadeOut), (state, content, input) => new MascotMachine.Data(IdleTime));
+            MascotSM.AddState(MascotState.OpenEye, new MascotMachine.Transfer(MascotState.Idle), (state, content, input) => new MascotMachine.Data(OpenEyeTime));
+            MascotSM.AddState(MascotState.Idle, new MascotMachine.Transfer(MascotState.FadeOut), (state, content, input) => new MascotMachine.Data(IdleTime));
             MascotSM.AddState(MascotState.FadeOut, new MascotMachine.Transfer(MascotState.Finish), (state, content, input) => new MascotMachine.Data(FadeOutTime));
             MascotSM.AddState(MascotState.Finish, new MascotMachine.Finish(), (state, content, input) => new MascotMachine.Data(0));
             MascotSM.AddOnLeave(MascotState.OpenEye, (input) =>
             {
+                Vector2 pos = new Vector2(Viewport.Width / 2, Viewport.Height / 2);
                 MascotFlash.AddFlash(ColorMatrix.Flat(Color.Red), 10);
-                var star = new BigStar(this, SpriteLoader.Instance.AddSprite("content/effect_star_big"), () => new Vector2())
+                var star = new BigStar(this, SpriteLoader.Instance.AddSprite("content/effect_star_big"))
                 {
                     Color = Color.Red,
-                    DrawPass = DrawPass.UI,
                 };
-                star.Angle.Set(0, MathHelper.TwoPi, LerpHelper.QuadraticOut, 30);
-                star.Scale.Set(0, 0.1f, LerpHelper.QuadraticOut, 30);
+                star.Angle.Set(0, MathHelper.Pi, LerpHelper.QuadraticOut, 30);
+                star.Scale.Set(1f, 0.1f, LerpHelper.QuadraticIn, 30);
                 star.ShouldDestroy.Set(true, LerpHelper.Linear, 30);
+                var wave = new Wave(this, SpriteLoader.Instance.AddSprite("content/ring_spark_thin"), 30)
+                {
+                    Radius = 128,
+                    Precision = 8,
+                    StartRadius = 0.3f,
+                    Thickness = 0.5f,
+                    InnerLerp = LerpHelper.QuadraticOut,
+                    OuterLerp = LerpHelper.QuadraticOut,
+                    Color = ColorMatrix.Tint(Color.Red),
+                };
+                VisualEffects.Add(new VisualEffect(star, pos + new Vector2(17, -17) * 2));
+                VisualEffects.Add(new VisualEffect(wave, pos + new Vector2(17, -17) * 2));
             });
             MascotSM.AddOnEnter(MascotState.Finish, (input) =>
             {
-                MascotSM.Start(MascotState.Empty);
-                //Game.Scene = new SceneTitle(Game);
+                Game.Scene = new SceneTitle(Game);
             });
             MascotSM.Start(MascotState.Empty);
         }
@@ -244,9 +274,11 @@ namespace _7DRL_2021
 
             Color fadeColor;
 
+            WorldTransform = Matrix.Identity;
             Projection = Matrix.CreateOrthographicOffCenter(0, Viewport.Width, Viewport.Height, 0, 0, -1);
             ColorMatrix colorMatrix = MascotFlash.ColorMatrix;
 
+            PushSpriteBatch();
             PushSpriteBatch(shader: Shader, projection: Projection, shaderSetup: (transform, projection) =>
             {
                 SetupColorMatrix(colorMatrix, transform, projection);
@@ -264,8 +296,9 @@ namespace _7DRL_2021
                     float openEye = MascotSM.Content.Slide;
                     DrawSpriteExt(mascot_dark, AnimationFrame(mascot_dark, (float)LerpHelper.QuinticIn(0, 1, openEye)), pos - mascot_dark.Middle, mascot_dark.Middle, 0, new Vector2(2), SpriteEffects.None, Color.White, 0);
                     break;
-                case MascotState.IdleTime:
-                    DrawSpriteExt(mascot, 3, pos - mascot.Middle, mascot.Middle, 0, new Vector2(2), SpriteEffects.None, Color.White, 0);
+                case MascotState.Idle:
+                    var blink = SlideRepeat(MascotBlink.Slide, 2);
+                    DrawSpriteExt(mascot, AnimationFrame(mascot, (float)LerpHelper.QuinticIn(0, 1, blink)), pos - mascot.Middle, mascot.Middle, 0, new Vector2(2), SpriteEffects.None, Color.White, 0);
                     break;
                 case MascotState.FadeOut:
                     float fadeOut = MascotSM.Content.Slide;
@@ -274,18 +307,36 @@ namespace _7DRL_2021
                     DrawSpriteExt(mascot, 3, pos - mascot.Middle, mascot.Middle, 0, new Vector2(2), SpriteEffects.None, fadeColor, 0);
                     break;
             }
-            
             PopSpriteBatch();
 
-            var drawPasses = VisualEffects
-                .Cast<IDrawable>()
-                .ToMultiLookup(x => x.GetDrawPasses());
+            foreach (var visualEffect in VisualEffects)
+                visualEffect.Draw(this);
+
+            PopSpriteBatch();
+        }
+
+        private float SlideRepeat(float slide, int times)
+        {
+            slide *= times;
+            while (slide > 1)
+                slide -= 1;
+            return slide;
         }
 
         public override void Update(GameTime gameTime)
         {
+            UpdateTimeModifier();
+
             MascotSM.Update();
             MascotFlash.Update(1);
+
+            MascotBlink += 1;
+            if (MascotSM.CurrentState == MascotState.Idle && MascotSM.Content.Frame.Time == 60)
+                MascotBlink = new Slider(20);
+
+            UpdateProtoEffects();
+
+            VisualEffects.RemoveAll(x => x.ProtoEffect.Destroyed);
         }
     }
 }

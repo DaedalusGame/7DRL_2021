@@ -35,9 +35,7 @@ namespace _7DRL_2021.Behaviors
 
         public Vector2 GetTip()
         {
-            var center = Curio.GetVisualPosition() + new Vector2(8, 8);
-            var angle = Curio.GetVisualAngle();
-            return center + Util.AngleToVector(angle + VisualAngle()) * (8 + 16 * VisualScale());
+            return GetBlade(16);
         }
 
         public Vector2 GetBlade(float bladeLength)

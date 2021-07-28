@@ -108,8 +108,6 @@ namespace _7DRL_2021
     {
         const float ViewScale = 2.0f;
 
-        Random Random = new Random();
-
         public Vector2 Camera => CameraCurio.GetVisualTarget();
         public Vector2 CameraPosition => Camera - CameraSize / 2;
         public Vector2 CameraSize => new Vector2(Viewport.Width / 2, Viewport.Height / 2);
@@ -117,9 +115,9 @@ namespace _7DRL_2021
         public PlayerUI Menu;
         public Map Map;
         public List<SliderTime> Timers = new List<SliderTime>();
+        public DeferredList<VisualEffect> VisualEffects = new DeferredList<VisualEffect>();
 
-        public RenderTarget2D CameraTargetA;
-        public RenderTarget2D CameraTargetB;
+        public DoubleBuffer CameraTarget = new DoubleBuffer();
         public RenderTarget2D DistortionMap;
         public RenderTarget2D BloodMapAdditive;
         public RenderTarget2D BloodMapMultiply;
@@ -134,9 +132,8 @@ namespace _7DRL_2021
         public ICurio PlayerCurio;
         public ICurio CameraCurio;
         public Wait Cutscene = Wait.NoWait;
-        public float TimeModStandard;
         public override float TimeMod => (WaitForPlayer || WaitForCutscene) ? 0 : TimeModStandard;
-        public float TimeModCurrent;
+        
         public bool WaitForPlayer => PlayerCurio.GetActionHolder(ActionSlot.Active)?.Done ?? false;
         public bool WaitForCutscene => !Cutscene.Done;
 
@@ -435,13 +432,6 @@ namespace _7DRL_2021
                 * Matrix.CreateTranslation(Viewport.Width / 2, Viewport.Height / 2, 0); //Translate the character to the middle of the viewport
         }
 
-        private void SwapBuffers()
-        {
-            var helper = CameraTargetA;
-            CameraTargetA = CameraTargetB;
-            CameraTargetB = helper;
-        }
-
         private void DrawTextures()
         {
             Menu.PreDraw(this);
@@ -487,6 +477,7 @@ namespace _7DRL_2021
             CurrentTheme?.Update();
             CurrentGameOver?.Update();
 
+            UpdateProtoEffects();
             UpdateVisualEffects();
 
             foreach (var timer in Timers)
@@ -542,39 +533,16 @@ namespace _7DRL_2021
             VisualEffects.RemoveAll(x => x.Destroyed);
         }
 
-        private void UpdateTimeModifier()
-        {
-            IEnumerable<TimeWarp> timeWarps = VisualEffects.OfType<TimeWarp>();
-            if (timeWarps.Any())
-            {
-                TimeModStandard = timeWarps.Aggregate(1f, (x, y) => x * y.TimeMod);
-            }
-            else
-            {
-                TimeModStandard = 1;
-            }
-
-            TimeModCurrent = TimeMod;
-        }
-
         public override void Draw(GameTime gameTime)
         {
-            Util.SetupRenderTarget(this, ref CameraTargetA, Viewport.Width, Viewport.Height);
-            Util.SetupRenderTarget(this, ref CameraTargetB, Viewport.Width, Viewport.Height);
+            CameraTarget.Setup(this, Viewport.Width, Viewport.Height);
             Util.SetupRenderTarget(this, ref DistortionMap, Viewport.Width, Viewport.Height);
             Util.SetupRenderTarget(this, ref BloodMapAdditive, Viewport.Width, Viewport.Height);
             Util.SetupRenderTarget(this, ref BloodMapMultiply, Viewport.Width, Viewport.Height);
 
             Projection = Matrix.CreateOrthographicOffCenter(0, Viewport.Width, Viewport.Height, 0, 0, -1);
             WorldTransform = CreateViewMatrix();
-
-            IEnumerable<ScreenShake> screenShakes = VisualEffects.OfType<ScreenShake>();
-            if (screenShakes.Any())
-            {
-                ScreenShake screenShake = screenShakes.WithMax(effect => effect.Offset.LengthSquared());
-                if (screenShake != null)
-                    WorldTransform *= Matrix.CreateTranslation(screenShake.Offset.X, screenShake.Offset.Y, 0);
-            }
+            ApplyScreenShake(ref WorldTransform);
 
             DrawTextures();
 
@@ -592,7 +560,7 @@ namespace _7DRL_2021
                 .Where(x => x.ShouldDraw(this, cameraPos))
                 .ToMultiLookup(x => x.GetDrawPasses());
 
-            SetRenderTarget(CameraTargetA);
+            SetRenderTarget(CameraTarget.A);
 
             int width = 19 * 32;
             int height = 19 * 32;
@@ -628,45 +596,25 @@ namespace _7DRL_2021
             PopSpriteBatch();
             PopSpriteBatch();
 
-            SetRenderTarget(CameraTargetB);
-            SwapBuffers();
+            SetRenderTarget(CameraTarget.B);
+            CameraTarget.Swap();
 
             //Draw screenflashes
             ColorMatrix color = ColorMatrix.Identity;
-
-            IEnumerable<ScreenFlash> screenFlashes = VisualEffects.OfType<ScreenFlash>();
-            foreach (ScreenFlash screenFlash in screenFlashes)
-            {
-                color *= screenFlash.ScreenColor;
-            }
+            ApplyScreenFlash(ref color);
 
             PushSpriteBatch(samplerState: SamplerState.PointWrap, blendState: NonPremultiplied, shader: Shader, shaderSetup: (transform, projection) =>
             {
                 SetupColorMatrix(color, Matrix.Identity, Projection);
             });
-            SpriteBatch.Draw(CameraTargetB, CameraTargetB.Bounds, Color.White);
+            SpriteBatch.Draw(CameraTarget.B, CameraTarget.B.Bounds, Color.White);
             PopSpriteBatch();
 
-            SetRenderTarget(CameraTargetB);
-            SwapBuffers();
+            SetRenderTarget(CameraTarget.B);
+            CameraTarget.Swap();
 
             //Draw glitches
-            IEnumerable<ScreenGlitch> screenGlitches = VisualEffects.OfType<ScreenGlitch>();
-
-            foreach (var glitch in screenGlitches)
-            {
-                GlitchParams glitchParams = glitch.Glitch;
-
-                PushSpriteBatch(samplerState: SamplerState.PointWrap, blendState: NonPremultiplied, shader: Shader, shaderSetup: (transform, projection) =>
-                {
-                    SetupGlitch(Game.Noise, glitchParams, Random, Matrix.Identity, Projection);
-                });
-                SpriteBatch.Draw(CameraTargetB, CameraTargetB.Bounds, Color.White);
-                PopSpriteBatch();
-
-                SetRenderTarget(CameraTargetB);
-                SwapBuffers();
-            }
+            RenderGlitches(CameraTarget);
 
             //Draw to screen
             SetRenderTarget(null);
@@ -675,10 +623,10 @@ namespace _7DRL_2021
             {
                 SetupColorMatrix(ColorMatrix.Identity, Matrix.Identity, Projection);
             });
-            SpriteBatch.Draw(CameraTargetB, CameraTargetB.Bounds, Color.White);
+            SpriteBatch.Draw(CameraTarget.B, CameraTarget.B.Bounds, Color.White);
             PopSpriteBatch();
 
-            
+
             PushSpriteBatch(samplerState: SamplerState.PointWrap, blendState: BlendState.Additive, shader: Shader, shaderSetup: (transform, projection) =>
             {
                 SetupColorMatrix(ColorMatrix.Identity, Matrix.Identity, Projection);
