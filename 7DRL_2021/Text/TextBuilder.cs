@@ -1211,6 +1211,12 @@ namespace _7DRL_2021
             StartLine(line.Alignment);
         }
 
+        public void NewLine(LineAlignment alignment)
+        {
+            EndLine();
+            StartLine(alignment);
+        }
+
         public void StartTableRow(float width, ColumnConfigs columnConfigs)
         {
             var container = new TextTableLine(width, columnConfigs);

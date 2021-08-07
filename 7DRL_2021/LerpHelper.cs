@@ -276,5 +276,30 @@ namespace _7DRL_2021
             else
                 return Linear(a, b, 0.5 * k * Math.Pow(2, -10 * (amt - 1)) * Math.Sin(((amt - 1) - s) * (2 * Math.PI) / p) + 1);
         }
+
+
+        public static double BackIn(double a, double b, double amt) => BackInCustom(a, b, 1.7f, amt);
+
+        public static double BackInCustom(double a, double b, double c, double amt)
+        {
+            if (amt <= 0)
+                return a;
+            if (amt >= 1)
+                return b;
+
+            return (c + 1) * amt * amt * amt;
+        }
+
+        public static double BackOut(double a, double b, double amt) => BackOutCustom(a, b, 1.7f, amt);
+
+        public static double BackOutCustom(double a, double b, double c, double amt)
+        {
+            if (amt <= 0)
+                return a;
+            if (amt >= 1)
+                return b;
+
+            return 1 + (c + 1) * Math.Pow(amt - 1, 3) + c * Math.Pow(amt - 1, 2);
+        }
     }
 }

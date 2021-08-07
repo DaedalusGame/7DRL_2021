@@ -64,6 +64,8 @@ float glitch_channel_shift;
 float glitch_noise_level;
 float glitch_shakiness;
 
+float2 uv_scroll;
+
 struct VertexShaderInput
 {
     float4 Position : SV_POSITION;
@@ -182,8 +184,24 @@ float4 WavePS(VertexShaderOutput input) : COLOR
 
 float4 GradientPS(VertexShaderOutput input) : COLOR
 {
-    float4 color = lerp(lerp(gradient_topleft, gradient_topright, input.ScreenCoords.xxxx), lerp(gradient_bottomleft, gradient_bottomright, input.ScreenCoords.xxxx), input.ScreenCoords.yyyy);
+	float4 color = lerp(lerp(gradient_topleft, gradient_topright, input.TextureCoordinates.xxxx), lerp(gradient_bottomleft, gradient_bottomright, input.TextureCoordinates.xxxx), input.TextureCoordinates.yyyy);
 	return input.Color * color;
+}
+
+float4 GradientQuantizedPS(VertexShaderOutput input) : COLOR
+{
+	float quantizeMod = 8;
+	float4 easeX = 1 - (1 - input.TextureCoordinates.xxxx) * (1 - input.TextureCoordinates.xxxx);
+	float4 easeY = 1 - (1 - input.TextureCoordinates.yyyy) * (1 - input.TextureCoordinates.yyyy);
+	float4 color = lerp(lerp(gradient_topleft, gradient_topright, easeX), lerp(gradient_bottomleft, gradient_bottomright, easeX), easeY.yyyy);
+	color = ceil(color * quantizeMod) / quantizeMod;
+	return input.Color * color;
+	//return input.Color * float4(input.TextureCoordinates.xy,0,1);
+}
+
+float4 UVScrollPS(VertexShaderOutput input) : COLOR
+{
+	return input.Color * texture_main.Sample(sampler_main, input.TextureCoordinates + uv_scroll);
 }
 
 float4 ColorMatrixPS(VertexShaderOutput input) : COLOR
@@ -287,6 +305,14 @@ technique Gradient
         PixelShader = compile PS_SHADERMODEL GradientPS();
     }
 };
+technique GradientQuantized
+{
+	pass P0
+	{
+        //VertexShader = compile VS_SHADERMODEL MainVS();
+		PixelShader = compile PS_SHADERMODEL GradientQuantizedPS();
+	}
+};
 technique ColorMatrix
 {
 	pass P0
@@ -333,5 +359,13 @@ technique Glitch
 	{
 		VertexShader = compile VS_SHADERMODEL MainVS();
 		PixelShader = compile PS_SHADERMODEL GlitchPS();
+	}
+};
+technique UVScroll
+{
+	pass P0
+	{
+		VertexShader = compile VS_SHADERMODEL MainVS();
+		PixelShader = compile PS_SHADERMODEL UVScrollPS();
 	}
 };

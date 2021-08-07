@@ -32,7 +32,7 @@ namespace _7DRL_2021.Results
 
         public void Tick(SceneGame scene)
         {
-            Frame += scene.TimeMod;
+            Frame += scene.TimeModCurrent;
         }
     }
 }

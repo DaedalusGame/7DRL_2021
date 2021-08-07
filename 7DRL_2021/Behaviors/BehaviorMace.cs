@@ -58,9 +58,9 @@ namespace _7DRL_2021.Behaviors
         {
             if (Curio.IsAlive() && !Upswing.Done)
             {
-                Upswing += scene.TimeMod;
+                Upswing += scene.TimeModCurrent;
                 var lastAngle = UpswingAngle;
-                UpswingAngle += scene.TimeMod * (float)LerpHelper.QuadraticOut(MathHelper.TwoPi * 0.01, MathHelper.TwoPi * 0.2, Upswing.Slide);
+                UpswingAngle += scene.TimeModCurrent * (float)LerpHelper.QuadraticOut(MathHelper.TwoPi * 0.01, MathHelper.TwoPi * 0.2, Upswing.Slide);
                 var deltaSwing = Math.Abs(Math.Floor(UpswingAngle / MathHelper.Pi) - Math.Floor(lastAngle / MathHelper.Pi));
                 if (deltaSwing >= 1)
                 {
@@ -71,7 +71,7 @@ namespace _7DRL_2021.Behaviors
             //    Upswing.Time = Upswing.EndTime;
             if (!MaceReturn.Done)
             {
-                MaceReturn += scene.TimeMod;
+                MaceReturn += scene.TimeModCurrent;
             }
         }
 

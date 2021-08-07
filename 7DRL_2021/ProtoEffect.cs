@@ -15,10 +15,17 @@ namespace _7DRL_2021
 
         public Scene Scene;
 
+        public bool Timeless;
+
         protected ProtoEffect(Scene scene)
         {
             Scene = scene;
             Scene.ProtoEffects.AddLater(this);
+        }
+
+        public float GetTimeMod()
+        {
+            return Timeless ? 1 : Scene.TimeModCurrent;
         }
 
         public bool Destroyed { get; set; }
@@ -106,11 +113,11 @@ namespace _7DRL_2021
     class ScreenFade : ScreenFlash
     {
         Func<ColorMatrix> ColorFunction;
-        LerpFloat Lerp;
+        public LerpFloat Lerp;
 
         public override ColorMatrix ScreenColor => ColorMatrix.Lerp(ColorMatrix.Identity, ColorFunction(), Lerp);
 
-        public ScreenFade(SceneGame world, Func<ColorMatrix> color, float start, bool delete) : base(world, 1)
+        public ScreenFade(Scene world, Func<ColorMatrix> color, float start, bool delete) : base(world, 1)
         {
             ColorFunction = color;
             Lerp = new LerpFloat(start);
@@ -339,11 +346,11 @@ namespace _7DRL_2021
 
         public override void Update()
         {
-            Angle.Update();
-            Scale.Update();
-            ScaleFlicker.Update();
-            Flicker.Update();
-            ShouldDestroy.Update();
+            Angle.Update(GetTimeMod());
+            Scale.Update(GetTimeMod());
+            ScaleFlicker.Update(GetTimeMod());
+            Flicker.Update(GetTimeMod());
+            ShouldDestroy.Update(GetTimeMod());
             ScaleFlickerTime += ScaleFlicker;
             if (ScaleFlickerTime < 0 || ScaleFlickerTime > 1)
             {
@@ -361,7 +368,7 @@ namespace _7DRL_2021
         public override void Draw(Scene scene, Vector2 pos)
         {
             if(FlickerTime < 0.5f)
-            scene.DrawSpriteExt(Sprite, 0, pos - Sprite.Middle, Sprite.Middle, Angle, new Vector2(Scale * (float)FlickerLerp(1, FlickerScale, ScaleFlickerTime)), SpriteEffects.None, Color, 0);
+                scene.DrawSpriteExt(Sprite, 0, pos - Sprite.Middle, Sprite.Middle, Angle, new Vector2(Scale * (float)FlickerLerp(1, FlickerScale, ScaleFlickerTime)), SpriteEffects.None, Color, 0);
         }
     }
 
@@ -397,7 +404,7 @@ namespace _7DRL_2021
 
         public override void Update()
         {
-            Frame += 1;
+            Frame += GetTimeMod();
             if (Frame.Done)
                 Destroy();
         }
@@ -405,6 +412,72 @@ namespace _7DRL_2021
         public override void Draw(Scene scene, Vector2 pos)
         {
             scene.DrawCircle(WaveSprite, SamplerState, pos, 100, 0, MathHelper.TwoPi, Radius, 0, Precision, Start, End, Color, scene.NonPremultiplied);
+        }
+    }
+
+    class Explosion : ProtoEffectDrawable
+    {
+        SpriteReference Sprite;
+        Vector2 Position;
+        public float Angle;
+        public LerpFloat AngleSpeed = new LerpFloat(0);
+        public LerpFloat Size = new LerpFloat(1);
+
+        public Color Color = Color.White;
+
+        Slider Frame;
+
+        public Explosion(Scene world, SpriteReference sprite, int time) : base(world)
+        {
+            Sprite = sprite;
+            Angle = Random.NextAngle();
+            Frame = new Slider(time);
+        }
+
+        public override void Update()
+        {
+            Frame += GetTimeMod();
+            Angle += GetTimeMod() * AngleSpeed;
+            AngleSpeed.Update(GetTimeMod());
+            if (Frame.Done)
+                Destroy();
+        }
+
+        public override void Draw(Scene scene, Vector2 pos)
+        {
+            int subImage = scene.AnimationFrame(Sprite, Frame.Slide);
+            float size = Size;
+            scene.DrawSpriteExt(Sprite, subImage, pos - Sprite.Middle, Sprite.Middle, Angle, new Vector2(size), SpriteEffects.None, Color, 0);
+        }
+    }
+
+    class SlashEffect : ProtoEffectDrawable
+    {
+        public float Width;
+        public float Angle;
+        public Color Color = Color.White;
+
+        Slider Frame;
+
+        public SlashEffect(Scene world, float width, int time) : base(world)
+        {
+            Width = width;
+            Angle = Random.NextAngle();
+            Frame = new Slider(time);
+        }
+
+        public override void Update()
+        {
+            Frame += GetTimeMod();
+            if (Frame.Done)
+                Destroy();
+        }
+
+        public override void Draw(Scene scene, Vector2 pos)
+        {
+
+            float width = (float)LerpHelper.QuarticOut(Width, 0, Frame.Slide);
+            scene.SpriteBatch.Draw(scene.Pixel, pos, scene.Pixel.Bounds, Color, Angle, new Vector2(0.5f, 0.5f), new Vector2(width * 2, 10000), SpriteEffects.None, 0);
         }
     }
 }

@@ -64,8 +64,8 @@ namespace _7DRL_2021.Behaviors
                 Curio.Destroy();
             }
 
-            LifeTime += scene.TimeMod;
-            MoveFrame += scene.TimeMod;
+            LifeTime += scene.TimeModCurrent;
+            MoveFrame += scene.TimeModCurrent;
         }
 
         public override void Apply()

@@ -83,7 +83,7 @@ namespace _7DRL_2021.Results
 
             if(!StartTime.Done)
             {
-                StartTime += world.TimeMod;
+                StartTime += world.TimeModCurrent;
                 if(StartTime.Done)
                 {
                     lich.SwordAngle.Set(StartAngle, EndAngle, LerpHelper.Quartic, SlashTime.EndTime);
@@ -94,7 +94,7 @@ namespace _7DRL_2021.Results
             if (!SlashTime.Done)
             {
                 PerformSlash(lich);
-                SlashTime += world.TimeMod;
+                SlashTime += world.TimeModCurrent;
                 if (SlashTime.Done)
                 {
                     lich.SwordScale.Set(1, 0, LerpHelper.QuadraticOut, EndTime.EndTime);
@@ -105,7 +105,7 @@ namespace _7DRL_2021.Results
 
             if (!EndTime.Done)
             {
-                EndTime += world.TimeMod;
+                EndTime += world.TimeModCurrent;
             }
         }
 

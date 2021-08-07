@@ -59,8 +59,8 @@ namespace _7DRL_2021.Results
 
         public void Tick(SceneGame scene)
         {
-            Frame += scene.TimeMod;
-            ShootFrame += scene.TimeMod;
+            Frame += scene.TimeModCurrent;
+            ShootFrame += scene.TimeModCurrent;
             if (ShootFrame.Done)
             {
                 int radius = 240;

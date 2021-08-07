@@ -94,7 +94,7 @@ namespace _7DRL_2021.Results
             if (dagger.Upswing.Done)
             {
                 bool shouldAttack = !Frame.Done;
-                Frame += scene.TimeMod;
+                Frame += scene.TimeModCurrent;
                 if (Frame.Done && shouldAttack)
                 {
                     DamageArea();

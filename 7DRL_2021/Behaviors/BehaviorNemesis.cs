@@ -93,7 +93,7 @@ namespace _7DRL_2021.Behaviors
                 {
                     if (isEnemyArmed)
                     {
-                        ParryTimer += scene.TimeMod;
+                        ParryTimer += scene.TimeModCurrent;
                         if (ParryTimer.Done)
                         {
                             State = NemesisState.Parry;
@@ -102,7 +102,7 @@ namespace _7DRL_2021.Behaviors
                     }
                     if(isEnemyFar)
                     {
-                        ChaseTimer += scene.TimeMod;
+                        ChaseTimer += scene.TimeModCurrent;
                         if (ChaseTimer.Done)
                         {
                             State = NemesisState.Forward;
@@ -114,7 +114,7 @@ namespace _7DRL_2021.Behaviors
                 {
                     if (!isEnemyArmed || isEnemyFar)
                     {
-                        ParryTimer += scene.TimeMod;
+                        ParryTimer += scene.TimeModCurrent;
                         if (ParryTimer.Done)
                         {
                             State = NemesisState.Back;

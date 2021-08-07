@@ -45,7 +45,7 @@ namespace _7DRL_2021.Behaviors
         public void Tick(SceneGame scene)
         {
             if (Curio.IsDead())
-                Decay += scene.TimeMod;
+                Decay += scene.TimeModCurrent;
 
             if (Decay.Done)
             {

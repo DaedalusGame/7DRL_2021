@@ -390,7 +390,7 @@ namespace _7DRL_2021.Menus
             Priority = priority;
         }
 
-        public void AddTooltip(TextBuilder text)
+        public void GenerateTooltip(TextBuilder text)
         {
             //NOOP
         }
@@ -441,7 +441,7 @@ namespace _7DRL_2021.Menus
                 HoverFrame -= 1;
         }
     }
-
+    /*
     abstract class MenuAct : Menu
     {
         class SelectionArea : IMenuArea
@@ -461,7 +461,7 @@ namespace _7DRL_2021.Menus
                 Index = index;
             }
 
-            public void AddTooltip(TextBuilder text)
+            public void GenerateTooltip(TextBuilder text)
             {
                 //NOOP
             }
@@ -576,7 +576,7 @@ namespace _7DRL_2021.Menus
 
         public abstract void DrawLine(Scene scene, Vector2 linePos, int e);
     }
-
+    */
     class ActAction
     {
         public virtual string Name
@@ -604,7 +604,7 @@ namespace _7DRL_2021.Menus
         }
     }
 
-    class MenuTextSelection : MenuAct
+    /*class MenuTextSelection : MenuAct
     {
         Scene Scene;
         List<ActAction> Actions = new List<ActAction>();
@@ -647,5 +647,5 @@ namespace _7DRL_2021.Menus
                 color = Color.Gray;
             //scene.DrawText(action.Name, linePos + new Vector2(16, 0), Alignment, new TextParameters().SetConstraints(Width - 32, 16).SetBold(true).SetColor(color, Color.Black));
         }
-    }
+    }*/
 }

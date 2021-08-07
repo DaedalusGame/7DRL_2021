@@ -42,7 +42,7 @@ namespace _7DRL_2021.Results
             {
                 moveTickable.MoveTick(Direction);
             }
-            Frame += scene.TimeMod;
+            Frame += scene.TimeModCurrent;
         }
     }
 }

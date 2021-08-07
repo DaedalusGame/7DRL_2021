@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +94,8 @@ namespace _7DRL_2021
         public TextFormatting Format { get; private set; }
         public DialogFormatting DialogFormat { get; private set; }
 
+        public LineAlignment Alignment;
+
         public TextElementDynamic(Func<string> value, float width, TextFormatting format, DialogFormatting dialogFormat)
         {
             Value = value;
@@ -121,13 +124,101 @@ namespace _7DRL_2021
 
         public void Draw(ITextContainer parent, Matrix baseTransform, FontRenderer renderer, TextCursorPosition cursorPos)
         {
-            renderer.DrawChars(Text, Width, Height, Format, Dialog, Position.Transform * baseTransform, cursorPos);
+            float offsetX = (Width - GetWidth()) * 1f;
+            switch (Alignment)
+            {
+                case (LineAlignment.Left):
+                    offsetX = 0;
+                    break;
+                case (LineAlignment.Center):
+                    offsetX *= 0.5f;
+                    break;
+                case (LineAlignment.Right):
+                    break;
+            }
+
+            renderer.DrawChars(Text, Width, Height, Format, Dialog, Position.Transform * baseTransform * Matrix.CreateTranslation(offsetX, 0, 0), cursorPos);
         }
 
         public void IncrementPosition(ref TextCursorPosition cursorPos)
         {
             cursorPos.AddCharacters(Text.Length);
             cursorPos.IncrementElement();
+        }
+    }
+
+    class TextElementCursor : ITextElement
+    {
+        public float Width { get; set; }
+        public float Height { get; set; }
+
+        public ElementPosition Position { get; private set; }
+
+        public bool IsUnit => true;
+
+        SpriteReference Sprite;
+        Func<bool> Selected;
+
+        public TextElementCursor(SpriteReference sprite, float width, float height, Func<bool> selected)
+        {
+            Sprite = sprite;
+            Width = width;
+            Height = height;
+            Selected = selected;
+        }
+
+        public void Setup(ITextContainer parent, Vector2 position)
+        {
+            Position = new ElementPosition(parent.Position.Transform * Matrix.CreateTranslation(position.X, position.Y, 0));
+        }
+
+        public void Draw(ITextContainer parent, Matrix baseTransform, FontRenderer renderer, TextCursorPosition cursorPos)
+        {
+            if (Selected())
+            {
+                renderer.Scene.PushSpriteBatch(transform: Position.Transform * baseTransform);
+                renderer.Scene.DrawSprite(Sprite, 0, new Vector2(Width / 2, Height / 2) - Sprite.Middle, SpriteEffects.None, 0);
+                renderer.Scene.PopSpriteBatch();
+            }
+        }
+
+        public void IncrementPosition(ref TextCursorPosition cursorPos)
+        {
+            //cursorPos.AddCharacters(1);
+            cursorPos.IncrementElement();
+        }
+    }
+
+    class TextElementBar : ITextElement
+    {
+        public float Width => 6 + BarCount * 5;
+        public float Height => 16;
+        public ElementPosition Position { get; set; }
+
+        public bool IsUnit => true;
+
+        public int BarCount;
+        public Func<float> BarSlide;
+
+        public TextElementBar(int barCount, Func<float> barSlide)
+        {
+            BarCount = barCount;
+            BarSlide = barSlide;
+        }
+
+        public void Draw(ITextContainer parent, Matrix baseTransform, FontRenderer renderer, TextCursorPosition cursorPos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void IncrementPosition(ref TextCursorPosition cursorPos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Setup(ITextContainer parent, Vector2 position)
+        {
+            throw new NotImplementedException();
         }
     }
 }

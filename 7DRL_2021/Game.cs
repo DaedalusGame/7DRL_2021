@@ -18,7 +18,8 @@ namespace _7DRL_2021
 
         public Texture2D Pixel;
         public Texture2D Noise;
-        public Microsoft.Xna.Framework.Graphics.Effect Shader;
+        public Effect Shader;
+        public Effect ShaderLight;
 
         public FrameCounter FPS = new FrameCounter();
         public FrameCounter GFPS = new FrameCounter();
@@ -40,7 +41,7 @@ namespace _7DRL_2021
             Graphics.PreferredBackBufferHeight = 768;
             Graphics.ApplyChanges();
             Window.Title = "Eradication Bastion"; //YEAH I KNOW
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = "content";
         }
 
         public IEnumerator<InputTwinState> InputIterator()
@@ -107,7 +108,8 @@ namespace _7DRL_2021
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             PrimitiveBatch = new PrimitiveBatch<VertexPositionColorTexture>(GraphicsDevice);
 
-            Shader = Content.Load<Microsoft.Xna.Framework.Graphics.Effect>("effects");
+            Shader = Content.Load<Effect>("effects");
+            ShaderLight = Content.Load<Effect>("effects_light");
         }
 
         /// <summary>

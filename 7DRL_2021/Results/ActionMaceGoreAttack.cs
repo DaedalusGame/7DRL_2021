@@ -133,7 +133,7 @@ namespace _7DRL_2021.Results
             var tile = Origin.GetMainTile();
             var mace = Origin.GetBehavior<BehaviorMace>();
 
-            IFrameCollection.Tick(scene.TimeMod);
+            IFrameCollection.Tick(scene.TimeModCurrent);
 
             bool upswingSlash = FrameUpswingSlash.Done;
             if (Origin.IsAlive() && FrameUpswingSlash.Time > FrameUpswingSlash.EndTime - 5 && !mace.Upswing.Done)
@@ -172,12 +172,12 @@ namespace _7DRL_2021.Results
                     };
                     FrameUpswingVisual.Time = 0;
                 }
-                FrameUpswingVisual += scene.TimeMod;
+                FrameUpswingVisual += scene.TimeModCurrent;
                 if(FrameUpswingSlash.Done)
                     DamageAreaUpswing();
             }
 
-            FrameUpswingSlash += scene.TimeMod;
+            FrameUpswingSlash += scene.TimeModCurrent;
 
             if (mace.Upswing.Done)
             {
@@ -187,7 +187,7 @@ namespace _7DRL_2021.Results
                     Swinging = true;
                 }
                 bool shouldAttack = !Frame.Done;
-                Frame += scene.TimeMod;
+                Frame += scene.TimeModCurrent;
                 if (Frame.Done && shouldAttack)
                 {
                     var target = GetTarget();

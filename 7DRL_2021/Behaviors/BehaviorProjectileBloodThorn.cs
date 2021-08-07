@@ -109,11 +109,11 @@ namespace _7DRL_2021.Behaviors
                 }
             }
 
-            AlreadyHit.Tick(scene.TimeMod);
+            AlreadyHit.Tick(scene.TimeModCurrent);
 
             if (Lifetime.Done)
                 Curio.Destroy();
-            Lifetime += scene.TimeMod;
+            Lifetime += scene.TimeModCurrent;
         }
 
         public override void Apply()

@@ -50,7 +50,7 @@ namespace _7DRL_2021.Results
             var orientable = Origin.GetBehavior<BehaviorOrientable>();
             var grapple = Origin.GetBehavior<BehaviorGrapplingHook>();
             bool shouldReel = !GrappleTime.Done;
-            GrappleTime += scene.TimeMod;
+            GrappleTime += scene.TimeModCurrent;
             if (GrappleTime.Done)
             {
                 if (shouldReel)
@@ -67,7 +67,7 @@ namespace _7DRL_2021.Results
                     Target.DelayDecay(ReelTime.EndTime);
                 }
                 bool shouldGrip = !ReelTime.Done;
-                ReelTime += scene.TimeMod;
+                ReelTime += scene.TimeModCurrent;
                 if(ReelTime.Done && shouldGrip)
                 {
                     var actions = new List<ActionWrapper>();

@@ -57,8 +57,8 @@ namespace _7DRL_2021.Behaviors
 
             if (Curio.IsAlive())
             {
-                SwordAngle.Update(scene.TimeMod);
-                SwordScale.Update(scene.TimeMod);
+                SwordAngle.Update(scene.TimeModCurrent);
+                SwordScale.Update(scene.TimeModCurrent);
             }
 
             if (active.Done && Curio.IsAlive())

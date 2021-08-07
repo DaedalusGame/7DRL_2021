@@ -117,7 +117,7 @@ namespace _7DRL_2021.Results
                     Swinging = true;
                 }
                 bool shouldAttack = !Frame.Done;
-                Frame += scene.TimeMod;
+                Frame += scene.TimeModCurrent;
                 if (Frame.Done && shouldAttack)
                 {
                     var target = GetTarget();

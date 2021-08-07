@@ -36,7 +36,7 @@ namespace _7DRL_2021.Behaviors
         public void Tick(SceneGame scene)
         {
             if (Curio.IsAlive())
-                Upswing += scene.TimeMod;
+                Upswing += scene.TimeModCurrent;
             //else
             //    Upswing.Time = Upswing.EndTime;
         }

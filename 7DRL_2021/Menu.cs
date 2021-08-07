@@ -20,9 +20,12 @@ namespace _7DRL_2021
             ContentSprite = contentSprite;
             LabelSprite = labelSprite;
             Label = new TextBuilder(float.PositiveInfinity, 16);
-            Label.StartLine(LineAlignment.Center);
-            label(Label);
-            Label.EndLine();
+            if (label != null)
+            {
+                Label.StartLine(LineAlignment.Center);
+                label(Label);
+                Label.EndLine();
+            }
             Label.EndContainer();
             Label.Finish();
             Size = size;
@@ -189,7 +192,7 @@ namespace _7DRL_2021
             get;
         }
 
-        void AddTooltip(TextBuilder text);
+        void GenerateTooltip(TextBuilder text);
         
         bool IsWithin(int x, int y);
     }
@@ -204,6 +207,28 @@ namespace _7DRL_2021
             set;
         }
         ITooltipProvider TooltipProvider;
+
+        public float GetTop()
+        {
+            return GetElements().SelectMany(GetAllLocalPoints).Min(pos => pos.Y);
+        }
+
+        public float GetBottom()
+        {
+            return GetElements().SelectMany(GetAllLocalPoints).Max(pos => pos.Y);
+        }
+
+        private IEnumerable<Vector2> GetAllLocalPoints(ITextElement element)
+        {
+            var transformFinal = element.Position.Transform;
+
+            var a = Vector2.Transform(new Vector2(0, 0), transformFinal);
+            var b = Vector2.Transform(new Vector2(element.Width, 0), transformFinal);
+            var c = Vector2.Transform(new Vector2(0, element.Height), transformFinal);
+            var d = Vector2.Transform(new Vector2(element.Width, element.Height), transformFinal);
+
+            return new[] { a, b, c, d };
+        }
 
         public MenuAreaText(TextBuilder text, double priority, ITooltipProvider tooltipProvider)
         {
@@ -235,7 +260,7 @@ namespace _7DRL_2021
             return false;
         }
 
-        public void AddTooltip(TextBuilder text)
+        public void GenerateTooltip(TextBuilder text)
         {
             TooltipProvider?.AddTooltip(text);
         }
@@ -259,7 +284,7 @@ namespace _7DRL_2021
             set;
         }
 
-        public void AddTooltip(TextBuilder text)
+        public void GenerateTooltip(TextBuilder text)
         {
             //NOOP
         }

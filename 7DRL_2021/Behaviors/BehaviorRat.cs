@@ -46,7 +46,7 @@ namespace _7DRL_2021.Behaviors
             var map = Curio.GetMap();
 
             if (Curio.IsDead())
-                Decay += scene.TimeMod;
+                Decay += scene.TimeModCurrent;
 
             if (Decay.Done)
             {

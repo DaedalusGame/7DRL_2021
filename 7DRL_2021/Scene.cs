@@ -103,7 +103,8 @@ namespace _7DRL_2021
         public Viewport Viewport => GraphicsDevice.Viewport;
         public int Width => GraphicsDevice.PresentationParameters.BackBufferWidth;
         public int Height => GraphicsDevice.PresentationParameters.BackBufferHeight;
-        public Microsoft.Xna.Framework.Graphics.Effect Shader => Game.Shader;
+        public Effect Shader => Game.Shader;
+        public Effect ShaderLight => Game.ShaderLight;
 
         public Matrix WorldTransform;
         public Matrix Projection;
@@ -164,6 +165,11 @@ namespace _7DRL_2021
         {
             Game = game;
             FontRenderer = new FontRenderer(this);
+        }
+
+        public void Quit()
+        {
+            Game.Exit();
         }
 
         public abstract void Update(GameTime gameTime);
@@ -316,6 +322,33 @@ namespace _7DRL_2021
             Shader.Parameters["WorldViewProjection"].SetValue(transform * projection);
 
             GraphicsDevice.SamplerStates[1] = GraphicsDevice.SamplerStates[0];
+        }
+
+        public void SetupGradient(Color topleft, Color topright, Color bottomleft, Color bottomright, Matrix transform, Matrix projection)
+        {
+            Shader.CurrentTechnique = Shader.Techniques["Gradient"];
+            Shader.Parameters["gradient_topleft"].SetValue(topleft.ToVector4());
+            Shader.Parameters["gradient_topright"].SetValue(topright.ToVector4());
+            Shader.Parameters["gradient_bottomleft"].SetValue(bottomleft.ToVector4());
+            Shader.Parameters["gradient_bottomright"].SetValue(bottomright.ToVector4());
+            Shader.Parameters["WorldViewProjection"].SetValue(transform * projection);
+        }
+
+        public void SetupGradientQuantized(Color topleft, Color topright, Color bottomleft, Color bottomright, Matrix transform, Matrix projection)
+        {
+            Shader.CurrentTechnique = Shader.Techniques["GradientQuantized"];
+            Shader.Parameters["gradient_topleft"].SetValue(topleft.ToVector4());
+            Shader.Parameters["gradient_topright"].SetValue(topright.ToVector4());
+            Shader.Parameters["gradient_bottomleft"].SetValue(bottomleft.ToVector4());
+            Shader.Parameters["gradient_bottomright"].SetValue(bottomright.ToVector4());
+            Shader.Parameters["WorldViewProjection"].SetValue(transform * projection);
+        }
+
+        public void SetupUVScroll(Vector2 offset, Matrix transform, Matrix projection)
+        {
+            Shader.CurrentTechnique = Shader.Techniques["UVScroll"];
+            Shader.Parameters["uv_scroll"].SetValue(offset);
+            Shader.Parameters["WorldViewProjection"].SetValue(transform * projection);
         }
 
         public void PushSpriteBatch(SpriteSortMode? sortMode = null, BlendState blendState = null, SamplerState samplerState = null, Matrix? transform = null, Matrix? projection = null, Microsoft.Xna.Framework.Graphics.Effect shader = null, Action<Matrix, Matrix> shaderSetup = null)

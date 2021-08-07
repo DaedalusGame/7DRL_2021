@@ -81,7 +81,7 @@ namespace _7DRL_2021.Behaviors
 
             ForwardBack.Update();
 
-            HairFrame += LevelTransition ? 1 : scene.TimeMod;
+            HairFrame += LevelTransition ? 1 : scene.TimeModCurrent;
 
             if (Curio.IsDead() && !scene.IsGameOver)
             {
@@ -108,7 +108,7 @@ namespace _7DRL_2021.Behaviors
         {
             var active = Curio.GetActionHolder(ActionSlot.Active);
             var tile = Curio.GetMainTile();
-            Footstep += scene.TimeMod;
+            Footstep += scene.TimeModCurrent;
             if (Momentum.Amount >= 32 && Footstep >= 4 && tile != null && !tile.IsChasm() && active.CurrentActions.Any(CanFootstep))
             {
                 Footstep = Footstep % 4;

@@ -231,7 +231,7 @@ namespace _7DRL_2021.Behaviors
             var enflamed = Enflamed;
 
             if (sword != null /*&& sword.HasBlood*/)
-                FrameCharge += scene.TimeMod;
+                FrameCharge += scene.TimeModCurrent;
             else
                 Extinguish();
 
@@ -251,7 +251,7 @@ namespace _7DRL_2021.Behaviors
                     }
                     FrameVisual.Reset();
                 }
-                FrameVisual += scene.TimeMod;
+                FrameVisual += scene.TimeModCurrent;
             }
         }
 

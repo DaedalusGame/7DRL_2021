@@ -42,7 +42,7 @@ namespace _7DRL_2021.Behaviors
 
         public void Update()
         {
-            Frame += Scene.TimeMod;
+            Frame += Scene.TimeModCurrent;
         }
     }
 }

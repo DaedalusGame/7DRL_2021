@@ -127,7 +127,7 @@ namespace _7DRL_2021.Behaviors
 
         public void MoveTick(Vector2 direction)
         {
-            SparkFrame += Curio.GetWorld().TimeMod;
+            SparkFrame += Curio.GetWorld().TimeModCurrent;
             if (SparkFrame.Done)
             {
                 SparkFrame.Reset();

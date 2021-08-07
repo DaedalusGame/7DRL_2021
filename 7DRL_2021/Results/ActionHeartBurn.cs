@@ -69,7 +69,7 @@ namespace _7DRL_2021.Results
             var active = Origin.GetActionHolder(ActionSlot.Active);
             var passive = Origin.GetActionHolder(ActionSlot.Passive);
 
-            ExplosionTime += scene.TimeMod;
+            ExplosionTime += scene.TimeModCurrent;
 
             if(ExplosionTime.Done)
             {
@@ -101,7 +101,7 @@ namespace _7DRL_2021.Results
                     actionsOrigin.Apply(Origin);
                 }
 
-                Time += scene.TimeMod;
+                Time += scene.TimeModCurrent;
             }
             else
             {

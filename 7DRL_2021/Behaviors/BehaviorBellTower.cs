@@ -56,7 +56,7 @@ namespace _7DRL_2021.Behaviors
 
         public void Tick(SceneGame scene)
         {
-            BellTime += scene.TimeMod;
+            BellTime += scene.TimeModCurrent;
             if(BellTime.Done && BellTolls < 12)
             {
                 new ScreenGlitchFlash(scene, slide => Params.WithIntensity(slide), 10);

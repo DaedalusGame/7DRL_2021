@@ -400,11 +400,6 @@ namespace _7DRL_2021
             Manager.Reset();
         }
 
-        public void Quit()
-        {
-            Game.Exit();
-        }
-
         public void GameOver(string reason, bool win)
         {
             if (IsGameOver)
@@ -504,7 +499,7 @@ namespace _7DRL_2021
             TooltipText = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity);
             if (MenuCursor != null)
             {
-                MenuCursor.AddTooltip(TooltipText);
+                MenuCursor.GenerateTooltip(TooltipText);
             }
             else if (Map != null && TileCursor.HasValue)
             {

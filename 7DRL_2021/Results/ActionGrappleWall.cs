@@ -48,7 +48,7 @@ namespace _7DRL_2021.Results
             var orientable = Origin.GetBehavior<BehaviorOrientable>();
             var grapple = Origin.GetBehavior<BehaviorGrapplingHook>();
             bool shouldReel = !GrappleTime.Done;
-            GrappleTime += scene.TimeMod;
+            GrappleTime += scene.TimeModCurrent;
             if (GrappleTime.Done)
             {
                 var tile = Target.GetMainTile();
@@ -74,7 +74,7 @@ namespace _7DRL_2021.Results
                     SoundSwish.Play(1, 0, 0);
                 }
                 bool shouldGrip = !ReelTime.Done;
-                ReelTime += scene.TimeMod;
+                ReelTime += scene.TimeModCurrent;
                 if(ReelTime.Done && shouldGrip && neighbor != null && !neighbor.IsSolid())
                 {
                     Origin.GetFlashHelper()?.AddFlash(ColorMatrix.Flat(Color.White), 5);

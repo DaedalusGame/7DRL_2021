@@ -109,7 +109,7 @@ namespace _7DRL_2021
 
         public float GetTimeMod()
         {
-            return Timeless ? 1 : World.TimeMod;
+            return Timeless ? 1 : World.TimeModCurrent;
         }
 
         public void Destroy()
@@ -207,7 +207,7 @@ namespace _7DRL_2021
         public override void Update()
         {
             Frame += GetTimeMod();
-            Angle += World.TimeMod * (float)RotationLerp(RotationStart, RotationEnd, Frame.Slide);
+            Angle += World.TimeModCurrent * (float)RotationLerp(RotationStart, RotationEnd, Frame.Slide);
             if (Frame.Done)
                 Destroy();
         }

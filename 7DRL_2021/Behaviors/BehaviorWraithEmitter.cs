@@ -53,7 +53,7 @@ namespace _7DRL_2021.Behaviors
         {
             if (!Activated)
                 return;
-            Frame += scene.TimeMod;
+            Frame += scene.TimeModCurrent;
             if(Frame.Done)
             {
                 float radius = 240;
