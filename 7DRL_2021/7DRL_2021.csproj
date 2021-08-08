@@ -183,6 +183,7 @@
     <Compile Include="Menus\OptionsUI.cs" />
     <Compile Include="Menus\PlayerUI.cs" />
     <Compile Include="Menus\TitleUI.cs" />
+    <Compile Include="JsonFile.cs" />
     <Compile Include="Pathfinding\Dijkstra\IUnweightedGraph.cs" />
     <Compile Include="Pathfinding\Dijkstra\IWeightedGraph.cs" />
     <Compile Include="Pathfinding\Dijkstra\MapGraph.cs" />
@@ -282,6 +283,9 @@
     </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PriorityQueue, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5e136dbf0437dacd, processorArchitecture=MSIL">
       <HintPath>..\packages\OptimizedPriorityQueue.5.1.0\lib\net45\PriorityQueue.dll</HintPath>

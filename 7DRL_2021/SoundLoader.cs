@@ -24,7 +24,7 @@ namespace _7DRL_2021
         public SoundEffectInstance Play(float volume, float pitch, float pan)
         {
             var instance = Sound.CreateInstance();
-            instance.Volume = SoundLoader.SoundMasterVolume * volume;
+            instance.Volume = SoundLoader.MasterVolume * SoundLoader.SoundMasterVolume * volume;
             instance.Pitch = pitch;
             instance.Pan = pan;
             instance.Play();
@@ -34,7 +34,7 @@ namespace _7DRL_2021
         public SoundEffectInstance CreateInstance()
         {
             var instance = Sound.CreateInstance();
-            instance.Volume = SoundLoader.SoundMasterVolume;
+            instance.Volume = SoundLoader.MasterVolume * SoundLoader.SoundMasterVolume;
             return instance;
         }
     }
@@ -77,7 +77,7 @@ namespace _7DRL_2021
             Volume.Update();
             Pitch.Update();
             Pan.Update();
-            Music.Volume = SoundLoader.MusicMasterVolume * Volume;
+            Music.Volume = SoundLoader.MasterVolume * SoundLoader.MusicMasterVolume * Volume;
             Music.Pitch = Pitch;
             Music.Pan = Pan;
         }
@@ -85,6 +85,7 @@ namespace _7DRL_2021
 
     class SoundLoader
     {
+        public static float MasterVolume = 1.0f;
         public static float SoundMasterVolume = 0.5f;
         public static float MusicMasterVolume = 1f;
 

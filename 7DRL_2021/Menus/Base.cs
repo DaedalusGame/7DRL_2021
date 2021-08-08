@@ -577,7 +577,7 @@ namespace _7DRL_2021.Menus
         public abstract void DrawLine(Scene scene, Vector2 linePos, int e);
     }
     */
-    class ActAction
+    /*class ActAction
     {
         public virtual string Name
         {
@@ -602,7 +602,7 @@ namespace _7DRL_2021.Menus
             if (enabled != null)
                 Enabled = enabled;
         }
-    }
+    }*/
 
     /*class MenuTextSelection : MenuAct
     {

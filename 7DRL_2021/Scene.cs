@@ -105,6 +105,7 @@ namespace _7DRL_2021
         public int Height => GraphicsDevice.PresentationParameters.BackBufferHeight;
         public Effect Shader => Game.Shader;
         public Effect ShaderLight => Game.ShaderLight;
+        public OptionsFile OptionsFile => Game.OptionsFile;
 
         public Matrix WorldTransform;
         public Matrix Projection;

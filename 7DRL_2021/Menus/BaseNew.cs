@@ -15,7 +15,7 @@ namespace _7DRL_2021
         public Action Action = () => { };
         public Func<bool> Enabled = () => true;
 
-        public ActActionNew(Action<TextBuilder> text, Action action, Func<bool> enabled = null)
+        public ActActionNew(Action<TextBuilder> text, Action action = null, Func<bool> enabled = null)
         {
             Text = text;
             if (action != null)

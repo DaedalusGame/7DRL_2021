@@ -191,7 +191,7 @@ namespace _7DRL_2021
 
     class TextElementBar : ITextElement
     {
-        public float Width => 6 + BarCount * 5;
+        public float Width => BarCount * 5 - 1 + 32;
         public float Height => 16;
         public ElementPosition Position { get; set; }
 
@@ -208,17 +208,34 @@ namespace _7DRL_2021
 
         public void Draw(ITextContainer parent, Matrix baseTransform, FontRenderer renderer, TextCursorPosition cursorPos)
         {
-            throw new NotImplementedException();
+            var sprite = SpriteLoader.Instance.AddSprite("content/ui_slider_bar");
+            var cursor = SpriteLoader.Instance.AddSprite("content/cursor");
+            var barSlide = BarSlide();
+            int bars = (int)Math.Round(BarCount * barSlide);
+            if (bars <= 0 && barSlide > 0)
+                bars = 1;
+            if (bars >= BarCount - 1 && barSlide < 1)
+                bars = BarCount - 1;
+            renderer.Scene.PushSpriteBatch(transform: Position.Transform * baseTransform);
+            if(barSlide > 0)
+                renderer.Scene.DrawSprite(cursor, 0, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 0);
+            for (int i = 0; i < BarCount; i++)
+            {
+                renderer.Scene.DrawSprite(sprite, 0, new Vector2(16 + i * 5 - 1, 0), SpriteEffects.None, i < bars ? Color.White : Color.Gray, 0);
+            }
+            if (barSlide < 1)
+                renderer.Scene.DrawSprite(cursor, 0, new Vector2(16 + BarCount * 5 - 1, 0), SpriteEffects.None, 0);
+            renderer.Scene.PopSpriteBatch();
         }
 
         public void IncrementPosition(ref TextCursorPosition cursorPos)
         {
-            throw new NotImplementedException();
+            cursorPos.IncrementElement();
         }
 
         public void Setup(ITextContainer parent, Vector2 position)
         {
-            throw new NotImplementedException();
+            Position = new ElementPosition(parent.Position.Transform * Matrix.CreateTranslation(position.X, position.Y, 0));
         }
     }
 }

@@ -34,6 +34,8 @@ namespace _7DRL_2021
         const int FontSpritesAmount = 64;
         public static SpriteReference[] FontSprites = new SpriteReference[FontSpritesAmount];
 
+        public OptionsFile OptionsFile = new OptionsFile("options.json");
+
         public Game()
         {
             Graphics = new GraphicsDeviceManager(this);
@@ -93,6 +95,11 @@ namespace _7DRL_2021
             Noise = GenerateNoiseTexture(GraphicsDevice, 256, 256, new Random());
 
             LoadFont();
+
+            if (!OptionsFile.Exists)
+                OptionsFile.Flush();
+            else
+                OptionsFile.Reload();
 
             Scene = new SceneMascot(this);
 
