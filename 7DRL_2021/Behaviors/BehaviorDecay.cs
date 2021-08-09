@@ -44,10 +44,12 @@ namespace _7DRL_2021.Behaviors
 
         public void Tick(SceneGame scene)
         {
+            bool decayed = Decay.Done;
+
             if (Curio.IsDead())
                 Decay += scene.TimeModCurrent;
 
-            if (Decay.Done)
+            if (!decayed && Decay.Done)
             {
                 var actions = new List<ActionWrapper>();
                 actions.Add(new ActionCorpseGib(scene.PlayerCurio, Curio, Score, Splat, Particles, Radius).InSlot(ActionSlot.Active));
