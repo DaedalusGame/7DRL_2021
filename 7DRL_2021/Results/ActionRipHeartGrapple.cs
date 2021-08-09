@@ -45,7 +45,7 @@ namespace _7DRL_2021.Results
                     grapple.HasHeart = true;
                 }
                 if (Origin == world.PlayerCurio)
-                    world.HeartsRipped += 1;
+                    world.RunStats.HeartsRipped += 1;
                 Blood.Play(1, 0, 0);
                 new TimeFade(world, 0.01f, LerpHelper.ExponentialIn, 60);
                 Behavior.Apply(new BehaviorHeartless(Target));

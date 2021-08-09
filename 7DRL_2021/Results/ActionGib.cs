@@ -37,7 +37,7 @@ namespace _7DRL_2021.Results
             if (Score > 0)
                 world.AddWorldScore(Score, Target.GetVisualTarget(), ScoreType.Small);
             if (Origin == world.PlayerCurio)
-                world.Gibs += 1;
+                world.RunStats.Gibs += 1;
             Splat.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);
             Behavior.Apply(new BehaviorGib(Target));
         }
@@ -115,8 +115,8 @@ namespace _7DRL_2021.Results
                     world.AddWorldScore(Score, Target.GetVisualTarget(), ScoreType.Small);
                 if (Origin == world.PlayerCurio)
                 {
-                    world.Gibs += 1;
-                    world.RatsHunted += 1;
+                    world.RunStats.Gibs += 1;
+                    world.RunStats.RatsHunted += 1;
                 }
             }
             Splat.Play(1.0f, Random.NextFloat(-0.5f, +0.5f), 0);

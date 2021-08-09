@@ -251,8 +251,8 @@ namespace _7DRL_2021.Menus
                 GameOver += 1;
             }
 
-            if (Scene.Score != Score.End)
-                Score.Set(Scene.Score, LerpHelper.Quadratic, 20);
+            if (Scene.RunStats.Score != Score.End)
+                Score.Set(Scene.RunStats.Score, LerpHelper.Quadratic, 20);
             Score.Update();
 
             base.Update(scene);
@@ -396,9 +396,9 @@ namespace _7DRL_2021.Menus
         private void DrawCards(Scene scene)
         {
             var origin = new Vector2(scene.Viewport.Width - 32, scene.Viewport.Height * 1 / 5);
-            for (int i = 0; i < Scene.Cards.Count; i++)
+            for (int i = 0; i < Scene.RunStats.Cards.Count; i++)
             {
-                var card = Scene.Cards[i % Scene.Cards.Count];
+                var card = Scene.RunStats.Cards[i % Scene.RunStats.Cards.Count];
                 var pos = origin + new Vector2(0, 28) * (i % 16) + new Vector2(-16, 12) * (i / 16);
                 scene.DrawSpriteExt(card.Sprite, 0, pos - card.Sprite.Middle, card.Sprite.Middle, 0, new Vector2(2), SpriteEffects.None, Color.White, 0);
             }
@@ -1109,7 +1109,7 @@ namespace _7DRL_2021.Menus
                     };
                 }
                 Scene.AddUIScore(5000, card.Position, ScoreType.Big);
-                Scene.CardsCrushed += 1;
+                Scene.RunStats.CardsCrushed += 1;
             }
             Cards.Clear();
             yield return new WaitTime(100);
@@ -1125,7 +1125,7 @@ namespace _7DRL_2021.Menus
             yield return new WaitTime(25);
             Cards.Remove(selected);
             selected.Card.Apply(Scene, selected.CurrentPosition);
-            Scene.Cards.Add(selected.Card);
+            Scene.RunStats.Cards.Add(selected.Card);
             yield return new WaitTime(100);
             Scene.WaitBetweenLevel.Complete();
             Close();

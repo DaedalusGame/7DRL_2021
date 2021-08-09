@@ -54,7 +54,7 @@ namespace _7DRL_2021.Results
             if (alive.CurrentDead)
             {
                 if (Origin == world.PlayerCurio)
-                    world.Kills += 1;
+                    world.RunStats.Kills += 1;
             }
 
             if (sword != null)

@@ -39,7 +39,7 @@ namespace _7DRL_2021.Results
                 world.AddWorldScore(Score, Origin.GetVisualTarget(), ScoreType.Small);
                 RemoveHeart();
                 if (Origin == world.PlayerCurio)
-                    world.HeartsEaten += 1;
+                    world.RunStats.HeartsEaten += 1;
                 Eat.Play(1, 0, 0);
                 Blood.Play(0.5f, -0.5f, 0);
                 Jingle.Play(1, 0, 0);

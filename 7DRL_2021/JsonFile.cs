@@ -24,6 +24,9 @@ namespace _7DRL_2021
         public void WriteToFile()
         {
             //TODO: make extra sure files don't get voided on error
+            var fileInfo = new FileInfo(Filename);
+            if (!fileInfo.Directory.Exists)
+                fileInfo.Directory.Create();
 
             using (StreamWriter file = File.CreateText(Filename))
             using (JsonTextWriter writer = new JsonTextWriter(file)
@@ -67,6 +70,13 @@ namespace _7DRL_2021
         {
         }
 
+        public override void ReadFromJson()
+        {
+            SoundLoader.MasterVolume = (float)Json["masterVolume"];
+            SoundLoader.SoundMasterVolume = (float)Json["soundVolume"];
+            SoundLoader.MusicMasterVolume = (float)Json["musicVolume"];
+        }
+
         public override void WriteToJson()
         {
             Json["masterVolume"] = SoundLoader.MasterVolume;
@@ -74,11 +84,62 @@ namespace _7DRL_2021
             Json["musicVolume"] = SoundLoader.MusicMasterVolume;
         }
 
+        
+    }
+
+    class RunStats
+    {
+        public int Level;
+        public int Score;
+        public List<Card> Cards = new List<Card>();
+        public int Kills;
+        public int Gibs;
+        public int Splats;
+        public int HeartsRipped;
+        public int HeartsEaten;
+        public int RatsHunted;
+        public int CardsCrushed;
+
+        public RunStats()
+        {
+        }
+    }
+
+    class HighscoreRunFile : JsonFile
+    {
+        RunStats Score;
+
+        public HighscoreRunFile(string filename, RunStats score) : base(filename)
+        {
+            Score = score;
+        }
+
         public override void ReadFromJson()
         {
-            SoundLoader.MasterVolume = (float)Json["masterVolume"];
-            SoundLoader.SoundMasterVolume = (float)Json["soundVolume"];
-            SoundLoader.MusicMasterVolume = (float)Json["musicVolume"];
+            Score.Level = (int)Json["level"];
+            Score.Score = (int)Json["score"];
+            Score.Cards = new List<Card>(Json["cards"].Cast<string>().Select(Card.Get));
+            Score.Kills = (int)Json["kills"];
+            Score.Gibs = (int)Json["gibs"];
+            Score.Splats = (int)Json["splats"];
+            Score.HeartsRipped = (int)Json["heartsRipped"];
+            Score.HeartsEaten = (int)Json["heartsEaten"];
+            Score.RatsHunted = (int)Json["ratsHunted"];
+            Score.CardsCrushed = (int)Json["cardsCrushed"];
+        }
+
+        public override void WriteToJson()
+        {
+            Json["level"] = Score.Level;
+            Json["score"] = Score.Score;
+            Json["cards"] = new JArray(Score.Cards.Select(card => card.ID));
+            Json["kills"] = Score.Kills;
+            Json["gibs"] = Score.Gibs;
+            Json["splats"] = Score.Splats;
+            Json["heartsRipped"] = Score.HeartsRipped;
+            Json["heartsEaten"] = Score.HeartsEaten;
+            Json["ratsHunted"] = Score.RatsHunted;
+            Json["cardsCrushed"] = Score.CardsCrushed;
         }
     }
 }

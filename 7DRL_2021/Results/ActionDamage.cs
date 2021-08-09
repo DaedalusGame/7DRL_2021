@@ -57,7 +57,7 @@ namespace _7DRL_2021.Results
             {
                 //DeathSound.Play(1, 0, 0);
                 if (Origin == world.PlayerCurio)
-                    world.Kills += 1;
+                    world.RunStats.Kills += 1;
             }
 
             if (sword != null && Blood > 0)

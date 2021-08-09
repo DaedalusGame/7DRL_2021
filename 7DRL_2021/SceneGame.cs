@@ -139,7 +139,7 @@ namespace _7DRL_2021
 
         public WaitForInput WaitBetweenLevel;
 
-        public int Level;
+        /*public int Level;
         public int Score;
         public List<Card> Cards = new List<Card>();
         public int Kills;
@@ -148,7 +148,10 @@ namespace _7DRL_2021
         public int HeartsRipped;
         public int HeartsEaten;
         public int RatsHunted;
-        public int CardsCrushed;
+        public int CardsCrushed;*/
+        public RunStats RunStats = new RunStats();
+
+        HighscoreRunFile HighscoreRunFile;
 
         SoundReference SoundIngress = SoundLoader.AddSound("content/sound/ingress.wav");
         SoundReference SoundEgress = SoundLoader.AddSound("content/sound/escape.wav");
@@ -174,6 +177,9 @@ namespace _7DRL_2021
             Menu = new PlayerUI(this);
 
             Cutscene = Scheduler.Instance.RunAndWait(RoutineStartLevel());
+
+            string runName = $"run{DateTime.Now.ToString("ddMMyyyyHHmm")}";
+            HighscoreRunFile = new HighscoreRunFile($"stats/runs/{runName}.json", RunStats);
         }
 
         public bool IsWithinCamera(Vector2 camera, Vector2 pos)
@@ -187,7 +193,7 @@ namespace _7DRL_2021
             generator.Generate();
             generator.Print(Map);
 
-            Level += 1;
+            RunStats.Level += 1;
 
             new Curio(Template.BellTower).MoveTo(Map.GetTile(0, 0));
 
@@ -200,17 +206,17 @@ namespace _7DRL_2021
             bool hasOmicron = PlayerCurio.HasBehaviors<BehaviorOmicron>();
 
             //TODO: There was gonna be a tutorial with blood urns for smashing
-            if (Level >= 1)
+            if (RunStats.Level >= 1)
                 weak.Add(Template.Grunt);
-            if (Level >= 2)
+            if (RunStats.Level >= 2)
                 weak.Add(Template.Twitch);
-            if (Level >= 3)
+            if (RunStats.Level >= 3)
                 weak.Add(Template.Bulwark);
-            if (Level >= 4)
+            if (RunStats.Level >= 4)
                 strong.Add(Template.Lich);
-            if (Level >= 5)
+            if (RunStats.Level >= 5)
                 weak.Remove(Template.Grunt);
-            if (Level % 2 == 0)
+            if (RunStats.Level % 2 == 0)
                 weak.Add(Template.Rat);
 
             weak.Add(Template.Executioner);
@@ -227,7 +233,7 @@ namespace _7DRL_2021
                 {
                     toSpawn.Add(strong.Pick(Random));
                 }
-            if (hasOmicron || (Level >= 6 && Level % 3 == 0))
+            if (hasOmicron || (RunStats.Level >= 6 && RunStats.Level % 3 == 0))
                 toSpawn.Add(Template.Nemesis);
 
             var spawned = new List<ICurio>();
@@ -253,7 +259,7 @@ namespace _7DRL_2021
                     break;
             }
 
-            if(Level % 3 == 0)
+            if(RunStats.Level % 3 == 0)
                 foreach (var enemy in spawned.Shuffle(Random).Take(3))
                 {
                     Behavior.Apply(new BehaviorKillTarget(enemy));
@@ -338,7 +344,7 @@ namespace _7DRL_2021
            
             foreach (var bloodStain in VisualEffects.OfType<BloodStain>())
             {
-                Splats += 1;
+                RunStats.Splats += 1;
                 stains += 1;
                 var center = PlayerCurio.GetVisualTarget();
                 var emit = bloodStain.WorldPosition;
@@ -416,6 +422,8 @@ namespace _7DRL_2021
                 CurrentGameOver.Volume.Set(0, 1, LerpHelper.QuadraticIn, 240);
                 CurrentGameOver.Play();
             }
+
+            HighscoreRunFile.Flush(); //Write score to disk
         }
 
         private Matrix CreateViewMatrix()
@@ -695,7 +703,7 @@ namespace _7DRL_2021
 
         public void AddWorldScore(int score, Vector2 position, ScoreType type)
         {
-            Score += score;
+            RunStats.Score += score;
             switch (type)
             {
                 case ScoreType.Small:
@@ -711,7 +719,7 @@ namespace _7DRL_2021
 
         public void AddUIScore(int score, Vector2 position, ScoreType type)
         {
-            Score += score;
+            RunStats.Score += score;
             switch (type)
             {
                 case ScoreType.Small:
