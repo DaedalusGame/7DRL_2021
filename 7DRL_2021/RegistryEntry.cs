@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +25,11 @@ namespace _7DRL_2021
         public static T Get(string id)
         {
             return Registry.Find(x => x.ID == id);
+        }
+
+        public static void Init()
+        {
+            RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
         }
     }
 }

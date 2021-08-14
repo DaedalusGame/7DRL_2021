@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using _7DRL_2021.Drawables;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace _7DRL_2021
@@ -85,6 +87,11 @@ namespace _7DRL_2021
 
             SpriteLoader.Init(GraphicsDevice);
             Scheduler.Init();
+
+            Card.Init();
+            Drawable.Init();
+            GameOverType.Init();
+            Template.Init();
 
             RenderTarget2D pixel = new RenderTarget2D(GraphicsDevice, 1, 1);
             GraphicsDevice.SetRenderTarget(pixel);

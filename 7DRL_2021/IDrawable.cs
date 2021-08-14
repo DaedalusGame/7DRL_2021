@@ -23,7 +23,7 @@ namespace _7DRL_2021
 
     interface IDrawableIcon
     {
-        void DrawIcon(SceneGame scene, Vector2 pos);
+        void DrawIcon(Scene scene, Vector2 pos);
     }
 
     interface IDrawableContainer

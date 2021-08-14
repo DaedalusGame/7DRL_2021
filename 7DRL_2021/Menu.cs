@@ -210,24 +210,12 @@ namespace _7DRL_2021
 
         public float GetTop()
         {
-            return GetElements().SelectMany(GetAllLocalPoints).Min(pos => pos.Y);
+            return GetElements().GetTop();
         }
 
         public float GetBottom()
         {
-            return GetElements().SelectMany(GetAllLocalPoints).Max(pos => pos.Y);
-        }
-
-        private IEnumerable<Vector2> GetAllLocalPoints(ITextElement element)
-        {
-            var transformFinal = element.Position.Transform;
-
-            var a = Vector2.Transform(new Vector2(0, 0), transformFinal);
-            var b = Vector2.Transform(new Vector2(element.Width, 0), transformFinal);
-            var c = Vector2.Transform(new Vector2(0, element.Height), transformFinal);
-            var d = Vector2.Transform(new Vector2(element.Width, element.Height), transformFinal);
-
-            return new[] { a, b, c, d };
+            return GetElements().GetBottom();
         }
 
         public MenuAreaText(TextBuilder text, double priority, ITooltipProvider tooltipProvider)

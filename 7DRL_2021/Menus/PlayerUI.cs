@@ -884,6 +884,7 @@ namespace _7DRL_2021.Menus
     class GameOverMenu : MenuActNew
     {
         SceneGame Scene;
+        TextBuilder Text;
         public override FontRenderer FontRenderer => Scene.FontRenderer;
 
         public GameOverMenu(SceneGame scene) : base(scene, null, new Vector2(scene.Viewport.Width / 2, scene.Viewport.Height * 3 / 4), SpriteLoader.Instance.AddSprite("content/ui_box"), SpriteLoader.Instance.AddSprite("content/ui_box"), 300, 64)
@@ -909,6 +910,22 @@ namespace _7DRL_2021.Menus
             {
                 scene.Quit();
             }));
+
+            Text = new TextBuilder(scene.Viewport.Width * 3 / 5, float.PositiveInfinity);
+            Text.StartLine(LineAlignment.Center);
+            Text.AppendText(Scene.RunStats.GameOverType.Reason);
+            Text.NewLine();
+
+            Text.EndLine();
+            Text.EndContainer();
+            Text.Finish();
+        }
+
+        public override void Update(Scene scene)
+        {
+            base.Update(scene);
+
+            Text.Update();
         }
 
         public override void Draw(Scene scene)
@@ -942,6 +959,8 @@ namespace _7DRL_2021.Menus
             
             TextParameters parametersStats = new TextParameters().SetColor(Color.White, Color.Black).SetConstraints(width, null);
             scene.DrawText(builderStats.ToString(), new Vector2(x - width / 2, y + 64), Alignment.Center, parametersStats);*/
+
+            Text.Draw(new Vector2(scene.Viewport.Width / 2, scene.Viewport.Height * 1 / 3), FontRenderer);
         }
     }
 

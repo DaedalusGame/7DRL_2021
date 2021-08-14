@@ -79,7 +79,7 @@ namespace _7DRL_2021.Behaviors
                 actions.Add(new ActionNemesisRevive(Curio, 120).InSlot(ActionSlot.Active));
                 actions.Apply(Curio);
                 if (!actions.Any(x => x.Action is ActionNemesisRevive))
-                    scene.GameOver("BUT WILL MY NIGHTMARE END?", true);
+                    scene.GameOver(GameOverType.NemesisKill);
             }
 
             if (active.Done && Curio.IsAlive())

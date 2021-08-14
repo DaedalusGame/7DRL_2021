@@ -238,4 +238,52 @@ namespace _7DRL_2021
             Position = new ElementPosition(parent.Position.Transform * Matrix.CreateTranslation(position.X, position.Y, 0));
         }
     }
+
+    class TextElementIcon : ITextElement, ITextDialogable
+    {
+        public float Width => 16;
+        public float Height => 16;
+
+        public ElementPosition Position { get; private set; }
+        public TextDialog Dialog { get; private set; } = new TextDialog();
+        public int Characters => 1;
+
+        public bool IsUnit => true;
+
+        public IDrawableIcon Icon;
+        public TextFormatting Format { get; private set; }
+        public DialogFormatting DialogFormat { get; private set; }
+
+        public TextElementIcon(IDrawableIcon icon, TextFormatting format, DialogFormatting dialogFormat)
+        {
+            Icon = icon;
+            Format = format;
+            DialogFormat = dialogFormat;
+        }
+
+        public void Setup(ITextContainer parent, Vector2 position)
+        {
+            Position = new ElementPosition(parent.Position.Transform * Matrix.CreateTranslation(position.X, position.Y, 0));
+        }
+
+        public void Draw(ITextContainer parent, Matrix baseTransform, FontRenderer renderer, TextCursorPosition cursorPos)
+        {
+            var par = Format.GetParams(cursorPos);
+            par = Dialog.Transform(par, cursorPos);
+            Color color = par.Color;
+            Vector2 offset = par.Offset;
+            Vector2 scale = par.Scale;
+            float angle = par.Angle;
+            renderer.Scene.PushSpriteBatch(transform: Matrix.CreateTranslation(-8, -8, 0) * Matrix.CreateScale(scale.X, scale.Y, 0) * Matrix.CreateRotationZ(angle) * Matrix.CreateTranslation(8, 8, 0) * Position.Transform * baseTransform);
+            if (color.A > 0)
+                Icon.DrawIcon(renderer.Scene, offset);
+            renderer.Scene.PopSpriteBatch();
+        }
+
+        public void IncrementPosition(ref TextCursorPosition cursorPos)
+        {
+            cursorPos.AddCharacters(1);
+            cursorPos.IncrementElement();
+        }
+    }
 }

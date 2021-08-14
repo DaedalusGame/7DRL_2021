@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021
 {
-    abstract class Card : RegistryEntry<Card>
+    abstract class Card : RegistryEntry<Card>, IDrawableIcon
     {
         public int DeckAmount;
         public SpriteReference Sprite;
@@ -38,6 +38,11 @@ namespace _7DRL_2021
         public abstract void Apply(SceneGame world, Vector2 cardPos);
 
         public abstract void Destroy(SceneGame world, Vector2 cardPos);
+
+        public void DrawIcon(Scene scene, Vector2 pos)
+        {
+            scene.DrawSprite(Sprite, 0, pos, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+        }
 
         public static Card SacrificeHealth = new CardSacrificeHP(1, 25000);
         //public static Card Score1000 = new CardScore("score1000", 1000, 3);

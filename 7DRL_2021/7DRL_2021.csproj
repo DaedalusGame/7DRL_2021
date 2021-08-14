@@ -182,6 +182,7 @@
     <Compile Include="Menus\BaseNew.cs" />
     <Compile Include="Menus\OptionsUI.cs" />
     <Compile Include="Menus\PlayerUI.cs" />
+    <Compile Include="Menus\StatUI.cs" />
     <Compile Include="Menus\TitleUI.cs" />
     <Compile Include="JsonFile.cs" />
     <Compile Include="Pathfinding\Dijkstra\IUnweightedGraph.cs" />
@@ -275,6 +276,7 @@
     <Compile Include="Text\TableElements.cs" />
     <Compile Include="Text\TextBuilder.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="GameOverType.cs" />
     <Compile Include="VisualEffect.cs" />
   </ItemGroup>
   <ItemGroup>

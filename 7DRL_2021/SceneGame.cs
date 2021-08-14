@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -125,9 +126,8 @@ namespace _7DRL_2021
         TextBuilder TooltipText;
         public Point? TileCursor;
 
-        public bool IsGameOver;
-        public bool GameOverWin;
-        public string GameOverReason;
+        public bool IsGameOver => RunStats.GameOverType != null;
+        public GameOverType GameOverType => RunStats.GameOverType;
 
         public ICurio PlayerCurio;
         public ICurio CameraCurio;
@@ -406,16 +406,14 @@ namespace _7DRL_2021
             Manager.Reset();
         }
 
-        public void GameOver(string reason, bool win)
+        public void GameOver(GameOverType type)
         {
             if (IsGameOver)
                 return;
-            IsGameOver = true;
-            GameOverReason = reason;
-            GameOverWin = win;
+            RunStats.GameOverType = type;
             CurrentTheme.Pitch.Set(-1, LerpHelper.QuadraticIn, 100);
             CurrentTheme.Volume.Set(0, LerpHelper.QuadraticIn, 100);
-            if (!win)
+            if (RunStats.GameOverType.VictoryType != VictoryType.Win)
             {
                 CurrentGameOver?.Stop();
                 CurrentGameOver = new MusicEffect(ThemeGameOver);

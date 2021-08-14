@@ -66,7 +66,7 @@ namespace _7DRL_2021.Menus
                 builder.EndLine();
             }, () =>
             {
-                ui.SubMenu.Open(new OptionsMenu(ui));
+                ui.SubMenu.Open(new OptionsMenu(ui.Scene));
             }));
             Add(new ActActionNew((builder) => {
                 builder.StartLine(LineAlignment.Center);
@@ -76,7 +76,7 @@ namespace _7DRL_2021.Menus
                 builder.EndLine();
             }, () =>
             {
-                ui.Scene.NewGame();
+                ui.SubMenu.Open(new StatMenu(ui.Scene));
             }));
             /*Add(new ActActionNew((builder) => {
                 builder.StartLine(LineAlignment.Center);

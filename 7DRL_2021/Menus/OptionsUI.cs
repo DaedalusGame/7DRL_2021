@@ -65,8 +65,12 @@ namespace _7DRL_2021.Menus
             }
         }
 
-        public OptionsMenu(TitleUI ui) : base(ui.Scene, null, new Vector2(ui.Scene.Viewport.Width / 2, ui.Scene.Viewport.Height * 2 / 3), SpriteLoader.Instance.AddSprite("content/ui_box"), SpriteLoader.Instance.AddSprite("content/ui_box"), 256, 16 * 20)
+        Scene Scene;
+
+        public OptionsMenu(Scene scene) : base(scene, null, new Vector2(scene.Viewport.Width * 3 / 5, scene.Viewport.Height * 2 / 3), SpriteLoader.Instance.AddSprite("content/ui_box"), SpriteLoader.Instance.AddSprite("content/ui_box"), 256, 16 * 20)
         {
+            Scene = scene;
+
             var formatName = new TextFormatting()
             {
                 Bold = true,
@@ -117,14 +121,9 @@ namespace _7DRL_2021.Menus
                 builder.EndLine();
             }, () =>
             {
-                Close(ui);
+                Scene.OptionsFile.Flush();
+                Close();
             }));
-        }
-
-        private static void Close(TitleUI ui)
-        {
-            ui.Scene.OptionsFile.Flush();
-            ui.SubMenu.Close();
         }
     }
 

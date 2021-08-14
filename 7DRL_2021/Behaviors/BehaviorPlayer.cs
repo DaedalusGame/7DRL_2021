@@ -85,7 +85,7 @@ namespace _7DRL_2021.Behaviors
 
             if (Curio.IsDead() && !scene.IsGameOver)
             {
-                scene.GameOver("GLORY TO THE BLOOD GOD.", false);
+                scene.GameOver(GameOverType.Death);
                 SoundDeath.Play(1, -0.5f, 0);
             }
 

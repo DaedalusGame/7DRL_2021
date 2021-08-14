@@ -9,6 +9,16 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021
 {
+    class AsyncCheck
+    {
+        public bool Done { get; private set; }
+        
+        public void SetDone()
+        {
+            Done = true;
+        }
+    }
+
     abstract class JsonFile
     {
         protected string Filename;
@@ -21,12 +31,17 @@ namespace _7DRL_2021
             Filename = filename;
         }
 
-        public void WriteToFile()
+        private void CreateDirectory()
         {
-            //TODO: make extra sure files don't get voided on error
             var fileInfo = new FileInfo(Filename);
             if (!fileInfo.Directory.Exists)
                 fileInfo.Directory.Create();
+        }
+
+        private void WriteToFile()
+        {
+            //TODO: make extra sure files don't get voided on error
+            CreateDirectory();
 
             using (StreamWriter file = File.CreateText(Filename))
             using (JsonTextWriter writer = new JsonTextWriter(file)
@@ -38,7 +53,7 @@ namespace _7DRL_2021
             }
         }
 
-        public void ReadFromFile()
+        private void ReadFromFile()
         {
             using (StreamReader file = File.OpenText(Filename))
             using (JsonTextReader reader = new JsonTextReader(file))
@@ -47,9 +62,45 @@ namespace _7DRL_2021
             }
         }
 
+        private Task WriteToFileAsync()
+        {
+            //TODO: make extra sure files don't get voided on error
+            CreateDirectory();
+
+            Task task;
+
+            using (FileStream file = new FileStream(Filename, FileMode.Create, FileAccess.Write, FileShare.Write, 4096, true))
+            {
+                task = Json.WriteToAsync(new JsonTextWriter(new StreamWriter(file))
+                {
+                    Formatting = Formatting.Indented,
+                });
+            }
+
+            return task;
+        }
+
+        private Task<JToken> ReadFromFileAsync()
+        {
+            Task<JToken> task;
+
+            using (FileStream file = new FileStream(Filename, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+            { 
+                task = JToken.ReadFromAsync(new JsonTextReader(new StreamReader(file)));
+            }
+
+            return task;
+        }
+
         public abstract void WriteToJson();
 
         public abstract void ReadFromJson();
+
+        public void Flush()
+        {
+            WriteToJson();
+            WriteToFile();
+        }
 
         public void Reload()
         {
@@ -57,10 +108,35 @@ namespace _7DRL_2021
             ReadFromJson();
         }
 
-        public void Flush()
+        public AsyncCheck FlushAsync()
         {
+            AsyncCheck loading = new AsyncCheck();
+
             WriteToJson();
-            WriteToFile();
+            var task = WriteToFileAsync();
+
+            task.ContinueWith(t =>
+            {
+                loading.SetDone();
+            });
+
+            return loading;
+        }
+
+        public AsyncCheck ReloadAsync()
+        {
+            AsyncCheck loading = new AsyncCheck();
+
+            var task = ReadFromFileAsync();
+
+            task.ContinueWith(t =>
+            {
+                Json = (JObject)t.Result;
+                ReadFromJson();
+                loading.SetDone();
+            });
+
+            return loading;
         }
     }
 
@@ -83,8 +159,6 @@ namespace _7DRL_2021
             Json["soundVolume"] = SoundLoader.SoundMasterVolume;
             Json["musicVolume"] = SoundLoader.MusicMasterVolume;
         }
-
-        
     }
 
     class RunStats
@@ -99,6 +173,7 @@ namespace _7DRL_2021
         public int HeartsEaten;
         public int RatsHunted;
         public int CardsCrushed;
+        public GameOverType GameOverType;
 
         public RunStats()
         {
@@ -107,7 +182,7 @@ namespace _7DRL_2021
 
     class HighscoreRunFile : JsonFile
     {
-        RunStats Score;
+        public RunStats Score;
 
         public HighscoreRunFile(string filename, RunStats score) : base(filename)
         {
@@ -118,7 +193,7 @@ namespace _7DRL_2021
         {
             Score.Level = (int)Json["level"];
             Score.Score = (int)Json["score"];
-            Score.Cards = new List<Card>(Json["cards"].Cast<string>().Select(Card.Get));
+            Score.Cards = new List<Card>(Json["cards"].Select(x => (string)x).Select(Card.Get));
             Score.Kills = (int)Json["kills"];
             Score.Gibs = (int)Json["gibs"];
             Score.Splats = (int)Json["splats"];
@@ -126,6 +201,7 @@ namespace _7DRL_2021
             Score.HeartsEaten = (int)Json["heartsEaten"];
             Score.RatsHunted = (int)Json["ratsHunted"];
             Score.CardsCrushed = (int)Json["cardsCrushed"];
+            Score.GameOverType = GameOverType.Get((string)Json["gameover"]);
         }
 
         public override void WriteToJson()
@@ -140,6 +216,7 @@ namespace _7DRL_2021
             Json["heartsEaten"] = Score.HeartsEaten;
             Json["ratsHunted"] = Score.RatsHunted;
             Json["cardsCrushed"] = Score.CardsCrushed;
+            Json["gameover"] = Score.GameOverType.ID;
         }
     }
 }

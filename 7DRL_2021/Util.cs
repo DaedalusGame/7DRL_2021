@@ -534,5 +534,37 @@ namespace _7DRL_2021
             list.RemoveLast();
             return t;
         }
+
+        public static float GetTop(this ITextElement element)
+        {
+            return GetAllLocalPoints(element).Min(pos => pos.Y);
+        }
+
+        public static float GetBottom(this ITextElement element)
+        {
+            return GetAllLocalPoints(element).Max(pos => pos.Y);
+        }
+
+        public static float GetTop(this IEnumerable<ITextElement> elements)
+        {
+            return elements.SelectMany(GetAllLocalPoints).Min(pos => pos.Y);
+        }
+
+        public static float GetBottom(this IEnumerable<ITextElement> elements)
+        {
+            return elements.SelectMany(GetAllLocalPoints).Max(pos => pos.Y);
+        }
+
+        private static IEnumerable<Vector2> GetAllLocalPoints(ITextElement element)
+        {
+            var transformFinal = element.Position.Transform;
+
+            var a = Vector2.Transform(new Vector2(0, 0), transformFinal);
+            var b = Vector2.Transform(new Vector2(element.Width, 0), transformFinal);
+            var c = Vector2.Transform(new Vector2(0, element.Height), transformFinal);
+            var d = Vector2.Transform(new Vector2(element.Width, element.Height), transformFinal);
+
+            return new[] { a, b, c, d };
+        }
     }
 }
