@@ -40,7 +40,7 @@ namespace _7DRL_2021.Menus
         }
     }
 
-    class TitleMenu : MenuActNew
+    class TitleMenu : MenuAct
     {
         public TitleMenu(TitleUI ui) : base(ui.Scene, null, new Vector2(ui.Scene.Viewport.Width / 2, ui.Scene.Viewport.Height * 3 / 4), SpriteLoader.Instance.AddSprite("content/ui_box"), SpriteLoader.Instance.AddSprite("content/ui_gab"), 256, 16 * 10)
         {
@@ -48,7 +48,7 @@ namespace _7DRL_2021.Menus
                 Bold = true,
             };
 
-            Add(new ActActionNew((builder) => {
+            Add(new ActAction((builder) => {
                 builder.StartLine(LineAlignment.Center);
                 builder.AppendText("New Game", formatName);
                 builder.NewLine();
@@ -58,7 +58,7 @@ namespace _7DRL_2021.Menus
             {
                 ui.Scene.NewGame();
             }));
-            Add(new ActActionNew((builder) => {
+            Add(new ActAction((builder) => {
                 builder.StartLine(LineAlignment.Center);
                 builder.AppendText("Options", formatName);
                 builder.NewLine();
@@ -68,7 +68,7 @@ namespace _7DRL_2021.Menus
             {
                 ui.SubMenu.Open(new OptionsMenu(ui.Scene));
             }));
-            Add(new ActActionNew((builder) => {
+            Add(new ActAction((builder) => {
                 builder.StartLine(LineAlignment.Center);
                 builder.AppendText("Statistics", formatName);
                 builder.NewLine();
@@ -98,7 +98,7 @@ namespace _7DRL_2021.Menus
             {
                 Process.Start("https://github.com/DaedalusGame/7DRL_2021");
             }));*/
-            Add(new ActActionNew((builder) => {
+            Add(new ActAction((builder) => {
                 builder.StartLine(LineAlignment.Center);
                 builder.AppendText("Quit", formatName);
                 builder.NewLine();

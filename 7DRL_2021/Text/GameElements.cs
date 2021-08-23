@@ -13,6 +13,9 @@ namespace _7DRL_2021
         public float Width => GetBackgroundWidth();
         public float Height => 16; //TODO: line height formatting
 
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
+
         public ElementPosition Position { get; private set; }
         public TextDialog Dialog { get; private set; } = new TextDialog();
 
@@ -81,6 +84,9 @@ namespace _7DRL_2021
     {
         public float Width { get; set; }
         public float Height => 16; //TODO: line height formatting
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
 
         public ElementPosition Position { get; private set; }
         public TextDialog Dialog { get; private set; } = new TextDialog();
@@ -152,6 +158,9 @@ namespace _7DRL_2021
         public float Width { get; set; }
         public float Height { get; set; }
 
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
+
         public ElementPosition Position { get; private set; }
 
         public bool IsUnit => true;
@@ -193,6 +202,10 @@ namespace _7DRL_2021
     {
         public float Width => BarCount * 5 - 1 + 32;
         public float Height => 16;
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
+
         public ElementPosition Position { get; set; }
 
         public bool IsUnit => true;
@@ -243,6 +256,9 @@ namespace _7DRL_2021
     {
         public float Width => 16;
         public float Height => 16;
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
 
         public ElementPosition Position { get; private set; }
         public TextDialog Dialog { get; private set; } = new TextDialog();

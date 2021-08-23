@@ -881,7 +881,7 @@ namespace _7DRL_2021.Menus
         }
     }
 
-    class GameOverMenu : MenuActNew
+    class GameOverMenu : MenuAct
     {
         SceneGame Scene;
         TextBuilder Text;
@@ -890,7 +890,7 @@ namespace _7DRL_2021.Menus
         public GameOverMenu(SceneGame scene) : base(scene, null, new Vector2(scene.Viewport.Width / 2, scene.Viewport.Height * 3 / 4), SpriteLoader.Instance.AddSprite("content/ui_box"), SpriteLoader.Instance.AddSprite("content/ui_box"), 300, 64)
         {
             Scene = scene;
-            Add(new ActActionNew((builder) => {
+            Add(new ActAction((builder) => {
                 builder.StartLine(LineAlignment.Center);
                 builder.AppendText("Return to Title");
                 builder.NewLine();
@@ -900,7 +900,7 @@ namespace _7DRL_2021.Menus
             {
                 scene.ReturnToTitle();
             }));
-            Add(new ActActionNew((builder) => {
+            Add(new ActAction((builder) => {
                 builder.StartLine(LineAlignment.Center);
                 builder.AppendText("Quit");
                 builder.NewLine();

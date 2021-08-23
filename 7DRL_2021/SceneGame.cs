@@ -123,9 +123,6 @@ namespace _7DRL_2021
         public RenderTarget2D BloodMapAdditive;
         public RenderTarget2D BloodMapMultiply;
 
-        TextBuilder TooltipText;
-        public Point? TileCursor;
-
         public bool IsGameOver => RunStats.GameOverType != null;
         public GameOverType GameOverType => RunStats.GameOverType;
 
@@ -493,28 +490,18 @@ namespace _7DRL_2021
             foreach (var tickable in tickables.ToList())
                 tickable.Tick(this);
 
+            UpdateTooltip();
+        }
+
+        private void UpdateTooltip()
+        {
             Vector2 worldPos = Vector2.Transform(new Vector2(InputState.MouseX, InputState.MouseY), Matrix.Invert(WorldTransform));
             int tileX = Util.FloorDiv((int)worldPos.X, 16);
             int tileY = Util.FloorDiv((int)worldPos.Y, 16);
-
-            TileCursor = new Point(tileX, tileY);
-            MenuCursor = Menu.GetMouseOver(InputState.MouseX, InputState.MouseY);
-            if (MenuCursor != null)
-                TileCursor = null;
-
-            TooltipText = new TextBuilder(float.PositiveInfinity, float.PositiveInfinity);
-            if (MenuCursor != null)
-            {
-                MenuCursor.GenerateTooltip(TooltipText);
-            }
-            else if (Map != null && TileCursor.HasValue)
-            {
-                MapTile tile = Map.GetTile(TileCursor.Value.X, TileCursor.Value.Y);
-                if (tile != null)
-                    tile.AddTooltip(TooltipText);
-            }
-            TooltipText.EndContainer();
-            TooltipText.Finish();
+            var mapRect = GetMapRectangle();
+            TooltipCursor = new TooltipCursorMenu(Menu.GetMouseOver(InputState.MouseX, InputState.MouseY));
+            if (TooltipCursor.Invalid && mapRect.Contains(InputState.MouseX, InputState.MouseY))
+                TooltipCursor = new TooltipCursorTile(Map, new Point(tileX, tileY));
         }
 
         private void UpdateInput()
@@ -562,10 +549,7 @@ namespace _7DRL_2021
                 .ToMultiLookup(x => x.GetDrawPasses());
 
             SetRenderTarget(CameraTarget.A);
-
-            int width = 19 * 32;
-            int height = 19 * 32;
-            GraphicsDevice.ScissorRectangle = new Rectangle((Viewport.Width - width) / 2, (Viewport.Height - height) / 2, width, height);
+            GraphicsDevice.ScissorRectangle = GetMapRectangle();
             PushSpriteBatch(samplerState: SamplerState.PointWrap, blendState: NonPremultiplied, transform: WorldTransform, projection: Projection);
             PushSpriteBatch(transform: WorldTransform * Matrix.CreateTranslation(new Vector3(-CameraSize, 0)) * Matrix.CreateScale(0.80f) * Matrix.CreateTranslation(new Vector3(CameraSize, 0)));
             drawPasses.DrawPass(this, DrawPass.ChasmBottom);
@@ -648,9 +632,9 @@ namespace _7DRL_2021
             //SpriteBatch.Begin(blendState: NonPremultiplied, rasterizerState: RasterizerState.CullNone, samplerState: SamplerState.PointWrap, transformMatrix: WorldTransform);
             PushSpriteBatch(blendState: NonPremultiplied, samplerState: SamplerState.PointWrap, transform: WorldTransform, projection: Projection);
 
-            if (TileCursor.HasValue)
+            if (!TooltipCursor.Invalid && TooltipCursor is TooltipCursorTile tileCursor)
             {
-                DrawSprite(cursor_tile, Frame / 8, new Vector2(TileCursor.Value.X * 16, TileCursor.Value.Y * 16), SpriteEffects.None, 0);
+                DrawSprite(cursor_tile, Frame / 8, new Vector2(tileCursor.X * 16, tileCursor.Y * 16), SpriteEffects.None, 0);
             }
 
             drawPasses.DrawPass(this, DrawPass.UIWorld);
@@ -667,18 +651,23 @@ namespace _7DRL_2021
 
             Menu.Draw(this);
 
-            var mousePos = new Vector2(InputState.MouseX, InputState.MouseY);
-            var mouseCursor = SpriteLoader.Instance.AddSprite("content/ui_mouse_cursor");
-            DrawSprite(mouseCursor, 0, mousePos, SpriteEffects.None, 0);
+            DrawCursor();
 
             DrawTooltip();
 
             PopSpriteBatch();
         }
 
+        private Rectangle GetMapRectangle()
+        {
+            int width = 19 * 32;
+            int height = 19 * 32;
+            return new Rectangle((Viewport.Width - width) / 2, (Viewport.Height - height) / 2, width, height);
+        }
+
         private void DrawTooltip()
         {
-            if (TooltipText != null && !TooltipText.IsEmpty())
+            /*if (TooltipText != null && !TooltipText.IsEmpty())
             {
                 SpriteReference ui_tooltip = SpriteLoader.Instance.AddSprite("content/ui_box");
                 int tooltipWidth = (int)TooltipText.GetContentWidth();
@@ -696,7 +685,7 @@ namespace _7DRL_2021
                     tooltipX -= tooltipWidth;
                 DrawUI(ui_tooltip, new Rectangle(tooltipX-2, tooltipY-2, tooltipWidth+4, tooltipHeight+4), Color.White);
                 TooltipText.Draw(new Vector2(tooltipX, tooltipY), FontRenderer);
-            }
+            }*/
         }
 
         public void AddWorldScore(int score, Vector2 position, ScoreType type)

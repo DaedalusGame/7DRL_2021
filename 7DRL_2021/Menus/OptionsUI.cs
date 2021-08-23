@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021.Menus
 {
-    abstract class ActionSlider : ActActionNew
+    abstract class ActionSlider : ActAction
     {
         protected abstract float Slider { get; set; }
 
@@ -24,7 +24,7 @@ namespace _7DRL_2021.Menus
         }
     }
 
-    class OptionsMenu : MenuActNew
+    class OptionsMenu : MenuAct
     {
         class SoundSlider : ActionSlider
         {
@@ -113,7 +113,7 @@ namespace _7DRL_2021.Menus
                 builder.EndLine();
             }));
 
-            AddDefault(new ActActionNew((builder) => {
+            AddDefault(new ActAction((builder) => {
                 builder.StartLine(LineAlignment.Left);
                 builder.AppendText("Cancel", formatName);
                 builder.NewLine();

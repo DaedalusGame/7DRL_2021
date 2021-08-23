@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using _7DRL_2021.Menus;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,75 @@ namespace _7DRL_2021
         }
     }
 
+    interface ITooltipCursor
+    {
+        bool Invalid { get; }
+
+        bool HasTooltip { get; }
+
+        void GenerateTooltip(TextBuilder text);
+    }
+
+    class TooltipCursorInvalid : ITooltipCursor
+    {
+        public static ITooltipCursor Instance { get; private set; } = new TooltipCursorInvalid();
+
+        public bool Invalid => true;
+        public bool HasTooltip => false;
+
+        private TooltipCursorInvalid()
+        {
+
+        }
+
+        public void GenerateTooltip(TextBuilder text)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class TooltipCursorMenu : ITooltipCursor
+    {
+        IMenuArea Area;
+
+        public bool Invalid => Area == null;
+        public bool HasTooltip => !Invalid && Area.Tooltip != null;
+
+        public TooltipCursorMenu(IMenuArea area)
+        {
+            Area = area;
+        }
+
+        public void GenerateTooltip(TextBuilder text)
+        {
+            Area.Tooltip?.AddTooltip(text);
+        }
+    }
+
+    class TooltipCursorTile : ITooltipCursor
+    {
+        Map Map;
+        Point Point;
+
+        public bool Invalid => Map == null || Map.GetTileOrNull(Point.X, Point.Y) == null;
+        public bool HasTooltip => !Invalid;
+        public int X => Point.X;
+        public int Y => Point.Y;
+
+        public TooltipCursorTile(Map map, Point point)
+        {
+            Map = map;
+            Point = point;
+        }
+
+        public void GenerateTooltip(TextBuilder text)
+        {
+            var tile = Map.GetTileOrNull(Point.X, Point.Y);
+            if (tile != null)
+                tile.AddTooltip(text);
+        }
+    }
+
     abstract class Scene
     {
         protected Game Game;
@@ -116,6 +186,7 @@ namespace _7DRL_2021
         Stack<DrawStackFrame> SpriteBatchStack = new Stack<DrawStackFrame>();
 
         public InputTwinState InputState => Game.InputState;
+        public ITooltipCursor TooltipCursor = TooltipCursorInvalid.Instance;
 
         public DeferredList<ProtoEffect> ProtoEffects = new DeferredList<ProtoEffect>();
         /// <summary>
@@ -159,8 +230,6 @@ namespace _7DRL_2021
             AlphaSourceBlend = Blend.DestinationColor,
             AlphaDestinationBlend = Blend.Zero,
         };
-
-        public IMenuArea MenuCursor;
 
         public Scene(Game game)
         {
@@ -611,6 +680,13 @@ namespace _7DRL_2021
             }
 
             PrimitiveBatch.End();
+        }
+
+        public void DrawCursor()
+        {
+            var mousePos = new Vector2(InputState.MouseX, InputState.MouseY);
+            var mouseCursor = SpriteLoader.Instance.AddSprite("content/ui_mouse_cursor");
+            DrawSprite(mouseCursor, 0, mousePos, SpriteEffects.None, 0);
         }
     }
 }

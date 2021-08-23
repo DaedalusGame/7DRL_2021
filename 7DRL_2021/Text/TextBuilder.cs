@@ -432,6 +432,9 @@ namespace _7DRL_2021
         float Width { get; }
         float Height { get; }
 
+        float VisualWidth { get; }
+        float VisualHeight { get; }
+
         ElementPosition Position { get; }
 
         /// <summary>
@@ -476,6 +479,9 @@ namespace _7DRL_2021
     {
         public float Width => GetWidth();
         public float Height => 16; //TODO: line height formatting
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
 
         public ElementPosition Position { get; private set; }
         public TextDialog Dialog { get; private set; } = new TextDialog();
@@ -556,12 +562,17 @@ namespace _7DRL_2021
 
     class TextElementSpace : ITextElement, ITextDialogable
     {
+        ITextContainer Parent;
+
         public float Width
         {
             get;
             set;
         }
         public float Height => 0;
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Parent.Height;
 
         public ElementPosition Position { get; private set; }
         public TextDialog Dialog { get; private set; } = new TextDialog();
@@ -586,7 +597,8 @@ namespace _7DRL_2021
 
         public void Setup(ITextContainer parent, Vector2 position)
         {
-            Position = parent.Position;
+            Parent = parent;
+            Position = new ElementPosition(parent.Position.Transform * Matrix.CreateTranslation(position.X, position.Y, 0));
         }
 
         public void Draw(ITextContainer parent, Matrix baseTransform, FontRenderer renderer, TextCursorPosition cursorPos)
@@ -609,6 +621,9 @@ namespace _7DRL_2021
     {
         public float Width => 16;
         public float Height => 16;
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
 
         public ElementPosition Position { get; private set; }
         public TextDialog Dialog { get; private set; } = new TextDialog();
@@ -658,6 +673,9 @@ namespace _7DRL_2021
         public float Width => Contents.Sum(x => x.Width);
         public float Height => Contents.Any() ? Math.Max(MinHeight, Contents.Max(x => x.Height)) : MinHeight;
         public float MinHeight = 8; //TODO: Line height
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
 
         public ElementPosition Position { get; private set; }
 
@@ -724,6 +742,10 @@ namespace _7DRL_2021
         public float Width => Contents.Sum(x => x.Width);
         public float Height => Contents.Any() ? Math.Max(MinHeight,Contents.Max(x => x.Height)) : MinHeight;
         public float MinHeight = 8; //TODO: Line height
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
+
         public LineAlignment Alignment { get; set; }
         public ElementPosition Position { get; private set; }
 
@@ -871,6 +893,9 @@ namespace _7DRL_2021
     {
         public float Width { get; set; } = float.PositiveInfinity;
         public float Height { get; set; } = float.PositiveInfinity;
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
 
         public bool IsUnit => false;
 
@@ -1043,12 +1068,15 @@ namespace _7DRL_2021
             Handlers -= handler.Add;
         }
 
-        public void StartMenuArea(double priority, ITooltipProvider tooltipProvider = null)
+        public void StartMenuArea(double priority, ITooltipProvider tooltipProvider = null, IMenuAnchor mouseTransform = null)
         {
             if (CurrentMenuArea != null)
                 throw new Exception();
 
-            CurrentMenuArea = new MenuAreaText(this, priority, tooltipProvider);
+            CurrentMenuArea = new MenuAreaText(this, priority, tooltipProvider)
+            {
+                MouseTransform = mouseTransform,
+            };
 
             StartHandler(CurrentMenuArea);
         }

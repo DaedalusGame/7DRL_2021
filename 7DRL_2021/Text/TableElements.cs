@@ -87,6 +87,10 @@ namespace _7DRL_2021
 
         public float Width { get; set; } = float.PositiveInfinity; 
         public float Height => Contents.Any() ? Math.Max(0, Contents.Max(x => x.Height)) : 0;
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
+
         public ElementPosition Position { get; private set; }
 
         public bool IsUnit => true;
@@ -160,6 +164,10 @@ namespace _7DRL_2021
 
         public float Width => Line.GetColumnWidth(ColumnIndex);
         public float Height => Contents.Any() ? Contents.Sum(x => x.Height) : 0;
+
+        public float VisualWidth => Width;
+        public float VisualHeight => Height;
+
         public ElementPosition Position { get; private set; }
 
         public bool IsUnit => true;

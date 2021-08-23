@@ -321,7 +321,7 @@ namespace _7DRL_2021.Menus
 
             var state = scene.InputState;
 
-            for (int i = 0; i < Actions.Length; i++)
+            /*for (int i = 0; i < Actions.Length; i++)
             {
                 CardAction action = Actions[i];
                 if (action != null)
@@ -333,7 +333,7 @@ namespace _7DRL_2021.Menus
                 CardAction action = Actions[card.Index];
                 if (action != null && action.Enabled())
                     action.Action();
-            }
+            }*/
         }
 
         public virtual Rectangle GetSelectRectangle(int index)
@@ -382,6 +382,8 @@ namespace _7DRL_2021.Menus
             get;
             set;
         }
+        public IMenuAnchor MouseTransform { get; set; }
+        public ITooltipProvider Tooltip { get; set; }
 
         public CardArea(CardAct menu, int index, double priority)
         {
@@ -390,14 +392,14 @@ namespace _7DRL_2021.Menus
             Priority = priority;
         }
 
-        public void GenerateTooltip(TextBuilder text)
+        public void AddTooltip(TextBuilder text)
         {
             //NOOP
         }
 
-        public bool IsWithin(int x, int y)
+        public bool IsWithin(Vector2 mousePos)
         {
-            return Menu.GetSelectRectangle(Index).Contains(x, y);
+            return Menu.GetSelectRectangle(Index).Contains(mousePos);
         }
     }
 

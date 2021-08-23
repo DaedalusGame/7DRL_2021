@@ -124,7 +124,7 @@ namespace _7DRL_2021
             }
         }
 
-        public TitleUI Menu;
+        public TitleUINew Menu;
 
         int GrassWidth = 32;
         int GrassHeight = 32;
@@ -160,7 +160,7 @@ namespace _7DRL_2021
 
         public SceneTitle(Game game) : base(game)
         {
-            Menu = new TitleUI(this);
+            Menu = new TitleUINew(this);
             FloorBatch = new PrimitiveBatch<VertexPositionNormalTexture>(GraphicsDevice);
 
             MorphoPositionBase = new LerpVector2(new Vector2(650, Viewport.Height + 160));
@@ -407,6 +407,8 @@ namespace _7DRL_2021
 
             Menu.Draw(this);
 
+            DrawCursor();
+
             foreach (var particle in Particles)
                 particle.Draw(this);
 
@@ -560,7 +562,7 @@ namespace _7DRL_2021
                 GroundParticles.Add(particle);
             }
 
-            MenuCursor = Menu.GetMouseOver(InputState.MouseX, InputState.MouseY);
+            TooltipCursor = new TooltipCursorMenu(Menu.GetMouseOver(InputState.MouseX, InputState.MouseY));
         }
 
         public void NewGame()

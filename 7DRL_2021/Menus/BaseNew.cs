@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace _7DRL_2021
 {
-    class ActActionNew
+    class ActAction
     {
         public Action<TextBuilder> Text;
         public Action Action = () => { };
         public Func<bool> Enabled = () => true;
 
-        public ActActionNew(Action<TextBuilder> text, Action action = null, Func<bool> enabled = null)
+        public ActAction(Action<TextBuilder> text, Action action = null, Func<bool> enabled = null)
         {
             Text = text;
             if (action != null)
@@ -29,14 +29,14 @@ namespace _7DRL_2021
         }
     }
 
-    class MenuActNew : Menu
+    class MenuAct : Menu
     {
         public override FontRenderer FontRenderer => Scene.FontRenderer;
         Scene Scene;
         LabelledUI UI;
         TextBuilder Text;
         public Vector2 Position;
-        List<ActActionNew> Actions = new List<ActActionNew>();
+        List<ActAction> Actions = new List<ActAction>();
         Dictionary<int, MenuAreaText> SelectionAreas = new Dictionary<int, MenuAreaText>(); 
 
         public int Selection;
@@ -61,7 +61,7 @@ namespace _7DRL_2021
             }
         };
 
-        public MenuActNew(Scene scene, Action<TextBuilder> name, Vector2 position, SpriteReference label, SpriteReference ui, int width, int height)
+        public MenuAct(Scene scene, Action<TextBuilder> name, Vector2 position, SpriteReference label, SpriteReference ui, int width, int height)
         {
             Scene = scene;
             Position = position;
@@ -105,18 +105,18 @@ namespace _7DRL_2021
             Dirty = false;
         }
 
-        private bool IsSelected(ActActionNew action)
+        private bool IsSelected(ActAction action)
         {
             return Actions[Selection] == action;
         }
 
-        public void Add(ActActionNew action)
+        public void Add(ActAction action)
         {
             Actions.Add(action);
             Dirty = true;
         }
 
-        public void AddDefault(ActActionNew action)
+        public void AddDefault(ActAction action)
         {
             DefaultSelection = Actions.Count;
             Add(action);

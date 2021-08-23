@@ -121,7 +121,7 @@ namespace _7DRL_2021
         public IMenuArea GetMouseOver(int mouseX, int mouseY)
         {
             var areas = GetAllMenus().SelectMany(x => x.MenuAreas).OrderBy(x => x.Priority);
-            return areas.FirstOrDefault(x => x.IsWithin(mouseX, mouseY));
+            return areas.FirstOrDefault(x => x.IsWithin(x.MouseTransform.Transform(new Vector2(mouseX, mouseY))));
         }
 
         public void Close()
@@ -187,14 +187,26 @@ namespace _7DRL_2021
 
     interface IMenuArea
     {
+        ITooltipProvider Tooltip { get; }
+
         double Priority
         {
             get;
         }
 
-        void GenerateTooltip(TextBuilder text);
-        
-        bool IsWithin(int x, int y);
+        IMenuAnchor MouseTransform
+        {
+            get;
+        }
+
+        bool IsWithin(Vector2 mousePos);
+    }
+
+    interface IMenuAnchor
+    {
+        double Priority { get; }
+
+        Vector2 Transform(Vector2 pos);
     }
 
     class MenuAreaText : IMenuArea, ITextElementHandler
@@ -206,7 +218,8 @@ namespace _7DRL_2021
             get;
             set;
         }
-        ITooltipProvider TooltipProvider;
+        public IMenuAnchor MouseTransform { get; set; }
+        public ITooltipProvider Tooltip { get; }
 
         public float GetTop()
         {
@@ -218,11 +231,11 @@ namespace _7DRL_2021
             return GetElements().GetBottom();
         }
 
-        public MenuAreaText(TextBuilder text, double priority, ITooltipProvider tooltipProvider)
+        public MenuAreaText(TextBuilder text, double priority, ITooltipProvider tooltip)
         {
             Text = text;
             Priority = priority;
-            TooltipProvider = tooltipProvider;
+            Tooltip = tooltip;
         }
 
         public void Add(ITextElement element)
@@ -235,22 +248,22 @@ namespace _7DRL_2021
             return Elements;
         }
 
-        public bool IsWithin(int x, int y)
+        public bool IsWithin(Vector2 mousePos)
         {
             var textPos = Text.TextPosition;
             foreach(var element in GetElements())
             {
                 var transformFinal = textPos.Transform * Matrix.CreateTranslation(textPos.Position.X, textPos.Position.Y, 0) * element.Position.Transform;
-                var localPos = Vector2.Transform(new Vector2(x,y), Matrix.Invert(transformFinal));
-                if(localPos.X >= 0 && localPos.Y >= 0 && localPos.X < element.Width && localPos.Y < element.Height)
+                var localPos = Vector2.Transform(mousePos, Matrix.Invert(transformFinal));
+                if(localPos.X >= 0 && localPos.Y >= 0 && localPos.X < element.VisualWidth && localPos.Y < element.VisualHeight)
                     return true;
             }
             return false;
         }
 
-        public void GenerateTooltip(TextBuilder text)
+        public void AddTooltip(TextBuilder text)
         {
-            TooltipProvider?.AddTooltip(text);
+            Tooltip?.AddTooltip(text);
         }
     }
 
@@ -258,6 +271,8 @@ namespace _7DRL_2021
     {
         Menu Menu;
         Func<Vector2> Position;
+        public IMenuAnchor MouseTransform { get; set; }
+        public ITooltipProvider Tooltip { get; set; }
 
         public MenuAreaBasic(Menu menu, Func<Vector2> position, double priority)
         {
@@ -272,14 +287,14 @@ namespace _7DRL_2021
             set;
         }
 
-        public void GenerateTooltip(TextBuilder text)
+        public void AddTooltip(TextBuilder text)
         {
             //NOOP
         }
 
-        public bool IsWithin(int x, int y)
+        public bool IsWithin(Vector2 mousePos)
         {
-            return new Rectangle((int)Position().X - Menu.Width / 2, (int)Position().Y - Menu.Height / 2, Menu.Width, Menu.Height).Contains(x, y);
+            return new Rectangle((int)Position().X - Menu.Width / 2, (int)Position().Y - Menu.Height / 2, Menu.Width, Menu.Height).Contains(mousePos);
         }
     }
 

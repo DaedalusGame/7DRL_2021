@@ -180,6 +180,7 @@
     <Compile Include="Menu.cs" />
     <Compile Include="Menus\Base.cs" />
     <Compile Include="Menus\BaseNew.cs" />
+    <Compile Include="Menus\MenuNew.cs" />
     <Compile Include="Menus\OptionsUI.cs" />
     <Compile Include="Menus\PlayerUI.cs" />
     <Compile Include="Menus\StatUI.cs" />
@@ -384,6 +385,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\cursor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\cursor_tile_strip8.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="content\effect_area.png">
