@@ -11,23 +11,23 @@ namespace _7DRL_2021.Menus
 {
     abstract class MenuNew
     {
-        public double Priority { get; set; }
+        public MenuRoot Root => MenuRoot.Current;
+
+        public double DrawPriority;
+        public double UpdatePriority;
+        public double InputPriority;
+        public bool BlocksInput;
+        public Func<bool> AllowInput = () => true;
+
         public int Ticks;
         public bool ShouldClose;
         public bool Closing;
         public abstract FontRenderer FontRenderer { get; }
 
         protected bool InputBlocked;
-        protected List<SubMenuHandlerNew> SubMenuHandlers = new List<SubMenuHandlerNew>();
-        protected abstract IEnumerable<IMenuArea> MenuAreas
+        public abstract IEnumerable<IMenuArea> MenuAreas
         {
             get;
-        }
-
-        public IMenuArea GetMouseOver(int mouseX, int mouseY)
-        {
-            var areas = GetAllMenus().SelectMany(x => x.MenuAreas).OrderByDescending(x => x.Priority);
-            return areas.FirstOrDefault(x => x.IsWithin(x.MouseTransform.Transform(new Vector2(mouseX, mouseY))));
         }
 
         public void Close()
@@ -38,36 +38,79 @@ namespace _7DRL_2021.Menus
         public virtual void Update(Scene scene)
         {
             Ticks++;
-            foreach (var handler in SubMenuHandlers.OrderBy(x => x.UpdatePriority))
-                handler.Update(scene);
         }
 
         public virtual void HandleInput(Scene scene)
         {
-            InputBlocked = false;
-            foreach (var handler in SubMenuHandlers.OrderBy(x => x.InputPriority))
+            //NOOP
+        }
+
+        public virtual void PreDraw(Scene scene)
+        {
+            //NOOP
+        }
+
+        public abstract void Draw(Scene scene);
+    }
+
+    abstract class MenuRoot
+    {
+        public static MenuRoot Current { get; private set; }
+
+        List<MenuNew> Menus = new List<MenuNew>();
+
+        protected MenuRoot()
+        {
+            //TODO: Cleanup previous root
+            Current = this; //Global state, cry about it
+        }
+
+        public virtual void Update(Scene scene)
+        {
+            foreach (var menu in Menus.OrderBy(x => x.UpdatePriority).ToList())
+                menu.Update(scene);
+            Menus.RemoveAll(x => x.ShouldClose);
+        }
+
+        public virtual void HandleInput(Scene scene)
+        {
+            foreach (var menu in Menus.OrderBy(x => x.InputPriority))
             {
-                handler.HandleInput(scene);
-                if (handler.IsExist && handler.BlocksInput)
+                menu.HandleInput(scene);
+                if (menu.BlocksInput)
                 {
-                    InputBlocked = true;
                     break;
                 }
             }
         }
 
-        public IEnumerable<MenuNew> GetAllMenus()
+        public virtual void Draw(Scene scene)
         {
-            return new[] { this }.Concat(SubMenuHandlers.Where(x => x.IsOpen).SelectMany(x => x.GetAllMenus())).Where(x => x != null);
+            foreach (var menu in Menus.OrderBy(x => x.DrawPriority))
+                menu.Draw(scene);
         }
 
         public virtual void PreDraw(Scene scene)
         {
-            foreach (var handler in SubMenuHandlers)
-                handler.PreDraw(scene);
+            foreach (var menu in Menus)
+                menu.PreDraw(scene);
         }
 
-        public abstract void Draw(Scene scene);
+        public IMenuArea GetMouseOver(int mouseX, int mouseY)
+        {
+            return GetMouseOver(Menus.SelectMany(x => x.MenuAreas), mouseX, mouseY);
+        }
+
+        public IMenuArea GetMouseOver(IEnumerable<IMenuArea> areas, int mouseX, int mouseY)
+        {
+            areas = areas.OrderByDescending(x => x.Priority);
+            return areas.FirstOrDefault(x => x.IsWithin(x.Anchor.Transform(new Vector2(mouseX, mouseY))));
+        }
+
+        public void OpenMenu(MenuNew menu)
+        {
+            Menus.Add(menu);
+        }
     }
 
     abstract class MenuWindow : MenuNew, IMenuAnchor, IMenuArea
@@ -91,8 +134,9 @@ namespace _7DRL_2021.Menus
         protected Vector2 WindowOffset => new Vector2(HorizontalAlignment, VerticalAlignment) * WindowSize;
         protected Vector2 WindowPosition => Position - WindowOffset;
 
-        public IMenuAnchor MouseTransform => this;
+        public IMenuAnchor Anchor => this;
         public ITooltipProvider Tooltip { get; set; }
+        public double Priority => DrawPriority;
 
         protected MenuWindow() : base()
         {
@@ -190,15 +234,15 @@ namespace _7DRL_2021.Menus
 
         public void Open(T menu)
         {
+            if (IsOpen)
+                throw new Exception();
             Menu = menu;
-            Menu.Priority = DrawPriority;
-        }
-
-        public override void Update(Scene scene)
-        {
-            base.Update(scene);
-            if (Menu != null && Menu.ShouldClose)
-                Menu = null;
+            Menu.DrawPriority = DrawPriority;
+            Menu.UpdatePriority = UpdatePriority;
+            Menu.InputPriority = InputPriority;
+            Menu.BlocksInput = BlocksInput;
+            Menu.AllowInput = AllowInput;
+            MenuRoot.Current.OpenMenu(Menu);
         }
     }
 
@@ -209,7 +253,9 @@ namespace _7DRL_2021.Menus
             get;
         }
 
-        public bool IsExist => InternalMenu != null;
+        private MenuRoot Root;
+
+        public bool IsExist => InternalMenu != null && !InternalMenu.ShouldClose;
         public bool IsOpen => InternalMenu != null && !InternalMenu.Closing;
 
         public double DrawPriority;
@@ -222,38 +268,12 @@ namespace _7DRL_2021.Menus
         {
             InternalMenu?.Close();
         }
-
-        public void HandleInput(Scene scene)
-        {
-            if (AllowInput())
-                InternalMenu?.HandleInput(scene);
-        }
-
-        public virtual void Update(Scene scene)
-        {
-            InternalMenu?.Update(scene);
-        }
-
-        public void PreDraw(Scene scene)
-        {
-            InternalMenu?.PreDraw(scene);
-        }
-
-        public void Draw(Scene scene)
-        {
-            InternalMenu?.Draw(scene);
-        }
-
-        public IEnumerable<MenuNew> GetAllMenus()
-        {
-            return InternalMenu?.GetAllMenus() ?? Enumerable.Empty<MenuNew>();
-        }
     }
 
     class MenuTextboxNew : MenuWindow
     {
         public override FontRenderer FontRenderer => Scene.FontRenderer;
-        protected override IEnumerable<IMenuArea> MenuAreas => Content.MenuAreas.Append(this);
+        public override IEnumerable<IMenuArea> MenuAreas => Content.MenuAreas.Append(this);
 
         Scene Scene;
         MenuContentText Content;
@@ -284,11 +304,8 @@ namespace _7DRL_2021.Menus
         }
     }
 
-    class TitleUINew : MenuNew
+    class TitleUINew : MenuRoot
     {
-        public override FontRenderer FontRenderer => Scene.FontRenderer;
-        protected override IEnumerable<IMenuArea> MenuAreas => Enumerable.Empty<IMenuArea>();
-
         public SceneTitle Scene;
         public SubMenuHandlerNew<MenuTitleWindowNew> TitleMenu = new SubMenuHandlerNew<MenuTitleWindowNew>() { BlocksInput = true, InputPriority = 10, DrawPriority = 0 };
         public SubMenuHandlerNew<MenuNew> SubMenu = new SubMenuHandlerNew<MenuNew>() { BlocksInput = true, DrawPriority = 10 };
@@ -297,11 +314,6 @@ namespace _7DRL_2021.Menus
         public TitleUINew(SceneTitle scene)
         {
             Scene = scene;
-            SubMenuHandlers.Add(TitleMenu);
-            SubMenuHandlers.Add(SubMenu);
-            SubMenuHandlers.Add(Tooltip);
-
-            Tooltip.Open(new TooltipUINew(Scene));
         }
 
         public override void Update(Scene scene)
@@ -309,6 +321,7 @@ namespace _7DRL_2021.Menus
             base.Update(scene);
 
             if (Scene.TitleSM.CurrentState == TitleState.Finish && !TitleMenu.IsOpen)
+            {
                 TitleMenu.Open(new MenuTitleWindowNew(this)
                 {
                     Position = new Vector2(Scene.Viewport.Width / 2, Scene.Viewport.Height * 3 / 4),
@@ -317,13 +330,8 @@ namespace _7DRL_2021.Menus
                     LabelSprite = SpriteLoader.Instance.AddSprite("content/ui_box"),
                     ContentSprite = SpriteLoader.Instance.AddSprite("content/ui_gab"),
                 });
-        }
-
-        public override void Draw(Scene scene)
-        {
-            TitleMenu.Draw(scene);
-            SubMenu.Draw(scene);
-            Tooltip.Draw(scene);
+                Tooltip.Open(new TooltipUINew(Scene));
+            }
         }
     }
 
@@ -518,7 +526,7 @@ namespace _7DRL_2021.Menus
         };
 
         public override FontRenderer FontRenderer => Scene.FontRenderer;
-        protected override IEnumerable<IMenuArea> MenuAreas => Content.MenuAreas.Append(this);
+        public override IEnumerable<IMenuArea> MenuAreas => Content.MenuAreas.Append(this);
 
         Scene Scene;
         MenuContentAct Content;
@@ -601,16 +609,15 @@ namespace _7DRL_2021.Menus
     class TooltipUINew : MenuNew
     {
         public override FontRenderer FontRenderer => Scene.FontRenderer;
-        protected override IEnumerable<IMenuArea> MenuAreas => Enumerable.Empty<IMenuArea>();
+        public override IEnumerable<IMenuArea> MenuAreas => Enumerable.Empty<IMenuArea>();
 
-        SubMenuHandlerNew<MenuTooltipWindow> TooltipWindow = new SubMenuHandlerNew<MenuTooltipWindow>();
+        SubMenuHandlerNew<MenuTooltipWindow> TooltipWindow = new SubMenuHandlerNew<MenuTooltipWindow>() { DrawPriority = 9999 };
 
         Scene Scene;
 
         public TooltipUINew(Scene scene)
         {
             Scene = scene;
-            SubMenuHandlers.Add(TooltipWindow);
         }
 
         public override void Update(Scene scene)
@@ -636,14 +643,16 @@ namespace _7DRL_2021.Menus
 
         public override void Draw(Scene scene)
         {
-            TooltipWindow.Draw(scene);
+            var mousePos = new Vector2(scene.InputState.MouseX, scene.InputState.MouseY);
+            var mouseCursor = SpriteLoader.Instance.AddSprite("content/ui_mouse_cursor");
+            scene.DrawSprite(mouseCursor, 0, mousePos, SpriteEffects.None, 0);
         }
     }
 
     class MenuTooltipWindow : MenuWindow
     {
         public override FontRenderer FontRenderer => Scene.FontRenderer;
-        protected override IEnumerable<IMenuArea> MenuAreas => Enumerable.Empty<IMenuArea>();
+        public override IEnumerable<IMenuArea> MenuAreas => Enumerable.Empty<IMenuArea>();
 
         Scene Scene;
         MenuContentTooltip Content;
@@ -778,6 +787,8 @@ namespace _7DRL_2021.Menus
 
     class MenuContentAct : MenuContentText
     {
+        
+
         List<ActAction> Actions = new List<ActAction>();
         Dictionary<int, MenuAreaText> SelectionAreas = new Dictionary<int, MenuAreaText>();
 
@@ -808,7 +819,7 @@ namespace _7DRL_2021.Menus
                 Text.AppendElement(new TextElementCursor(cursor, 16, 16, () => IsSelected(action)));
                 Text.EndTableCell();
                 Text.StartTableCell();
-                Text.StartMenuArea(Anchor.Priority + 0.1, new TooltipProviderFunction((text =>
+                Text.StartMenuArea(0.1, new TooltipProviderFunction((text =>
                 {
                     text.StartLine(LineAlignment.Left);
                     text.AppendText("Test and stuff");
@@ -821,7 +832,7 @@ namespace _7DRL_2021.Menus
 
                 Text.EndTableCell();
                 var row = Text.EndTableRow();
-                var selectionArea = new MenuAreaText(Text, Anchor.Priority, null);
+                var selectionArea = new MenuAreaText(Text, 0, null);
                 selectionArea.Add(row);
                 SelectionAreas.Add(index, selectionArea);
                 index++;

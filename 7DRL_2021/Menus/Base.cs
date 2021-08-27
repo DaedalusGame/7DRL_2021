@@ -382,7 +382,7 @@ namespace _7DRL_2021.Menus
             get;
             set;
         }
-        public IMenuAnchor MouseTransform { get; set; }
+        public IMenuAnchor Anchor { get; set; }
         public ITooltipProvider Tooltip { get; set; }
 
         public CardArea(CardAct menu, int index, double priority)

@@ -121,7 +121,7 @@ namespace _7DRL_2021
         public IMenuArea GetMouseOver(int mouseX, int mouseY)
         {
             var areas = GetAllMenus().SelectMany(x => x.MenuAreas).OrderBy(x => x.Priority);
-            return areas.FirstOrDefault(x => x.IsWithin(x.MouseTransform.Transform(new Vector2(mouseX, mouseY))));
+            return areas.FirstOrDefault(x => x.IsWithin(x.Anchor.Transform(new Vector2(mouseX, mouseY))));
         }
 
         public void Close()
@@ -194,7 +194,7 @@ namespace _7DRL_2021
             get;
         }
 
-        IMenuAnchor MouseTransform
+        IMenuAnchor Anchor
         {
             get;
         }
@@ -213,12 +213,9 @@ namespace _7DRL_2021
     {
         TextBuilder Text;
         List<ITextElement> Elements = new List<ITextElement>();
-        public double Priority
-        {
-            get;
-            set;
-        }
-        public IMenuAnchor MouseTransform { get; set; }
+        private double LocalPriority;
+        public double Priority => Anchor.Priority + LocalPriority;
+        public IMenuAnchor Anchor { get; set; }
         public ITooltipProvider Tooltip { get; }
 
         public float GetTop()
@@ -234,7 +231,7 @@ namespace _7DRL_2021
         public MenuAreaText(TextBuilder text, double priority, ITooltipProvider tooltip)
         {
             Text = text;
-            Priority = priority;
+            LocalPriority = priority;
             Tooltip = tooltip;
         }
 
@@ -271,7 +268,7 @@ namespace _7DRL_2021
     {
         Menu Menu;
         Func<Vector2> Position;
-        public IMenuAnchor MouseTransform { get; set; }
+        public IMenuAnchor Anchor { get; set; }
         public ITooltipProvider Tooltip { get; set; }
 
         public MenuAreaBasic(Menu menu, Func<Vector2> position, double priority)

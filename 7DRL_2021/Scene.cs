@@ -684,9 +684,9 @@ namespace _7DRL_2021
 
         public void DrawCursor()
         {
-            var mousePos = new Vector2(InputState.MouseX, InputState.MouseY);
-            var mouseCursor = SpriteLoader.Instance.AddSprite("content/ui_mouse_cursor");
-            DrawSprite(mouseCursor, 0, mousePos, SpriteEffects.None, 0);
+            //var mousePos = new Vector2(InputState.MouseX, InputState.MouseY);
+            //var mouseCursor = SpriteLoader.Instance.AddSprite("content/ui_mouse_cursor");
+            //DrawSprite(mouseCursor, 0, mousePos, SpriteEffects.None, 0);
         }
     }
 }

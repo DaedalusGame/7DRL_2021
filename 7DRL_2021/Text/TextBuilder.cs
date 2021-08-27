@@ -1075,7 +1075,7 @@ namespace _7DRL_2021
 
             CurrentMenuArea = new MenuAreaText(this, priority, tooltipProvider)
             {
-                MouseTransform = mouseTransform,
+                Anchor = mouseTransform,
             };
 
             StartHandler(CurrentMenuArea);
